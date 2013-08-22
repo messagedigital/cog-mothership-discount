@@ -1,0 +1,108 @@
+{% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
+
+{% block sidebar %}
+	{{ render(controller('Message:Mothership:Commerce::Controller:Product:Sidebar#index', {'productID':product.id}))}}
+{% endblock %}
+
+{% block main %}
+
+<hgroup class="title">
+		<h1>Editing Units of '{{ product.name }}'</h1>
+</hgroup>
+
+{{ render(controller('Message:Mothership:Commerce::Controller:Product:ProductsMenu#index', {'productID':product.id}))}}
+
+<section class="container-content">
+	{{ form_start(form) }}
+	<table>
+		<thead>
+			<tr>
+				<th>SKU</th>
+				{% for heading in headings %}
+					<th>{{heading}}</th>
+				{% endfor %}
+				<th>Prices</th>
+				<th>Weight (grams)</th>
+				<th>Visible</th>
+				<th>Delete</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for unit in units %}
+				<tr>
+					<td>{{ form_widget(form[unit.id]['sku']) }}</td>
+					{% for name, title in headings %}
+						<td>
+							{{ form_widget(form[unit.id]['options'][name]) }}
+						</td>
+					{% endfor %}
+					<td>
+					{% for name, value in unit.price %}
+						<div class="inline">
+							{{ form_row(form[unit.id]['price'][name]) }}
+						</div>
+					{% endfor %}
+					</td>
+					<td>{{ form_widget(form[unit.id]['weight']) }}</td>
+					<td>{{ form_widget(form[unit.id]['visible']) }}</td>
+					<td>{{ form_widget(form[unit.id]['delete']) }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<button type="submit" class="button small save" id="save-content">Update</button>
+	{{ form_end(form) }}
+	{{ form_start(addForm) }}
+	<table>
+		<thead>
+			<tr>
+				<th>SKU</th>
+				<th>Type</th>
+				<th>Value</th>
+				<th>Prices</th>
+				<th>Weight (grams)</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>{{ form_widget(addForm.sku) }}</td>
+				<td>
+					{{ form_widget(addForm.option_name_1) }}
+					{{ form_widget(addForm.option_name_2) }}
+				</td>
+				<td>
+					<div class="inline">
+						{{ form_widget(addForm.option_value_1) }}
+					</div>
+
+					<div class="inline">
+						{{ form_widget(addForm.option_value_2) }}
+					</div>
+				</td>
+				<td>
+					<div class="inline">
+						{{ form_row(addForm['price']['retail']) }}
+					</div>
+					<div class="inline">
+						{{ form_row(addForm['price']['cost']) }}
+					</div>
+					<div class="inline">
+					{{ form_row(addForm['price']['rrp']) }}
+					</div>
+				</td>
+				<td>{{ form_widget(addForm.weight) }}</td>
+
+			</tr>
+		</tbody>
+	</table>
+		<button type="submit" class="button small submit">Add new</button>
+		<datalist id="option_value">
+			{% for option in optionValue %}
+				<option value="{{ option }}">{{option}}</option>
+			{% endfor %}
+		</datalist>
+
+	{{ form_end(addForm) }}
+</section>
+
+{% endblock %}
