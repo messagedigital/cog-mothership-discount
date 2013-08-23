@@ -1,8 +1,9 @@
 <?php
 
-namespace Message\Mothership\Commerce\Bootstrap;
+namespace Message\Mothership\Discount\Bootstrap;
 
-use Message\Mothership\Commerce;
+use Message\Mothership\Discount;
+use Message\Mothership\ControlPanel\Event\Event;
 
 use Message\Cog\Bootstrap\EventsInterface;
 use Message\Cog\Service\ContainerInterface;
@@ -19,20 +20,10 @@ class Events implements EventsInterface, ContainerAwareInterface
 
 	public function registerEvents($dispatcher)
 	{
-		$dispatcher->addSubscriber(new Commerce\Order\EventListener\AssemblerListener);
-		$dispatcher->addSubscriber(new Commerce\Order\EventListener\TotalsListener);
-		$dispatcher->addSubscriber(new Commerce\Order\EventListener\ValidateListener);
-		$dispatcher->addSubscriber(new Commerce\Order\EventListener\StatusListener(
-			$this->_services['order.statuses'],
-			$this->_services['order.edit']
-		));
-
-		$dispatcher->addSubscriber(new Commerce\Order\Entity\Address\EventListener);
-		$dispatcher->addSubscriber(new Commerce\Order\Entity\Discount\EventListener);
-		$dispatcher->addSubscriber(new Commerce\Order\Entity\Item\EventListener(
-			$this->_services['order.item.statuses']->get(0)
-		));
-
-		$dispatcher->addSubscriber(new Commerce\EventListener);
+		$dispatcher->addListener(Event::BUILD_MAIN_MENU, function($event) {
+			$event->addItem('ms.discount.dashboard', 'Discount', array(
+				'ms.discount'
+			));
+		});
 	}
 }

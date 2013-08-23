@@ -12,64 +12,33 @@ use Message\Mothership\Commerce\Product\ImageType\Collection as ImageTypes;
 class Loader
 {
 	protected $_query;
-	protected $_locale;
-	protected $_entities;
-	protected $_imageTypes;
+	protected $_productLoader;
 
-	protected $_returnArray;
-
-	public function __construct(
-		Query $query,
-		Locale $locale,
-		FileLoader $fileLoader,
-		ImageTypes $imageTypes,
-		array $entities = array(),
-		$priceTypes = array()
-	) {
+	public function __construct(Query $query, Loader $productLoader)
+	{
 		$this->_query = $query;
-		$this->_locale = $locale;
-		$this->_entities = $entities;
-		$this->_priceTypes = $priceTypes;
-		$this->_imageTypes = $imageTypes;
-		$this->_fileLoader = $fileLoader;
 	}
 
-	public function getEntityLoader($name)
+	public function getByID($discountID)
 	{
-		if (!array_key_exists($name, $this->_entities)) {
-			throw new \InvalidArgumentException(sprintf('Unknown product entity: `%s`', $name));
-		}
-
-		$this->_entities[$name]->setProductLoader($this);
-
-		return $this->_entities[$name];
+		return $this->_load($discountID, false);
 	}
 
-	public function getByID($productID)
-	{
-		$this->_returnArray = is_array($productID);
-
-		return $this->_loadProduct($productID);
-	}
-
-	public function getByUnitID($unitID)
+	public function getByCode($code)
 	{
 		$result = $this->_query->run(
 			'SELECT
-				product_id
+				discount_id
 			FROM
-				product_unit
+				discount
 			WHERE
-				unit_id = ?i',
+				code = ?s',
 			array(
-				$unitID
+				$code
 			)
 		);
 
-		$this->_returnArray = false;
-
-		return count($result) ? $this->_loadProduct($result->flatten()) : false;
-
+		return (count($result) === 1 ? $this->_load($result->first(), false) : false);
 	}
 
 	public function getAll()
@@ -85,7 +54,7 @@ class Loader
 	}
 
 
-	protected function _loadProduct($productIDs)
+	protected function _load($discountIDs, $returnArray = false)
 	{
 		$result = $this->_query->run(
 			'SELECT
@@ -216,6 +185,20 @@ class Loader
 		}
 
 		return count($products) == 1 && !$this->_returnArray ? array_shift($products) : $products;
+	}
+
+	protected function _loadProducts($discountIDs)
+	{
+		$products = $this->_query->run(
+			'SELECT
+				product_id	AS productID,
+			FROM
+				discount_product
+			WHERE
+				discount_id IN (?ij)
+		', array(
+			(array) $productIDs,
+		));
 	}
 
 }

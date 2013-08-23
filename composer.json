@@ -1,7 +1,7 @@
 {
-	"name": "message/cog-mothership-commerce",
-	"description": "Cog module for commerce building blocks in Mothership",
-	"keywords": ["commerce", "mothership", "order", "orders", "products", "money", "cog"],
+	"name": "message/cog-mothership-discount",
+	"description": "Cog module for discount building blocks in Mothership",
+	"keywords": ["discount", "mothership", "offer", "campaign", "cog"],
 	"homepage": "http://message.co.uk",
 	"authors": [
 		{
@@ -11,12 +11,12 @@
 	],
 	"support": {
 		"wiki"  : "http://server.local/wiki/projects/cog",
-		"issues": "http://github.com/messagedigital/cog-mothership-commerce/issues"
+		"issues": "http://github.com/messagedigital/cog-mothership-discount/issues"
 	},
 	"autoload": {
 		"psr-0": {
-			"Message\\Mothership\\Commerce"      : "src",
-			"Message\\Mothership\\Commerce\\Test": "tests"
+			"Message\\Mothership\\Discount"      : "src",
+			"Message\\Mothership\\Discount\\Test": "tests"
 		}
 	},
 	"repositories": [
@@ -29,8 +29,8 @@
 	"require": {
 		"php": ">=5.3.0",
 
-		"message/cog-user"         : "dev-master",
-		"message/cog-mothership-cp": "dev-master"
+		"message/cog-user"         		 : "dev-master",
+		"message/cog-mothership-commerce": "dev-master"
 	},
 	"suggest": {
 	},
