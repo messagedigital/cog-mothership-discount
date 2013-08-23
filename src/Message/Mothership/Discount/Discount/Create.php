@@ -1,11 +1,8 @@
 <?php
 
-namespace Message\Mothership\Commerce\Product;
-
-use Message\Mothership\Commerce\Product\Product;
+namespace Message\Mothership\Discount\Discount;
 
 use Message\Cog\ValueObject\DateTimeImmutable;
-use Message\Cog\Localisation\Locale;
 use Message\Cog\DB\Query;
 use Message\Cog\DB\Result;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Message\Mothership\Discount;
+namespace Message\Mothership\Discount\Discount;
 
 use Message\Cog\Service\Container;
 use Message\Cog\ValueObject\Authorship;
@@ -43,5 +43,11 @@ class Discount
 	public function addDiscountAmount(DiscountAmount $amount)
 	{
 		$this->discountAmounts[] = $amount;
+	}
+
+	public function isActive()
+	{
+		$curTime = new \DateTime;
+		return (!$this->start || $this->start < $curTime) && (!$this->end || $this->end > $curTime);
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Message\Mothership\Discount\Discount\DiscountAmount;
+namespace Message\Mothership\Discount\Discount\Threshold;
 
 use Message\Cog\DB\Query;
 use Message\Cog\DB\Result;
@@ -21,9 +21,9 @@ class Loader
 				discount_id,
 				locale,
 				currency_id,
-				amount
+				threshold
 			FROM
-				discount_amount
+				discount_threshold
 			WHERE
 				discount_id  = ?i
 		', 	array(
@@ -31,15 +31,15 @@ class Loader
 			)
 		);
 
-		$discountAmounts = $result->bindTo('Message\\Mothership\\Discount\\Discount\\DiscountAmount\\DiscountAmount');
+		$thresholds = $result->bindTo('Message\\Mothership\\Discount\\Discount\\Threshold\\Threshold');
 
 		foreach ($result as $key => $data) {
-			$discountAmounts[$key]->discount = $discount;
-			$discountAmounts[$key]->amount = (float) $data->amount;
+			$thresholds[$key]->discount = $discount;
+			$thresholds[$key]->threshold = (float) $data->threshold;
 
 			// TODO Maybe load Locale-Object??
 		}
 
-		return $discountAmounts;
+		return $thresholds;
 	}
 }

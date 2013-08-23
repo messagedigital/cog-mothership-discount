@@ -1,22 +1,59 @@
 <?php
 
-namespace Message\Mothership\Commerce\Product;
+namespace Message\Mothership\Discount\Discount;
 
 use Message\Cog\DB\Query;
 use Message\Cog\DB\Result;
-use Message\Cog\Localisation\Locale;
 use Message\Cog\ValueObject\DateTimeImmutable;
-use Message\Mothership\FileManager\File\Loader as FileLoader;
-use Message\Mothership\Commerce\Product\ImageType\Collection as ImageTypes;
+use Message\Mothership\Commerce\Product;
 
 class Loader
 {
 	protected $_query;
 	protected $_productLoader;
+	protected $_thresholdLoader;
+	protected $_discountAmountLoader;
 
-	public function __construct(Query $query, Loader $productLoader)
+	public function __construct(Query $query, Product\Loader $productLoader, DiscountAmount\Loader $discountAmountLoader, Threshold\Loader $thresholdLoader)
 	{
-		$this->_query = $query;
+		$this->_query 				 = $query;
+
+		$this->_productLoader 		 = $productLoader;
+		$this->_thresholdLoader 	 = $thresholdLoader;
+		$this->_discountAmountLoader = $discountAmountLoader;
+	}
+
+	public function getByDateRange(\DateTime $from, \DateTime $to)
+	{
+		$result = $this->_query->run(
+			'SELECT
+				discount_id
+			FROM
+				discount
+			WHERE
+			(
+				end IS NULL
+				(
+					AND
+						start < :to?d
+					OR
+						start IS NULL
+				)
+			)
+			OR
+			(
+					end < :to?d
+				AND
+					end > :from?d
+			)
+			'
+			array(
+				'to' 	=> $to,
+				'from'  => $from,
+			)
+		);
+
+		return $this->_load($result->flatten());
 	}
 
 	public function getByID($discountID)
@@ -41,164 +78,100 @@ class Loader
 		return (count($result) === 1 ? $this->_load($result->first(), false) : false);
 	}
 
-	public function getAll()
+	public function getByProduct(Product\Product $product)
 	{
 		$result = $this->_query->run(
 			'SELECT
-				product_id
-			FROM
-				product'
-		);
-
-		return count($result) ? $this->_loadProduct($result->flatten()) : false;
-	}
-
-
-	protected function _load($discountIDs, $returnArray = false)
-	{
-		$result = $this->_query->run(
-			'SELECT
-				product.product_id   AS id,
-				product.product_id   AS catalogueID,
-				product.year         AS year,
-				product.created_at   AS createdAt,
-				product.created_by   AS createdBy,
-				product.updated_at   AS updatedAt,
-				product.updated_by   AS updatedBy,
-				product.deleted_at   AS deletedAt,
-				product.deleted_by   AS deletedBy,
-				product.brand    	 AS brand,
-				product.name         AS name,
-				product.category     AS category,
-				product.tax_rate     AS taxRate,
-				product.supplier_ref AS supplierRef,
-				product.weight_grams AS weight,
-
-				product_info.display_name      AS displayName,
-				product_info.season            AS season,
-				product_info.description       AS description,
-				product_info.fabric            AS fabric,
-				product_info.features          AS features,
-				product_info.care_instructions AS careInstructions,
-				product_info.short_description AS shortDescription,
-				product_info.sizing            AS sizing,
-				product_info.notes             AS notes,
-
-				product_export.export_description            AS exportDescription,
-				product_export.export_value                  AS exportValue,
-				product_export.export_manufacture_country_id AS exportManufactureCountryID
-			FROM
-				product
-			LEFT JOIN
-				product_info ON (product.product_id = product_info.product_id)
-			LEFT JOIN
-				product_export ON (product.product_id = product_export.product_id)
-			WHERE
-				product.product_id 	 IN (?ij)
-		', 	array(
-				(array) $productIDs,
-			)
-		);
-
-		$prices = $this->_query->run(
-			'SELECT
-				product_price.product_id  AS id,
-				product_price.type        AS type,
-				product_price.currency_id AS currencyID,
-				product_price.price       AS price
-			FROM
-				product_price
-			WHERE
-				product_price.product_id IN (?ij)
-		', array(
-			(array) $productIDs,
-		));
-
-		$tags = $this->_query->run(
-			'SELECT
-				product_tag.product_id  AS id,
-				product_tag.name        AS name
-			FROM
-				product_tag
-			WHERE
-				product_tag.product_id IN (?ij)
-		', array(
-			(array) $productIDs,
-		));
-
-		$images = $this->_query->run(
-			'SELECT
-				product_image.product_id   AS id,
-				product_image.file_id      AS fileID,
-				product_image.type         AS type,
-				product_image.option_name  AS optionName,
-				product_image.option_value AS optionValue
-			FROM
-				product_image
-			WHERE
-				product_image.product_id IN (?ij)
-		', array(
-			(array) $productIDs,
-		));
-
-		$products = $result->bindTo('Message\\Mothership\\Commerce\\Product\\Product', array($this->_locale, $this->_entities, $this->_priceTypes));
-
-		foreach ($result as $key => $data) {
-
-			$data->taxRate     = (float) $data->taxRate;
-			$data->exportValue = (float) $data->exportValue;
-
-			$products[$key]->authorship->create(new DateTimeImmutable(date('c',$data->createdAt)), $data->createdBy);
-
-			if ($data->updatedAt) {
-				$products[$key]->authorship->update(new DateTimeImmutable(date('c',$data->updatedAt)), $data->updatedBy);
-			}
-
-			if ($data->deletedAt) {
-				$products[$key]->authorship->delete(new DateTimeImmutable(date('c',$data->deletedAt)), $data->deletedBy);
-			}
-
-			foreach ($prices as $price) {
-				if ($price->id == $data->id) {
-					$products[$key]->price[$price->type]->setPrice($price->currencyID, (float) $price->price, $this->_locale);
-				}
-			}
-
-			foreach ($tags as $k => $tag) {
-				if ($tag->id == $data->id) {
-					$products[$key]->tags[$k] = $tag->name;
-				}
-			}
-
-			foreach ($images as $image) {
-				if ($image->id == $data->id) {
-					$products[$key]->images[$image->fileID] = new Image(
-						$image->fileID,
-						$this->_imageTypes->get($image->type),
-						$this->_locale,
-						$this->_fileLoader->getByID($image->fileID),
-						$image->optionName,
-						$image->optionValue
-					);
-				}
-			}
-		}
-
-		return count($products) == 1 && !$this->_returnArray ? array_shift($products) : $products;
-	}
-
-	protected function _loadProducts($discountIDs)
-	{
-		$products = $this->_query->run(
-			'SELECT
-				product_id	AS productID,
+				discount_id
 			FROM
 				discount_product
 			WHERE
+				product_id = ?i',
+			array(
+				$product->id
+			)
+		);
+
+		return $this->_load($result->flatten());
+	}
+
+	protected function _load($ids, $alwaysReturnArray = false)
+	{
+		if (!is_array($ids)) {
+			$ids = (array) $ids;
+		}
+
+		if (!$ids) {
+			return $alwaysReturnArray ? array() : false;
+		}
+
+		$result = $this->_query->run('
+			SELECT
+				*,
+				discount_id 	AS id,
+				free_shipping 	AS freeShipping
+			FROM
+				discount
+			WHERE
 				discount_id IN (?ij)
+		', array($ids));
+
+		if (0 === count($result)) {
+			return $alwaysReturnArray ? array() : false;
+		}
+
+		$discounts = $result->bindTo('Message\\Mothership\\Discount\\Discount\\Discount');
+		$return   = array();
+
+		foreach ($result as $key => $row) {
+			$discounts[$key]->authorship->create(
+				new DateTimeImmutable(
+					date('c', $row->created_at)
+				),
+				$row->created_by
+			);
+
+			$products = $this->_loadProducts($row->id);
+			$appliesToOrder = (0 === count($products));
+
+			$discounts[$key]->percentage 		= ($row->percentage !== null ? (float) $row->percentage : null);
+
+
+			$discounts[$key]->products 			= $products;
+			$discounts[$key]->appliesToOrder 	= $appliesToOrder;
+
+			$discounts[$key]->start 			= ($row->start ? new DateTimeImmutable(date('c', $row->start)) : null);
+			$discounts[$key]->end 				= ($row->end ? new DateTimeImmutable(date('c', $row->end)) : null);
+			$discounts[$key]->freeShipping  	= (bool) $row->freeShipping;
+
+			$discounts[$key]->thresholds 		= $this->_thresholdLoader->getByDiscount($discounts[$key]);
+			$discounts[$key]->discountAmounts 	= $this->_discountAmountLoader->getByDiscount($discounts[$key]);
+
+			$return[$row->id] = $discounts[$key];
+		}
+
+		return $alwaysReturnArray || count($return) > 1 ? $return : reset($return);
+	}
+
+	protected function _loadProducts($discountID)
+	{
+		$results = $this->_query->run(
+			'SELECT
+				product_id	AS productID
+			FROM
+				discount_product
+			WHERE
+				discount_id = ?i
 		', array(
-			(array) $productIDs,
+			$discountID,
 		));
+
+		$products = array();
+		foreach($results->flatten() as $productID) {
+			$products[$productID] = $this->_productLoader->getByID($productID);
+		}
+
+		return $products;
 	}
 
 }
