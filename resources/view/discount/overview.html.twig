@@ -1,0 +1,52 @@
+{% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
+
+{% block sidebar %}
+{% endblock %}
+
+{% block main %}
+
+<hgroup class="title">
+	<h1>Discounts</h1>
+</hgroup>
+
+<div class="container-content create-discount">
+	{% if not discounts is empty %}
+	<table class="discount-listing">
+		<thead>
+		<tr>
+			<th><span>Discount ID</span></th>
+			<th><span>Discount Code</span></th>
+			<th><span>Discount Name</span></th>
+			<th><span>Created At</span></th>
+			<th><span>Start</span></th>
+			<th><span>End</span></th>
+			<th><span>Active</span></th>
+		</tr>
+		</thead>
+		<tbody>
+			{% for discount in discounts %}
+				<tr>
+					<td><a href="">{{ discount.id }}</a></td>
+					<td>{{ discount.code }}</td>
+					<td>{{ discount.name }}</td>
+					<td>{{ discount.authorship.createdAt|date }}</td>
+					<td>
+						{% if not discount.start is null %}
+							{{ discount.start|date }}
+						{% endif %}
+					</td>
+					<td>
+						{% if not discount.end is null %}
+							{{ discount.end|date }}
+						{% endif %}
+					</td>
+					<td>{{ discount.active }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% else %}
+	<p>Empty</p>
+{% endif %}
+</div>
+{% endblock %}

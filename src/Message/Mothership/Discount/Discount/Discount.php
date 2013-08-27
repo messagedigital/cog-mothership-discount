@@ -4,6 +4,7 @@ namespace Message\Mothership\Discount\Discount;
 
 use Message\Cog\Service\Container;
 use Message\Cog\ValueObject\Authorship;
+use Message\Mothership\Commerce\Product\Product;
 
 class Discount
 {
@@ -22,7 +23,7 @@ class Discount
 	public $thresholds = array();
 	public $discountAmounts = array();
 
-	public $appliesToOrder;
+	public $appliesToOrder = false;
 	public $products = array();
 
 	public function __construct()
@@ -33,15 +34,18 @@ class Discount
 	public function addProduct(Product $product)
 	{
 		$this->products[] = $product;
+		$appliesToOrder = true;
 	}
 
-	public function addThreshold(DiscountThreshold $threshold)
+	public function addThreshold(Threshold $threshold)
 	{
+		$threshold->discount = $this;
 		$this->thresholds[] = $threshold;
 	}
 
 	public function addDiscountAmount(DiscountAmount $amount)
 	{
+		$amount->discount = $this;
 		$this->discountAmounts[] = $amount;
 	}
 

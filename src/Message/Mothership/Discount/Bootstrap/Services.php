@@ -11,12 +11,11 @@ class Services implements ServicesInterface
 	{
 
 		$services['discount.loader'] = function($c) {
-			return new Discount\Discount\Loader(
-				$c['db.query'],
-				$c['product.loader'],
-				new Discount\Discount\DiscountAmount\Loader($c['db.query']),
-				new Discount\Discount\Threshold\Loader($c['db.query'])			
-			);
+			return new Discount\Discount\Loader($c['db.query'], $c['product.loader']);
+		};
+
+		$services['discount.create'] = function($c) {
+			return new Discount\Discount\Create($c['db.query'], $c['user.current']);
 		};
 	}
 }

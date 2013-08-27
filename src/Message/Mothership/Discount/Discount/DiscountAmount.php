@@ -1,14 +1,14 @@
 <?php
 
-namespace Message\Mothership\Discount\Discount\Threshold;
+namespace Message\Mothership\Discount\Discount;
 
 use Message\Cog\Service\Container;
 use Message\Cog\ValueObject\Authorship;
 
-class Threshold
+class DiscountAmount
 {
 	public $discount;
 	public $locale;
-	public $currency_id;
-	public $threshold;	
+	public $currencyID;
+	public $amount;	
 }

@@ -3,8 +3,7 @@
 namespace Message\Mothership\Discount\Discount;
 
 use Message\Cog\ValueObject\DateTimeImmutable;
-use Message\Cog\DB\Query;
-use Message\Cog\DB\Result;
+use Message\Cog\DB;
 
 use Message\User\UserInterface;
 
@@ -12,58 +11,101 @@ class Create
 {
 	protected $_query;
 	protected $_locale;
-	protected $_user;
+	protected $_currentUser;
 
-	public function __construct(Query $query, Locale $locale, UserInterface $user)
+	public function __construct(DB\Query $query, UserInterface $currentUser)
 	{
-		$this->_query  = $query;
-		$this->_locale = $locale;
-		$this->_user   = $user;
+		$this->_query		= $query;
+		$this->_currentUser	= $currentUser;
 	}
 
-	public function save(Product $product)
+	public function create(Discount $discount)
 	{
+		if (!$discount->authorship->createdAt()) {
+			$discount->authorship->create(
+				new DateTimeImmutable,
+				$this->_currentUser->id
+			);
+		}
+
 		$result = $this->_query->run(
 			'INSERT INTO
-				product
+				discount
 			SET
-				product.product_id   = null,
-				product.name         = ?s,
-				product.weight_grams = ?i,
-				product.tax_rate     = ?,
-				product.supplier_ref = ?s,
-				product.created_at   = ?d,
-				product.created_by   = ?i',
+				code          = ?s,
+				created_at 	  = ?d,
+				created_by    = ?i,
+				name 		  = ?s,
+				description   = ?s,
+				start   	  = ?dn,
+				end   		  = ?dn,
+				percentage    = ?in,
+				free_shipping = ?b',
 			array(
-				$product->name,
-				$product->weight,
-				$product->taxRate,
-				$product->supplierRef,
-				$product->authorship->createdAt(),
-				$product->authorship->createdBy()->id
+				$discount->code,
+				$discount->authorship->createdAt(),
+				$discount->authorship->createdBy(),
+				$discount->name,
+				$discount->description,
+				$discount->start,
+				$discount->end,
+				$discount->percentage,
+				$discount->freeShipping
 			)
 		);
 
-		$productID = $result->id();
+		$discount->id = $result->id();
 
-		$info = $this->_query->run(
-			'INSERT INTO
-				product_info
-			SET
-				product_info.product_id = ?i,
-				product_info.locale = ?s,
-				product_info.display_name = ?s,
-				product_info.short_description   = ?s',
-			array(
-				$productID,
-				$this->_locale->getID(),
-				$product->displayName,
-				$product->shortDescription,
-			)
-		);
+		foreach($discount->thresholds as $threshold) {
+			$this->_query->run(
+				'INSERT INTO
+					discount_threshold
+				SET
+					discount_id = ?i,
+					currency_id = ?s,
+					locale    	= ?s,
+					threshold 	= ?f',
+				array(
+					$discount->id,
+					$threshold->currencyID,
+					$threshold->locale,
+					$threshold->threshold,
+				)
+			);
+		}
 
-		$product->id = $productID;
+		foreach($discount->discountAmounts as $discountAmount) {
+			$this->_query->run(
+				'INSERT INTO
+					discount_amount
+				SET
+					discount_id = ?i,
+					currency_id = ?s,
+					locale    	= ?s,
+					amount 		= ?f',
+				array(
+					$discount->id,
+					$discountAmount->currencyID,
+					$discountAmount->locale,
+					$discountAmount->amount,
+				)
+			);
+		}
 
-		return $product;
+		foreach($discount->products as $product) {
+			$this->_query->run(
+				'INSERT INTO
+					discount_product
+				SET
+					discount_id = ?i,
+					product_id 	= ?i',
+				array(
+					$discount->id,
+					$product->id,
+				)
+			);
+		}
+		
+		return $discount;
 	}
 }

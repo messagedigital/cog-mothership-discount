@@ -14,51 +14,15 @@ class Loader
 	protected $_thresholdLoader;
 	protected $_discountAmountLoader;
 
-	public function __construct(Query $query, Product\Loader $productLoader, DiscountAmount\Loader $discountAmountLoader, Threshold\Loader $thresholdLoader)
+	public function __construct(Query $query, Product\Loader $productLoader)
 	{
-		$this->_query 				 = $query;
-
-		$this->_productLoader 		 = $productLoader;
-		$this->_thresholdLoader 	 = $thresholdLoader;
-		$this->_discountAmountLoader = $discountAmountLoader;
-	}
-
-	public function getByDateRange(\DateTime $from, \DateTime $to)
-	{
-		$result = $this->_query->run(
-			'SELECT
-				discount_id
-			FROM
-				discount
-			WHERE
-			(
-				end IS NULL
-				(
-					AND
-						start < :to?d
-					OR
-						start IS NULL
-				)
-			)
-			OR
-			(
-					end < :to?d
-				AND
-					end > :from?d
-			)
-			'
-			array(
-				'to' 	=> $to,
-				'from'  => $from,
-			)
-		);
-
-		return $this->_load($result->flatten());
+		$this->_query 		  = $query;
+		$this->_productLoader = $productLoader;
 	}
 
 	public function getByID($discountID)
 	{
-		return $this->_load($discountID, false);
+		return $this->_load($discountID);
 	}
 
 	public function getByCode($code)
@@ -75,7 +39,7 @@ class Loader
 			)
 		);
 
-		return (count($result) === 1 ? $this->_load($result->first(), false) : false);
+		return (count($result) === 1 ? $this->_load($result->first()) : false);
 	}
 
 	public function getByProduct(Product\Product $product)
@@ -92,7 +56,72 @@ class Loader
 			)
 		);
 
-		return $this->_load($result->flatten());
+		return $this->_load($result->flatten(), true);
+	}
+
+	public function getByDateRange(\DateTime $from, \DateTime $to)
+	{
+		$result = $this->_query->run(
+			'SELECT
+				discount_id
+			FROM
+				discount
+			WHERE
+				(
+					start IS NULL
+					OR NOT start > :to?d
+				)
+			AND
+				(
+					end IS NULL
+					OR NOT end < :from?d 
+				)
+			',
+			array(
+				'to' 	=> $to,
+				'from'  => $from,
+			)
+		);
+
+		return $this->_load($result->flatten(), true);
+	}
+
+	public function getActive()
+	{
+		$result = $this->_query->run(
+			'SELECT
+				discount_id
+			FROM
+				discount
+			WHERE
+				(
+					start IS NULL
+					OR start < :now?d
+				)
+			AND
+				(
+					end IS NULL
+					OR end > :now?d
+				)
+			', array(
+				"now" => new \DateTime(),
+			)
+		);
+
+		return $this->_load($result->flatten(), true);
+	}
+
+	public function getAll()
+	{
+		$result = $this->_query->run(
+			'SELECT
+				discount_id
+			FROM
+				discount
+			'
+		);
+
+		return $this->_load($result->flatten(), true);
 	}
 
 	protected function _load($ids, $alwaysReturnArray = false)
@@ -136,7 +165,6 @@ class Loader
 
 			$discounts[$key]->percentage 		= ($row->percentage !== null ? (float) $row->percentage : null);
 
-
 			$discounts[$key]->products 			= $products;
 			$discounts[$key]->appliesToOrder 	= $appliesToOrder;
 
@@ -144,13 +172,71 @@ class Loader
 			$discounts[$key]->end 				= ($row->end ? new DateTimeImmutable(date('c', $row->end)) : null);
 			$discounts[$key]->freeShipping  	= (bool) $row->freeShipping;
 
-			$discounts[$key]->thresholds 		= $this->_thresholdLoader->getByDiscount($discounts[$key]);
-			$discounts[$key]->discountAmounts 	= $this->_discountAmountLoader->getByDiscount($discounts[$key]);
+			$discounts[$key]->thresholds 		= $this->_loadThresholds($discounts[$key]);
+			$discounts[$key]->discountAmounts 	= $this->_loadDiscountAmounts($discounts[$key]);
 
 			$return[$row->id] = $discounts[$key];
 		}
 
 		return $alwaysReturnArray || count($return) > 1 ? $return : reset($return);
+	}
+
+	protected function _loadThresholds($discount)
+	{
+		$result = $this->_query->run(
+			'SELECT
+				discount_id,
+				locale,
+				currency_id AS currencyID,
+				threshold
+			FROM
+				discount_threshold
+			WHERE
+				discount_id  = ?i
+		', 	array(
+				$discount->id,
+			)
+		);
+
+		$thresholds = $result->bindTo('Message\\Mothership\\Discount\\Discount\\Threshold');
+
+		foreach ($result as $key => $data) {
+			$thresholds[$key]->discount = $discount;
+			$thresholds[$key]->threshold = (float) $data->threshold;
+
+			// TODO Maybe load Locale-Object??
+		}
+
+		return $thresholds;
+	}
+
+	protected function _loadDiscountAmounts($discount)
+	{
+		$result = $this->_query->run(
+			'SELECT
+				discount_id,
+				locale,
+				currency_id AS currencyID,
+				amount
+			FROM
+				discount_amount
+			WHERE
+				discount_id  = ?i
+		', 	array(
+				$discount->id,
+			)
+		);
+
+		$discountAmounts = $result->bindTo('Message\\Mothership\\Discount\\Discount\\DiscountAmount');
+
+		foreach ($result as $key => $data) {
+			$discountAmounts[$key]->discount = $discount;
+			$discountAmounts[$key]->amount = (float) $data->amount;
+
+			// TODO Maybe load Locale-Object??
+		}
+
+		return $discountAmounts;
 	}
 
 	protected function _loadProducts($discountID)

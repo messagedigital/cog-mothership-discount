@@ -1,22 +1,38 @@
 {% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
 
 {% block sidebar %}
-	{{ render(controller('Message:Mothership:Commerce::Controller:Product:Sidebar#index', {'productID':product.id}))}}
 {% endblock %}
 
 {% block main %}
 
 <hgroup class="title">
-	<h1>Create a product</h1>
+	<h1>Create a discount</h1>
 </hgroup>
 
-<div class="container-content create-product">
+<div class="container-content create-discount">
 	{{ form_start(form) }}
 		{{ form_row(form.name) }}
-		{{ form_row(form.display_name) }}
-		{{ form_row(form.short_description) }}
+		{{ form_row(form.description) }}
+		{{ form_row(form.code) }}
 
-		<button type="submit" class="button small save">Create product</button>
+		{{ form_row(form.start) }}
+		{{ form_row(form.end) }}
+
+		{{ form_row(form.thresholds) }}
+
+			
+		{{ form_row(form.percentage) }}
+
+		<p><strong>OR</strong></p>
+
+		{{ form_row(form.discountAmounts) }}
+
+		{{ form_row(form.freeShipping) }}
+
+		{{ form_row(form.products) }}
+
+
+		<button type="submit" class="button small save">Create discount</button>
 	{{ form_end(form) }}
 </div>
 {% endblock %}
