@@ -38,9 +38,7 @@ class Create
 				name 		  = ?s,
 				description   = ?s,
 				start   	  = ?dn,
-				end   		  = ?dn,
-				percentage    = ?in,
-				free_shipping = ?b',
+				end   		  = ?dn',
 			array(
 				$discount->code,
 				$discount->authorship->createdAt(),
@@ -49,62 +47,10 @@ class Create
 				$discount->description,
 				$discount->start,
 				$discount->end,
-				$discount->percentage,
-				$discount->freeShipping
 			)
 		);
 
 		$discount->id = $result->id();
-
-		foreach($discount->thresholds as $threshold) {
-			$this->_query->run(
-				'INSERT INTO
-					discount_threshold
-				SET
-					discount_id = ?i,
-					currency_id = ?s,
-					locale    	= ?s,
-					threshold 	= ?f',
-				array(
-					$discount->id,
-					$threshold->currencyID,
-					$threshold->locale,
-					$threshold->threshold,
-				)
-			);
-		}
-
-		foreach($discount->discountAmounts as $discountAmount) {
-			$this->_query->run(
-				'INSERT INTO
-					discount_amount
-				SET
-					discount_id = ?i,
-					currency_id = ?s,
-					locale    	= ?s,
-					amount 		= ?f',
-				array(
-					$discount->id,
-					$discountAmount->currencyID,
-					$discountAmount->locale,
-					$discountAmount->amount,
-				)
-			);
-		}
-
-		foreach($discount->products as $product) {
-			$this->_query->run(
-				'INSERT INTO
-					discount_product
-				SET
-					discount_id = ?i,
-					product_id 	= ?i',
-				array(
-					$discount->id,
-					$product->id,
-				)
-			);
-		}
 		
 		return $discount;
 	}

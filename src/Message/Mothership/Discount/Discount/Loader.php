@@ -199,15 +199,18 @@ class Loader
 		);
 
 		$thresholds = $result->bindTo('Message\\Mothership\\Discount\\Discount\\Threshold');
+		$return = array();
 
 		foreach ($result as $key => $data) {
 			$thresholds[$key]->discount = $discount;
 			$thresholds[$key]->threshold = (float) $data->threshold;
 
 			// TODO Maybe load Locale-Object??
+
+			$return[$data->currencyID] = $thresholds[$key];
 		}
 
-		return $thresholds;
+		return $return;
 	}
 
 	protected function _loadDiscountAmounts($discount)
@@ -228,15 +231,17 @@ class Loader
 		);
 
 		$discountAmounts = $result->bindTo('Message\\Mothership\\Discount\\Discount\\DiscountAmount');
+		$return = array();
 
 		foreach ($result as $key => $data) {
 			$discountAmounts[$key]->discount = $discount;
 			$discountAmounts[$key]->amount = (float) $data->amount;
 
 			// TODO Maybe load Locale-Object??
+			$return[$data->currencyID] = $discountAmounts[$key];
 		}
 
-		return $discountAmounts;
+		return $return;
 	}
 
 	protected function _loadProducts($discountID)

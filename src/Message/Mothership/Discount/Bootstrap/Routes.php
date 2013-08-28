@@ -16,5 +16,24 @@ class Routes implements RoutesInterface
 		$router['ms.discount']->add('ms.discount.create.action', 'create', '::Controller:Create#process')
 			->setMethod('POST');
 		$router['ms.discount']->add('ms.discount.create', 'create', '::Controller:Create#index');
+
+		$router['ms.discount']->add('ms.discount.edit.action', 'edit/{discountID}', '::Controller:Edit#processAttributes')
+			->setRequirement('discountID', '\d+')
+			->setMethod('POST');
+		$router['ms.discount']->add('ms.discount.edit', 'edit/{discountID}', '::Controller:Edit#index')
+			->setRequirement('discountID', '\d+');
+
+		$router['ms.discount']->add('ms.discount.edit.products.action', 'edit/{discountID}/products', '::Controller:Edit#processProducts')
+			->setRequirement('discountID', '\d+')
+			->setMethod('POST');
+		$router['ms.discount']->add('ms.discount.edit.products', 'edit/{discountID}/products', '::Controller:Edit#products')
+			->setRequirement('discountID', '\d+');
+
+		$router['ms.discount']->add('ms.discount.edit.discount-details.action', 'edit/{discountID}/discount-details', '::Controller:Edit#processDiscountDetails')
+			->setRequirement('discountID', '\d+')
+			->setMethod('POST');
+		$router['ms.discount']->add('ms.discount.edit.discount-details', 'edit/{discountID}/discount-details', '::Controller:Edit#discountDetails')
+			->setRequirement('discountID', '\d+');
+
 	}
 }

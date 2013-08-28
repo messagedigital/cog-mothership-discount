@@ -1,0 +1,11 @@
+{% extends 'Message:Mothership:Discount::discount:edit' %}
+
+{% block discount_form %}
+
+<div class="container-content edit-discount">
+	{{ form_start(form) }}
+		{{ form_row(form.products) }}
+		<button type="submit" class="button small save">Save discount</button>
+	{{ form_end(form) }}
+</div>
+{% endblock %}

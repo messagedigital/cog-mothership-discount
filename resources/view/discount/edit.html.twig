@@ -1,21 +1,15 @@
 {% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
 
 {% block sidebar %}
-	{{ render(controller('Message:Mothership:Commerce::Controller:Product:Sidebar#index', {'productID':product.id}))}}
 {% endblock %}
 
 {% block main %}
-
+{% include 'Message:Mothership:Discount::discount:tabs' %}
 <hgroup class="title">
-		<h1>Editing '{{ product.name }}'</h1>
+	<h1>Edit discount</h1>
 </hgroup>
 
-{{ render(controller('Message:Mothership:Commerce::Controller:Product:ProductsMenu#index', {'productID':product.id}))}}
+	{% block discount_form %}
+	{% endblock %}
 
-<section class="container-content">
-	{{ form_start(form) }}
-		{{ form_rest(form) }}
-		<button type="submit" class="button small save" id="save-content">Save changes</button>
-	{{ form_end(form) }}
-</section>
 {% endblock %}

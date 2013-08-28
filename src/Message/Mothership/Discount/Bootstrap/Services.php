@@ -17,5 +17,9 @@ class Services implements ServicesInterface
 		$services['discount.create'] = function($c) {
 			return new Discount\Discount\Create($c['db.query'], $c['user.current']);
 		};
+
+		$services['discount.edit'] = function($c) {
+			return new Discount\Discount\Edit($c['db.transaction']);
+		};
 	}
 }

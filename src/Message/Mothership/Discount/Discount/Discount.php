@@ -23,7 +23,7 @@ class Discount
 	public $thresholds = array();
 	public $discountAmounts = array();
 
-	public $appliesToOrder = false;
+	public $appliesToOrder = true;
 	public $products = array();
 
 	public function __construct()
@@ -33,20 +33,30 @@ class Discount
 
 	public function addProduct(Product $product)
 	{
-		$this->products[] = $product;
+		$this->products[$product->id] = $product;
 		$appliesToOrder = true;
 	}
 
 	public function addThreshold(Threshold $threshold)
 	{
 		$threshold->discount = $this;
-		$this->thresholds[] = $threshold;
+		$this->thresholds[$threshold->currencyID] = $threshold;
 	}
 
 	public function addDiscountAmount(DiscountAmount $amount)
 	{
 		$amount->discount = $this;
-		$this->discountAmounts[] = $amount;
+		$this->discountAmounts[$amount->currencyID] = $amount;
+	}
+
+	public function getThresholdForCurrencyID($currencyID)
+	{
+		return array_key_exists($currencyID, $this->thresholds) ? $this->thresholds[$currencyID]->threshold : null;
+	}
+
+	public function getDiscountAmountForCurrencyID($currencyID)
+	{
+		return array_key_exists($currencyID, $this->discountAmounts) ? $this->discountAmounts[$currencyID]->amount : null;
 	}
 
 	public function isActive()
