@@ -64,4 +64,24 @@ class Discount
 		$curTime = new \DateTime;
 		return (!$this->start || $this->start < $curTime) && (!$this->end || $this->end > $curTime);
 	}
+
+	public function hasValidStartEnd()
+	{
+		return !($this->start !== null && $this->end !== null && $this->start > $this->end);
+	}
+
+	public function hasBenefit()
+	{
+		return $this->percentage !== null || count($this->thresholds) > 0 || $this->freeShipping;
+	}
+
+	public function hasValidBenefit()
+	{
+		return !($this->percentage !== null && count($this->discountAmounts) > 0) && $this->hasBenefit();
+	}
+
+	public function isValid()
+	{
+		return $this->hasValidStartEnd() && $this->hasValidBenefit();
+	}
 }

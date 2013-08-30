@@ -18,23 +18,23 @@ class Edit extends Controller
 		));
 	}
 
-	public function discountDetails($discountID)
+	public function benefit($discountID)
 	{
 		$discount = $this->get('discount.loader')->getByID($discountID);
 
-		return $this->render('::discount:edit-discount-details', array(
+		return $this->render('::discount:edit-benefit', array(
 			'discount'  => $discount,
-			'form'  	=> $this->_getDiscountDetailsForm($discount),
+			'form'  	=> $this->_getBenefitForm($discount),
 		));
 	}
 
-	public function products($discountID)
+	public function criteria($discountID)
 	{
 		$discount = $this->get('discount.loader')->getByID($discountID);
 
-		return $this->render('::discount:edit-products', array(
+		return $this->render('::discount:edit-criteria', array(
 			'discount'  => $discount,
-			'form'  	=> $this->_getProductsForm($discount),
+			'form'  	=> $this->_getCriteriaForm($discount),
 		));
 	}
 
@@ -44,17 +44,20 @@ class Edit extends Controller
 
 		$form = $this->_getAttributesForm($discount);
 		if ($form->isValid() && $data = $form->getFilteredData()) {
-			$discount->code 		= $data['code'];
 			$discount->name 		= $data['name'];
 			$discount->description 	= $data['description'];
 
 			$discount->start = ($data['start'] !== null ? $data['start'] : null);
 			$discount->end   = ($data['end']   !== null ? $data['end']   : null);
 
-			$discount = $this->get('discount.edit')->save($discount);
+			if(!$discount->hasValidStartEnd()) {
+				$this->addFlash('error', 'Start date must be before end date!');
+			} else {
+				$discount = $this->get('discount.edit')->save($discount);
 
-			$this->addFlash('success', sprintf('You successfully saved discount attributes for discount "%s".', $discount->name));
-			return $this->redirectToRoute('ms.discount.edit', array('discountID' => $discount->id));
+				$this->addFlash('success', sprintf('You successfully saved discount attributes for discount "%s".', $discount->name));
+				return $this->redirectToRoute('ms.discount.edit', array('discountID' => $discount->id));
+			}			
 		}
 
 		return $this->render('::discount:edit-attributes', array(
@@ -63,31 +66,17 @@ class Edit extends Controller
 		));
 	}
 
-	public function processDiscountDetails($discountID)
+	public function processBenefit($discountID)
 	{
 		$discount = $this->get('discount.loader')->getByID($discountID);
-		$discount->thresholds 		= array();
-		$discount->discountAmounts  = array();
+		$discount->discountAmounts = array();
 
 
-		$form = $this->_getDiscountDetailsForm($discount);
+		$form = $this->_getBenefitForm($discount);
 		if ($form->isValid() && $data = $form->getFilteredData()) {
 
 			$discount->percentage   = ($data['percentage'] !== null ? $data['percentage'] : null);
 			$discount->freeShipping = $data['freeShipping'];
-
-			foreach($data['thresholds'] as $currencyID => $thresholdAmount) {
-				if($thresholdAmount !== null) {
-					$threshold = new Discount\Threshold;
-					$threshold->currencyID = $currencyID;
-					$threshold->threshold = $thresholdAmount;
-
-					// TODO LOCALE?!?
-					$threshold->locale = 'en_GB';
-
-					$discount->addThreshold($threshold);
-				}
-			}
 
 			foreach($data['discountAmounts'] as $currencyID => $amount) {
 				if($amount !== null) {
@@ -102,39 +91,59 @@ class Edit extends Controller
 				}
 			}
 
-			$discount = $this->get('discount.edit')->save($discount);
+			// TODO Replace this with form validation!
+			if(!$discount->hasBenefit()) {
+				$this->addFlash('error', 'Neither a percentage discount, nor a fixed discount amount, nor free shipping has been entered for this discount!');
+			} else if(!$discount->hasValidBenefit()) {
+				$this->addFlash('error', 'Please either enter a percentage discount OR a fixed discount amount!');				
+			} else {
+				$discount = $this->get('discount.edit')->save($discount);
 
-			$this->addFlash('success', sprintf('You successfully saved discount details for discount "%s".', $discount->name));
-			return $this->redirectToRoute('ms.discount.edit.discount-details', array('discountID' => $discount->id));
-
+				$this->addFlash('success', sprintf('You successfully saved benefits for discount "%s".', $discount->name));
+				return $this->redirectToRoute('ms.discount.edit.benefit', array('discountID' => $discount->id));
+			}
 		}
 
-		return $this->render('::discount:edit-discount-details', array(
+		return $this->render('::discount:edit-benefit', array(
 			'discount'  => $discount,
 			'form'  	=> $form,
 		));
 	}
 
-	public function processProducts($discountID)
+	public function processCriteria($discountID)
 	{
 		$discount = $this->get('discount.loader')->getByID($discountID);
-		$discount->products = array();
+		$discount->thresholds = array();
+		$discount->products   = array();
 
-		$form = $this->_getProductsForm($discount);
+		$form = $this->_getCriteriaForm($discount);
 
 		if ($form->isValid() && $data = $form->getFilteredData()) {
+			foreach($data['thresholds'] as $currencyID => $thresholdAmount) {
+				if($thresholdAmount !== null) {
+					$threshold = new Discount\Threshold;
+					$threshold->currencyID = $currencyID;
+					$threshold->threshold = $thresholdAmount;
+
+					// TODO LOCALE?!?
+					$threshold->locale = 'en_GB';
+
+					$discount->addThreshold($threshold);
+				}
+			}
+
 			foreach($data['products'] as $productID) {
 				$discount->addProduct($this->get('product.loader')->getByID($productID));
 			}
 
 			$discount = $this->get('discount.edit')->save($discount);
 
-			$this->addFlash('success', sprintf('You successfully saved products for discount "%s".', $discount->name));
-			return $this->redirectToRoute('ms.discount.edit.products', array('discountID' => $discount->id));
+			$this->addFlash('success', sprintf('You successfully saved criteria for discount "%s".', $discount->name));
+			return $this->redirectToRoute('ms.discount.edit.criteria', array('discountID' => $discount->id));
 
 		}
 
-		return $this->render('::discount:edit-products', array(
+		return $this->render('::discount:edit-criteria', array(
 			'discount'  => $discount,
 			'form'  	=> $form,
 		));
@@ -153,15 +162,12 @@ class Edit extends Controller
 			->setAction($this->generateUrl('ms.discount.edit.action', array('discountID' => $discount->id)))
 			->setMethod('post');
 
-		$form->add('name', 'text', 'Name', array('attr' => array('value' =>  $discount->name)))
+		$form->add('name', 'text', 'Name', array('data' =>  $discount->name))
 			->val()
 			->maxLength(255);
 
 		$form->add('description', 'textarea', 'Description', array('data' => $discount->description))
 			->val()->optional();
-
-		$form->add('code', 'text', 'Code', array('attr' => array('value' =>  $discount->code)))
-			->val()->maxLength(10);
 
 		$dateEmptyValues = array(
 			'year' 	 => 'Year',
@@ -177,6 +183,66 @@ class Edit extends Controller
 		$form->add('end', 'datetime', 'End', array('empty_value' => $dateEmptyValues, 'data' =>  $discount->end))
 			->val()->optional();
 
+		return $form;
+	}
+
+	protected function _getBenefitForm($discount)
+	{
+		// TODO: Replace with actual currency collection!
+		$currencies = array('GBP');
+
+		$form = $this->get('form')
+			->setName('benefit-edit')
+			->setAction($this->generateUrl('ms.discount.edit.benefit.action', array('discountID' => $discount->id)))
+			->setMethod('post');
+
+		$form->add('percentage', 'percent', 'Percentage Discount Amount', array('type' => 'integer', 'data' =>  $discount->percentage))
+			->val()
+			->max(100)
+			->min(0)
+			->optional();
+
+		$form->add('freeShipping', 'checkbox', 'Free Shipping', array('data' =>  $discount->freeShipping))
+			->val()->optional();
+
+		$discountAmountsForm = $this->get('form')
+			->setName('discountAmounts')
+			->addOptions(array(
+				'label' => 'Fixed Discount Amount',
+				'auto_initialize' => false,
+			));
+
+		foreach ($currencies as $currencyID) {
+			$discountAmountsForm->add(
+				$currencyID,
+				'money',
+				$currencyID,
+				array(
+					'label' => $currencyID,
+					'currency' => $currencyID,
+					'data' => $discount->getDiscountAmountForCurrencyID($currencyID),
+				)
+			)->val()
+				->min(0)
+				->optional();
+		}
+
+		$form->add($discountAmountsForm->getForm(), 'form');
+
+		return $form;
+	}
+
+	protected function _getCriteriaForm($discount)
+	{
+		// TODO: Replace with actual currency collection!
+		$currencies = array('GBP');
+		$products = $this->get('product.loader')->getAll();
+
+		$form = $this->get('form')
+			->setName('criteria-edit')
+			->setAction($this->generateUrl('ms.discount.edit.criteria.action', array('discountID' => $discount->id)))
+			->setMethod('post');
+
 		$form->add('appliesTo', 'choice', 'Applies to', array(
 			'required' 	=> true,
 			'choices' 		=> array('Specific Products Only', 'Whole Order'),
@@ -185,43 +251,13 @@ class Edit extends Controller
 			'data' 			=> $discount->appliesToOrder,
 		));
 
-		return $form;
-	}
-
-	protected function _getDiscountDetailsForm($discount)
-	{
-		// TODO: Add validation for percentage / discount amount -> only one of them should be filled in!
-		// TODO: Replace with actual currency collection!
-		$currencies = array('GBP');
-
-		$form = $this->get('form')
-			->setName('discount-detail-edit')
-			->setAction($this->generateUrl('ms.discount.edit.discount-details.action', array('discountID' => $discount->id)))
-			->setMethod('post');
-
-		$form->add('percentage', 'percent', 'Percentage Discount Amount', array('type' => 'integer', 'attr' => array('value' =>  $discount->percentage)))
-			->val()
-			->optional();
-
-		$form->add('freeShipping', 'checkbox', 'Free Shipping', array('data' =>  $discount->freeShipping))
-			->val()->optional();
-
-
 		$thresholdsForm = $this->get('form')
 			->setName('thresholds')
 			->addOptions(array(
 				'label' => 'Threshold',
 				'auto_initialize' => false,
-				'required' => false,
 			));
 
-		$discountAmountsForm = $this->get('form')
-			->setName('discountAmounts')
-			->addOptions(array(
-				'label' => 'Fixed Discount Amount',
-				'auto_initialize' => false,
-				'required' => false,
-			));
 
 		foreach ($currencies as $currencyID) {
 			$thresholdsForm->add(
@@ -231,39 +267,14 @@ class Edit extends Controller
 				array(
 					'label' => $currencyID,
 					'currency' => $currencyID,
-					'attr' => array(
-						'value' => $discount->getThresholdForCurrencyID($currencyID),
-					)
+					'data' => $discount->getThresholdForCurrencyID($currencyID),
 				)
-			);
-			$discountAmountsForm->add(
-				$currencyID,
-				'money',
-				$currencyID,
-				array(
-					'label' => $currencyID,
-					'currency' => $currencyID,
-					'attr' => array(
-						'value' => $discount->getDiscountAmountForCurrencyID($currencyID),
-					)
-				)
-			);
+			)->val()
+				->optional();
 		}
 
+
 		$form->add($thresholdsForm->getForm(), 'form');
-		$form->add($discountAmountsForm->getForm(), 'form');
-
-		return $form;
-	}
-
-	protected function _getProductsForm($discount)
-	{
-		$products = $this->get('product.loader')->getAll();
-
-		$form = $this->get('form')
-			->setName('products-edit')
-			->setAction($this->generateUrl('ms.discount.edit.products.action', array('discountID' => $discount->id)))
-			->setMethod('post');
 
 		$productChoices = array();
 		$productSelection = array();
