@@ -186,6 +186,24 @@ class Loader
 				$row->created_by
 			);
 
+			if ($row->updated_at) {
+				$discounts[$key]->authorship->update(
+					new DateTimeImmutable(
+						date('c', $row->updated_at)
+					),
+					$row->updated_by
+				);
+			}
+
+			if ($row->deleted_at) {
+				$discounts[$key]->authorship->delete(
+					new DateTimeImmutable(
+						date('c', $row->deleted_at)
+					),
+					$row->deleted_by
+				);
+			}
+
 			$products = $this->_loadProducts($row->id);
 			$appliesToOrder = (0 === count($products));
 

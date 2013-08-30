@@ -2,8 +2,11 @@
 
 namespace Message\Mothership\Discount\Discount;
 
+use Message\Cog\ValueObject\DateTimeImmutable;
+
 use Message\Cog\DB;
 use Message\Cog\DB\Result;
+use Message\User\UserInterface;
 
 /**
  * Class for updating the attributes of a given Product object to the DB
@@ -11,10 +14,12 @@ use Message\Cog\DB\Result;
 class Edit implements DB\TransactionalInterface
 {
 	protected $_query;
+	protected $_currentUser;
 
-	public function __construct(DB\Transaction $query)
+	public function __construct(DB\Transaction $query, UserInterface $currentUser)
 	{
-		$this->_query  = $query;
+		$this->_query  		= $query;
+		$this->_currentUser	= $currentUser;
 	}
 
 	public function setTransaction(DB\Transaction $transaction)
@@ -31,6 +36,11 @@ class Edit implements DB\TransactionalInterface
 	 */
 	public function save(Discount $discount)
 	{
+		$discount->authorship->update(
+				new DateTimeImmutable,
+				$this->_currentUser->id
+			);
+
 		$result = $this->_query->run(
 			'UPDATE
 				discount
@@ -41,7 +51,9 @@ class Edit implements DB\TransactionalInterface
 				start		  = :start?dn,
 				end 		  = :end?dn,
 				percentage    = :percentage?fn,
-				free_shipping = :freeShipping?b
+				free_shipping = :freeShipping?b,
+				updated_by	  = :updatedBy?i,
+				updated_at	  = :updatedAt?d
 			WHERE
 				discount_id = :discountID?i
 			', array(
@@ -53,6 +65,8 @@ class Edit implements DB\TransactionalInterface
 				'percentage' 	=> $discount->percentage,
 				'freeShipping' 	=> $discount->freeShipping,
 				'discountID' 	=> $discount->id,
+				'updatedBy'		=> $discount->authorship->updatedBy(),
+				'updatedAt'		=> $discount->authorship->updatedAt(),				
 			)
 		);
 
