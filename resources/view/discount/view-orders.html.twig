@@ -1,0 +1,35 @@
+{% extends 'Message:Mothership:Discount::discount:detail' %}
+
+{% block discount_form %}
+
+<div class="container-content create-discount">
+	{% if not orderDiscounts is empty %}
+	<table class="discount-listing">
+		<thead>
+		<tr>
+			<th><span>Order ID</span></th>
+			<th><span>Created At</span></th>
+			<th><span>User</span></th>
+			<th><span>Total Discount</span></th>
+			<th><span>Total Gross</span></th>
+		</tr>
+		</thead>
+		<tbody>
+			{% for orderDiscount in orderDiscounts %}
+				{% set order = orderDiscount.order %}
+				<tr>
+					<td><a href="{{ url('ms.commerce.order.detail.view', {'orderID': order.id }) }}">{{ order.id }}</a></td>
+					<td>{{ order.authorship.createdAt|date }}</td>
+					<td><a href="">{{ order.user.name }}</a></td>
+					<td>{{ order.totalDiscount|price(order.currencyID) }}</td>
+					<td>{{ order.totalGross|price(order.currencyID) }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% else %}
+	<p>No orders use this discount yet.</p>
+{% endif %}
+</div>
+
+{% endblock %}
