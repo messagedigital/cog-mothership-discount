@@ -1,12 +1,13 @@
 {% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
 
 {% block sidebar %}
+	{{ render(controller('Message:Mothership:Discount::Controller:Sidebar#index')) }}
 {% endblock %}
 
 {% block main %}
 
 <hgroup class="title">
-	<h1>Discounts</h1>
+	<h1>{{ title|title }}</h1>
 </hgroup>
 
 <div class="container-content create-discount">
@@ -14,21 +15,19 @@
 	<table class="discount-listing">
 		<thead>
 		<tr>
-			<th><span>Discount ID</span></th>
 			<th><span>Discount Code</span></th>
 			<th><span>Discount Name</span></th>
 			<th><span>Created At</span></th>
 			<th><span>Start</span></th>
 			<th><span>End</span></th>
-			<th><span>Active</span></th>
+			<th><span>Active Status</span></th>
 		</tr>
 		</thead>
 		<tbody>
 			{% for discount in discounts %}
 				<tr>
-					<td><a href="">{{ discount.id }}</a></td>
-					<td>{{ discount.code }}</td>
-					<td>{{ discount.name }}</td>
+					<td><a href="{{ url('ms.discount.edit', {'discountID': discount.id }) }}">{{ discount.code|upper }}</a></td>
+					<td>{{ discount.name|title }}</td>
 					<td>{{ discount.authorship.createdAt|date }}</td>
 					<td>
 						{% if not discount.start is null %}
@@ -40,13 +39,19 @@
 							{{ discount.end|date }}
 						{% endif %}
 					</td>
-					<td>{{ discount.active }}</td>
+					<td>
+						{% if discount.active %}
+							{{ "Active"|trans }}
+						{% else %}
+							{{ discount.start|date('c') > "now"|date('c') ? "Upcoming"|trans : "Expired"|trans }}
+						{% endif %}
+					</td>
 				</tr>
 			{% endfor %}
 		</tbody>
 	</table>
 {% else %}
-	<p>Empty</p>
+	<p>No {{ title }} exist yet!</p>
 {% endif %}
 </div>
 {% endblock %}

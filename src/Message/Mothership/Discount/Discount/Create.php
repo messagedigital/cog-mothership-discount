@@ -40,10 +40,10 @@ class Create
 				start   	  = ?dn,
 				end   		  = ?dn',
 			array(
-				$discount->code,
+				strtoupper($discount->code),
 				$discount->authorship->createdAt(),
 				$discount->authorship->createdBy(),
-				$discount->name,
+				ucwords($discount->name),
 				$discount->description,
 				$discount->start,
 				$discount->end,

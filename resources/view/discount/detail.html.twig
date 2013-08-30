@@ -1,0 +1,17 @@
+{% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
+
+{% block sidebar %}
+	{{ render(controller('Message:Mothership:Discount::Controller:Sidebar#index')) }}
+{% endblock %}
+
+{% block main %}
+<hgroup class="title">
+	<h1>Discount "{{ discount.name|title }}" - code: {{ discount.code|upper }} - {{ discount.active ? "Active"|trans : "Inactive"|trans }} </h1>
+</hgroup>
+
+{% include 'Message:Mothership:Discount::discount:tabs' %}
+
+	{% block discount_form %}
+	{% endblock %}
+
+{% endblock %}
