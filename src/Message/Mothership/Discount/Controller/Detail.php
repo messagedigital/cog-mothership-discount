@@ -42,10 +42,20 @@ class Detail extends Controller
 	{
 		$discount = $this->get('discount.loader')->getByID($discountID);
 		$orderDiscounts = $this->get('order.discount.loader')->getByCode($discount->code);
+
+		$totalDiscount 	= 0;
+		$totalGross		= 0;
+		foreach($orderDiscounts as $orderDiscount) {
+			// ADD CONVERSION HERE
+			$totalDiscount 	+= $orderDiscount->amount;
+			$totalGross 	+= $orderDiscount->order->totalGross;
+		}
 		
 		return $this->render('::discount:orders', array(
 			'discount' 			=> $discount,
 			'orderDiscounts' 	=> $orderDiscounts,
+			'totalDiscount'		=> $totalDiscount,
+			'totalGross'		=> $totalGross,
 		));
 	}
 

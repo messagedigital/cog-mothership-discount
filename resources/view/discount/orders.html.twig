@@ -25,6 +25,13 @@
 					<td>{{ order.totalGross|price(order.currencyID) }}</td>
 				</tr>
 			{% endfor %}
+			{#
+			<tr>
+				<td colspan="3"><span>Totals</span></td>
+				<td>{{ totalDiscount|price}}</td>
+				<td>{{ totalGross|price }}</td>
+			</tr>
+			#}
 		</tbody>
 	</table>
 {% else %}
