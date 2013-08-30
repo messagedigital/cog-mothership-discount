@@ -1,13 +1,17 @@
-<a href="{{ url('ms.commerce.product.create')}}" class="button small create product" data-live>Add product</a>
+<div class="search">
+{{ form_start(id_search_form) }}
+	{{ form_row(id_search_form.term, { 'attr': {'placeholder': 'Enter discount id...' } }) }}
+	<button type="submit">Search</button>
+{{ form_end(id_search_form) }}
+</div>
+
+<a href="{{ url('ms.discount.create')}}" class="button small create discount" data-live>Add Discount</a>
 
 <ol class="menu">
-{% for category, products in listing %}
-	<li><a href="#">{{ category }}</a>
-		<ol>
-		{% for product in products %}
-			<li><a href="{{ url('ms.commerce.product.edit', {productID:product.id}) }}" data-live>{{ product.name }}</a></li>
-		{% endfor %}
-		</ol>
+	<li>
+		<a href="{{ url('ms.discount.listing.active') }}" data-live>Active Discounts</a>
 	</li>
-{% endfor %}
+	<li>
+		<a href="{{ url('ms.discount.listing.inactive') }}" data-live>Inactive Discounts</a>
+	</li>
 </ol>

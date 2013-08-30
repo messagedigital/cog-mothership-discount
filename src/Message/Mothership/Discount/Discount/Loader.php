@@ -111,6 +111,32 @@ class Loader
 		return $this->_load($result->flatten(), true);
 	}
 
+	public function getInactive()
+	{
+		$result = $this->_query->run(
+			'SELECT
+				discount_id
+			FROM
+				discount
+			WHERE
+			(
+				start > :now?d
+				AND	start IS NOT NULL
+			)
+			OR
+			(
+				end < :now?d
+				AND	end IS NOT NULL
+			)
+				
+			', array(
+				"now" => new \DateTime(),
+			)
+		);
+
+		return $this->_load($result->flatten(), true);
+	}
+
 	public function getAll()
 	{
 		$result = $this->_query->run(
