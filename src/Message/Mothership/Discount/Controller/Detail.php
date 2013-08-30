@@ -6,13 +6,13 @@ use Message\Mothership\Discount\Discount;
 use Message\Cog\Controller\Controller;
 use Message\Cog\ValueObject\DateTimeImmutable;
 
-class Edit extends Controller
+class Detail extends Controller
 {
 	public function index($discountID)
 	{
 		$discount = $this->get('discount.loader')->getByID($discountID);
 
-		return $this->render('::discount:edit-attributes', array(
+		return $this->render('::discount:attributes', array(
 			'discount'  => $discount,
 			'form'  	=> $this->_getAttributesForm($discount),
 		));
@@ -22,7 +22,7 @@ class Edit extends Controller
 	{
 		$discount = $this->get('discount.loader')->getByID($discountID);
 
-		return $this->render('::discount:edit-benefit', array(
+		return $this->render('::discount:benefit', array(
 			'discount'  => $discount,
 			'form'  	=> $this->_getBenefitForm($discount),
 		));
@@ -32,9 +32,20 @@ class Edit extends Controller
 	{
 		$discount = $this->get('discount.loader')->getByID($discountID);
 
-		return $this->render('::discount:edit-criteria', array(
+		return $this->render('::discount:criteria', array(
 			'discount'  => $discount,
 			'form'  	=> $this->_getCriteriaForm($discount),
+		));
+	}
+
+	public function orders($discountID)
+	{
+		$discount = $this->get('discount.loader')->getByID($discountID);
+		$orderDiscounts = $this->get('order.discount.loader')->getByCode($discount->code);
+		
+		return $this->render('::discount:orders', array(
+			'discount' 			=> $discount,
+			'orderDiscounts' 	=> $orderDiscounts,
 		));
 	}
 
@@ -60,7 +71,7 @@ class Edit extends Controller
 			}			
 		}
 
-		return $this->render('::discount:edit-attributes', array(
+		return $this->render('::discount:attributes', array(
 			'discount'  => $discount,
 			'form'  	=> $form,
 		));
@@ -104,7 +115,7 @@ class Edit extends Controller
 			}
 		}
 
-		return $this->render('::discount:edit-benefit', array(
+		return $this->render('::discount:benefit', array(
 			'discount'  => $discount,
 			'form'  	=> $form,
 		));
@@ -143,7 +154,7 @@ class Edit extends Controller
 
 		}
 
-		return $this->render('::discount:edit-criteria', array(
+		return $this->render('::discount:criteria', array(
 			'discount'  => $discount,
 			'form'  	=> $form,
 		));

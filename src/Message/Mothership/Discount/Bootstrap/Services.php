@@ -19,7 +19,7 @@ class Services implements ServicesInterface
 		};
 
 		$services['discount.edit'] = function($c) {
-			return new Discount\Discount\Edit($c['db.transaction']);
+			return new Discount\Discount\Edit($c['db.transaction'], $c['user.current']);
 		};
 	}
 }

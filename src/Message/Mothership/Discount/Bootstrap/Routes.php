@@ -25,25 +25,25 @@ class Routes implements RoutesInterface
 			->setMethod('POST');
 		$router['ms.discount']->add('ms.discount.create', 'create', '::Controller:Create#index');
 
-		$router['ms.discount']->add('ms.discount.edit.action', 'edit/{discountID}', '::Controller:Edit#processAttributes')
+		$router['ms.discount']->add('ms.discount.edit.action', 'edit/{discountID}', '::Controller:Detail#processAttributes')
 			->setRequirement('discountID', '\d+')
 			->setMethod('POST');
-		$router['ms.discount']->add('ms.discount.edit', 'edit/{discountID}', '::Controller:Edit#index')
+		$router['ms.discount']->add('ms.discount.edit', 'edit/{discountID}', '::Controller:Detail#index')
 			->setRequirement('discountID', '\d+');
 
-		$router['ms.discount']->add('ms.discount.edit.criteria.action', 'edit/{discountID}/criteria', '::Controller:Edit#processCriteria')
+		$router['ms.discount']->add('ms.discount.edit.criteria.action', 'edit/{discountID}/criteria', '::Controller:Detail#processCriteria')
 			->setRequirement('discountID', '\d+')
 			->setMethod('POST');
-		$router['ms.discount']->add('ms.discount.edit.criteria', 'edit/{discountID}/criteria', '::Controller:Edit#criteria')
+		$router['ms.discount']->add('ms.discount.edit.criteria', 'edit/{discountID}/criteria', '::Controller:Detail#criteria')
 			->setRequirement('discountID', '\d+');
 
-		$router['ms.discount']->add('ms.discount.edit.benefit.action', 'edit/{discountID}/benefit', '::Controller:Edit#processBenefit')
+		$router['ms.discount']->add('ms.discount.edit.benefit.action', 'edit/{discountID}/benefit', '::Controller:Detail#processBenefit')
 			->setRequirement('discountID', '\d+')
 			->setMethod('POST');
-		$router['ms.discount']->add('ms.discount.edit.benefit', 'edit/{discountID}/benefit', '::Controller:Edit#benefit')
+		$router['ms.discount']->add('ms.discount.edit.benefit', 'edit/{discountID}/benefit', '::Controller:Detail#benefit')
 			->setRequirement('discountID', '\d+');
 
-		$router['ms.discount']->add('ms.discount.view.orders', 'view/{discountID}/orders', '::Controller:View#orders');
+		$router['ms.discount']->add('ms.discount.view.orders', 'view/{discountID}/orders', '::Controller:Detail#orders');
 
 	}
 }
