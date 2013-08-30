@@ -28,13 +28,17 @@ class Create extends Controller
 			$discount->authorship->create(new DateTimeImmutable, $this->get('user.current')->id);
 
 			$discount->start = ($data['start'] !== null ? $data['start'] : null);
-			$discount->end   = ($data['end'] !== null ? $data['end'] : null);
+			$discount->end   = ($data['end']   !== null ? $data['end']   : null);
 
-			$discount = $this->get('discount.create')->create($discount);
+			if(!$discount->hasValidStartEnd()) {
+				$this->addFlash('error', 'Start date must be before end date!');
+			} else {
+				$discount = $this->get('discount.create')->create($discount);
 
-			if($discount->id) {
-				$this->addFlash('success', sprintf('You successfully added discount "%s"!', $discount->name));
-				return $this->redirectToRoute('ms.discount.edit', array('discountID' => $discount->id));
+				if($discount->id) {
+					$this->addFlash('success', sprintf('You successfully added discount "%s"!', $discount->name));
+					return $this->redirectToRoute('ms.discount.edit', array('discountID' => $discount->id));
+				}
 			}
 		}
 
