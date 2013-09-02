@@ -5,6 +5,7 @@ namespace Message\Mothership\Discount\Discount;
 use Message\Cog\Service\Container;
 use Message\Cog\ValueObject\Authorship;
 use Message\Mothership\Commerce\Product\Product;
+use Message\Mothership\Commerce\Order;
 
 class Discount
 {
@@ -83,5 +84,30 @@ class Discount
 	public function isValid()
 	{
 		return $this->hasValidStartEnd() && $this->hasValidBenefit();
+	}
+
+	public function createOrderDiscount(Order\Order $order)
+	{
+		$orderDiscount = new Order\Entity\Discount\Discount;
+		$orderDiscount->code 		= $this->code;
+		$orderDiscount->name 		= $this->name;
+		$orderDiscount->description = $this->description;
+
+		$orderDiscount->percentage 	= $this->percentage;
+
+		$orderDiscount->order 		= $order;
+
+		if($this->appliesToOrder) {
+			$orderDiscount->items = $order->items->all();
+		} else {
+			foreach($order->items->all() as $item) {
+				foreach($this->products as $product) {
+					if($item->productID === $product->id) {
+						$orderDiscount->addItem($item);
+						continue;
+					}
+				}
+			}
+		}
 	}
 }

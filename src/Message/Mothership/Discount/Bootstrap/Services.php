@@ -25,5 +25,9 @@ class Services implements ServicesInterface
 		$services['discount.delete'] = function($c) {
 			return new Discount\Discount\Delete($c['db.query'], $c['user.current']);
 		};
+
+		$services['discount.validator'] = function($c) {
+			return new Discount\Discount\Validator($c['discount.loader']);
+		};
 	}
 }

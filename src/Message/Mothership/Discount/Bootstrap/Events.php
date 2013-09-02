@@ -25,5 +25,7 @@ class Events implements EventsInterface, ContainerAwareInterface
 				'ms.discount'
 			));
 		});
+
+		$dispatcher->addSubscriber(new Discount\Discount\EventListener);
 	}
 }
