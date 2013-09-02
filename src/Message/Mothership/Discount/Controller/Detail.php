@@ -59,6 +59,56 @@ class Detail extends Controller
 		));
 	}
 
+
+	/**
+	 * Delete a discount
+	 *
+	 * @param  int 	$discountID id of the discount to be marked as deleted
+	 */
+	public function delete($discountID)
+	{
+		// Check that the delete request has been sent
+		if ($delete = $this->get('request')->get('delete')) {
+			// Load the file object
+			$discount = $this->get('discount.loader')->getByID($discountID);
+
+			if ($file = $this->get('discount.delete')->delete($discount)) {
+				$this->addFlash(
+					'success',
+					sprintf(
+						'%s was deleted. <a href="%s">Undo</a>',
+						$discount->name,
+						$this->generateUrl('ms.discount.restore', array('discountID' => $discount->id))
+					)
+				);
+			} else {
+				$this->addFlash('error', sprintf('%s could not be deleted.', $discount->name));
+			}
+
+		}
+		return $this->redirect($this->generateUrl('ms.discount.dashboard'));
+	}
+
+	/**
+	 * Restore an discount that has been deleted.
+	 *
+	 * @param  int $discountID	id of the discount to be restored
+	 */
+	public function restore($discountID)
+	{
+		// Load the file
+		$discount = $this->get('discount.loader')->includeDeleted(true)->getByID($discountID);
+
+		if ($this->get('discount.delete')->restore($discount)) {
+			$this->addFlash('success', sprintf('%s was restored successfully', $discount->name));
+		} else {
+			$this->addFlash('error', sprintf('%s could not be restored.', $discount->name));
+		}
+
+		return $this->redirect($this->generateUrl('ms.discount.dashboard'));
+	}
+
+
 	public function processAttributes($discountID)
 	{
 		$discount = $this->get('discount.loader')->getByID($discountID);

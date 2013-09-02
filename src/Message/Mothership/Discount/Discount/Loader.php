@@ -9,6 +9,8 @@ use Message\Mothership\Commerce\Product;
 
 class Loader
 {
+	protected $_includeDeleted = false;
+
 	protected $_query;
 	protected $_productLoader;
 	protected $_thresholdLoader;
@@ -18,6 +20,13 @@ class Loader
 	{
 		$this->_query 		  = $query;
 		$this->_productLoader = $productLoader;
+	}
+
+	public function includeDeleted($bool)
+	{
+		$this->_includeDeleted = (bool)$bool;
+
+		return $this;
 	}
 
 	public function getByID($discountID)
@@ -169,7 +178,8 @@ class Loader
 				discount
 			WHERE
 				discount_id IN (?ij)
-		', array($ids));
+			' . (!$this->_includeDeleted ? 'AND	deleted_at IS NULL' : '')
+		, array($ids));
 
 		if (0 === count($result)) {
 			return $alwaysReturnArray ? array() : false;

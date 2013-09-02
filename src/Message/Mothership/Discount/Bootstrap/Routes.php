@@ -25,6 +25,16 @@ class Routes implements RoutesInterface
 			->setMethod('POST');
 		$router['ms.discount']->add('ms.discount.create', 'create', '::Controller:Create#index');
 
+
+		$router['ms.discount']->add('ms.discount.delete', '/{discountID}/delete', '::Controller:Detail#delete')
+			->setRequirement('discountID', '\d+')
+			->setMethod('DELETE');
+
+		$router['ms.discount']->add('ms.discount.restore', '/{discountID}/restore/{hash}', '::Controller:Detail#restore')                                                                           
+			->setRequirement('discountID', '\d+')
+			->setMethod('GET')
+			->enableCsrf('hash');
+
 		$router['ms.discount']->add('ms.discount.edit.action', 'edit/{discountID}', '::Controller:Detail#processAttributes')
 			->setRequirement('discountID', '\d+')
 			->setMethod('POST');
