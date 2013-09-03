@@ -12,7 +12,7 @@ class Detail extends Controller
 	{
 		$discount = $this->get('discount.loader')->getByID($discountID);
 
-		return $this->render('::discount:attributes', array(
+		return $this->render('::attributes', array(
 			'discount'  => $discount,
 			'form'  	=> $this->_getAttributesForm($discount),
 		));
@@ -22,7 +22,7 @@ class Detail extends Controller
 	{
 		$discount = $this->get('discount.loader')->getByID($discountID);
 
-		return $this->render('::discount:benefit', array(
+		return $this->render('::benefit', array(
 			'discount'  => $discount,
 			'form'  	=> $this->_getBenefitForm($discount),
 		));
@@ -32,7 +32,7 @@ class Detail extends Controller
 	{
 		$discount = $this->get('discount.loader')->getByID($discountID);
 
-		return $this->render('::discount:criteria', array(
+		return $this->render('::criteria', array(
 			'discount'  => $discount,
 			'form'  	=> $this->_getCriteriaForm($discount),
 		));
@@ -51,7 +51,7 @@ class Detail extends Controller
 			$totalGross 	+= $orderDiscount->order->totalGross;
 		}
 		
-		return $this->render('::discount:orders', array(
+		return $this->render('::orders', array(
 			'discount' 			=> $discount,
 			'orderDiscounts' 	=> $orderDiscounts,
 			'totalDiscount'		=> $totalDiscount,
@@ -131,7 +131,7 @@ class Detail extends Controller
 			}			
 		}
 
-		return $this->render('::discount:attributes', array(
+		return $this->render('::attributes', array(
 			'discount'  => $discount,
 			'form'  	=> $form,
 		));
@@ -175,7 +175,7 @@ class Detail extends Controller
 			}
 		}
 
-		return $this->render('::discount:benefit', array(
+		return $this->render('::benefit', array(
 			'discount'  => $discount,
 			'form'  	=> $form,
 		));
@@ -214,7 +214,7 @@ class Detail extends Controller
 
 		}
 
-		return $this->render('::discount:criteria', array(
+		return $this->render('::criteria', array(
 			'discount'  => $discount,
 			'form'  	=> $form,
 		));

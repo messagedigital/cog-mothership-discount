@@ -13,25 +13,14 @@ class AddDiscount extends Controller
 	public function index()
 	{
 		return $this->render('Message:Mothership:Discount::discount-input', array(
-			'form' => $this->discountForm(),
+			'form' => $this->_getDiscountForm(),
 		));
 
 	}
 
-	public function discountForm()
-	{
-		$form = $this->get('form');
-		$form->setName('discount_form')
-			->setAction($this->generateUrl('ms.discount.process'))
-			->setMethod('post');
-		$form->add('code', 'text', 'I have a discount token / camapign code');
-
-		return $form;
-	}
-
 	public function discountProcess()
 	{
-		$form = $this->discountForm();
+		$form = $this->_getDiscountForm();
 		if ($form->isValid() && $data = $form->getFilteredData()) {
 			$discountValidator = $this->get('discount.validator')->setOrder($this->get('basket')->getOrder());
 			try {
@@ -44,5 +33,16 @@ class AddDiscount extends Controller
 		}
 
 		return $this->redirectToReferer();
+	}
+
+	protected function _getDiscountForm()
+	{
+		$form = $this->get('form');
+		$form->setName('discount_form')
+			->setAction($this->generateUrl('ms.discount.add.action'))
+			->setMethod('post');
+		$form->add('code', 'text', 'I have a discount token / camapign code');
+
+		return $form;
 	}
 }

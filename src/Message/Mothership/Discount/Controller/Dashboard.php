@@ -11,6 +11,6 @@ class Dashboard extends Controller
 
 	public function index()
 	{
-		return $this->render('::discount:dashboard');
+		return $this->render('::dashboard');
 	}
 }

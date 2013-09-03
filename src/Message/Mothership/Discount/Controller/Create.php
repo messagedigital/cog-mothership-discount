@@ -10,7 +10,7 @@ class Create extends Controller
 {
 	public function index()
 	{
-		return $this->render('::discount:create', array(
+		return $this->render('::create', array(
 			'form'  => $this->_getForm(),
 		));
 	}
@@ -42,7 +42,7 @@ class Create extends Controller
 			}
 		}
 
-		return $this->render('::discount:create', array(
+		return $this->render('::create', array(
 			'form'  => $form,
 		));
 	}

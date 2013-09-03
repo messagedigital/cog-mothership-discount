@@ -16,6 +16,9 @@ class Routes implements RoutesInterface
 
 		$router['ms.discount']->add('ms.discount.sidebar.search.date.action', 'search/date', '::Controller:Sidebar#searchDateAction');
 
+		$router['ms.discount']->add('ms.discount.add.action', 'add/action', '::Controller:AddDiscount#discountProcess')
+			->setMethod('POST');
+
 		$router['ms.discount']->add('ms.discount.listing.all', 'listing/all', '::Controller:Listing#all');
 		$router['ms.discount']->add('ms.discount.listing.active', 'listing/active', '::Controller:Listing#active');
 		$router['ms.discount']->add('ms.discount.listing.active.date', 'listing/active/from/{fromTimestamp}/to/{toTimestamp}', '::Controller:Listing#active');

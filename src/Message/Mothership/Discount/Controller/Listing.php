@@ -13,7 +13,7 @@ class Listing extends Controller
 	{
 		$discounts = $this->get('discount.loader')->getAll();
 
-		return $this->render('::discount:listing', array(
+		return $this->render('::listing', array(
 			'discounts' => $discounts,
 		));
 	}
@@ -25,7 +25,7 @@ class Listing extends Controller
 		
 		$discounts = $this->get('discount.loader')->getByDateRange($from, $to);
 
-		return $this->render('::discount:listing', array(
+		return $this->render('::listing', array(
 			'discounts' => $discounts,
 			'title' 	=> 'Active Discounts',
 		));
@@ -35,7 +35,7 @@ class Listing extends Controller
 	{
 		$discounts = $this->get('discount.loader')->getInactive();
 
-		return $this->render('::discount:listing', array(
+		return $this->render('::listing', array(
 			'discounts' => $discounts,
 			'title' 	=> 'Inactive Discounts',
 		));

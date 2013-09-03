@@ -1,18 +1,12 @@
-{% extends 'Message:Mothership:Discount::discount:detail' %}
+{% extends 'Message:Mothership:Discount::detail-layout' %}
 
 {% block discount_form %}
 
 <div class="container-content edit-discount">
 	{{ form_start(form) }}
-			
-		{{ form_row(form.percentage) }}
-
-		<p><strong>OR</strong></p>
-
-		{{ form_row(form.discountAmounts) }}
-
-		{{ form_row(form.freeShipping) }}
+		{{ form_rest(form) }}
 		<button type="submit" class="button small save">Save discount</button>
 	{{ form_end(form) }}
 </div>
+
 {% endblock %}
