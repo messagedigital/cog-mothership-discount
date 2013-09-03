@@ -5,22 +5,17 @@
 {% endblock %}
 
 {% block main %}
-<hgroup class="title">
-	<h1>
-		Discount "{{ discount.name|title }}" - code: {{ discount.code|upper }} - {{ discount.active ? "Active"|trans : "Inactive"|trans }}
-		{% if discount.authorship.updatedAt %}
-			<span class="updated-date">(Last updated: {{ discount.authorship.updatedAt|date }})</span>
-		{% endif %}
-	</h1>
-</hgroup>
 
-{% include 'Message:Mothership:Discount::discount:tabs' %}
+	<hgroup class="title">
+		<h1>
+			Discount "{{ discount.name|title }}" - code: {{ discount.code|upper }} - {{ discount.active ? "Active"|trans : "Inactive"|trans }}
+			{% if discount.authorship.updatedAt %}
+				<span class="updated-date">(Last updated: {{ discount.authorship.updatedAt|date }})</span>
+			{% endif %}
+		</h1>
+	</hgroup>
 
-
-	<form action="{{ url('ms.discount.delete', {discountID: discount.id}) }}" method="post">
-		<input type="hidden" name="_method" value="DELETE">
-		<button name="delete[delete]" value="delete" id="delete" type="submit" class="button small delete">{{ 'Delete'|trans }}</button>
-	</form>
+	{% include 'Message:Mothership:Discount::discount:tabs' %}
 
 	{% block discount_form %}
 	{% endblock %}

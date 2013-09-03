@@ -72,10 +72,10 @@ class Create extends Controller
 			'minute' => 'Minute'
 		);
 
-		$form->add('start', 'datetime', 'Start', array('empty_value' => $dateEmptyValues))
+		$form->add('start', 'datetime', 'Start date', array('empty_value' => $dateEmptyValues))
 			->val()->optional();
 
-		$form->add('end', 'datetime', 'End', array('empty_value' => $dateEmptyValues))
+		$form->add('end', 'datetime', 'End date', array('empty_value' => $dateEmptyValues))
 			->val()->optional();
 
 		return $form;

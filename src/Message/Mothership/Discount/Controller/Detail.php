@@ -248,10 +248,10 @@ class Detail extends Controller
 			'minute' => 'Minute'
 		);
 
-		$form->add('start', 'datetime', 'Start', array('empty_value' => $dateEmptyValues, 'data' =>  $discount->start))
+		$form->add('start', 'datetime', 'Start date', array('empty_value' => $dateEmptyValues, 'data' =>  $discount->start))
 			->val()->optional();
 
-		$form->add('end', 'datetime', 'End', array('empty_value' => $dateEmptyValues, 'data' =>  $discount->end))
+		$form->add('end', 'datetime', 'End date', array('empty_value' => $dateEmptyValues, 'data' =>  $discount->end))
 			->val()->optional();
 
 		return $form;
