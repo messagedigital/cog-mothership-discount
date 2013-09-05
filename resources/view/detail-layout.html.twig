@@ -14,8 +14,7 @@
 	</h1>
 </hgroup>
 
-{% include 'Message:Mothership:Discount::tabs' %}
-
+	{{ render(controller('Message:Mothership:Discount::Controller:Detail#tabs', {'discountID': discount.id })) }}
 
 	<form action="{{ url('ms.discount.delete', {discountID: discount.id}) }}" method="post">
 		<input type="hidden" name="_method" value="DELETE">

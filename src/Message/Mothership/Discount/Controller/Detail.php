@@ -59,6 +59,23 @@ class Detail extends Controller
 		));
 	}
 
+	public function tabs($discountID)
+	{
+		$tabs = array(
+			'Attributes' => $this->generateUrl('ms.discount.edit', 			array('discountID' => $discountID)),
+			'Benefit'	 => $this->generateUrl('ms.discount.edit.benefit', 	array('discountID' => $discountID)),
+			'Criteria' 	 => $this->generateUrl('ms.discount.edit.criteria', array('discountID' => $discountID)),
+			'Orders'  	 => $this->generateUrl('ms.discount.view.orders', 	array('discountID' => $discountID)),
+		);
+		
+		$current = ucfirst(trim(strrchr($this->get('http.request.master')->get('_controller'), '::'), ':'));
+		
+		return $this->render('Message:Mothership:Discount::tabs', array(
+			'tabs'    => $tabs,
+			'current' => $current,
+		));
+	}
+
 
 	/**
 	 * Delete a discount
@@ -121,7 +138,7 @@ class Detail extends Controller
 			$discount->start = ($data['start'] !== null ? $data['start'] : null);
 			$discount->end   = ($data['end']   !== null ? $data['end']   : null);
 
-			if(!$discount->hasValidStartEnd()) {
+			if($discount->start !== null && $discount->end !== null && $discount->start > $discount->end) {
 				$this->addFlash('error', 'Start date must be before end date!');
 			} else {
 				$discount = $this->get('discount.edit')->save($discount);
@@ -163,9 +180,9 @@ class Detail extends Controller
 			}
 
 			// TODO Replace this with form validation!
-			if(!$discount->hasBenefit()) {
+			if($discount->percentage === null && count($discount->discountAmounts) === 0 && !$discount->freeShipping) {
 				$this->addFlash('error', 'Neither a percentage discount, nor a fixed discount amount, nor free shipping has been entered for this discount!');
-			} else if(!$discount->hasValidBenefit()) {
+			} else if($discount->percentage !== null && count($discount->discountAmounts) > 0) {
 				$this->addFlash('error', 'Please either enter a percentage discount OR a fixed discount amount!');				
 			} else {
 				$discount = $this->get('discount.edit')->save($discount);
@@ -326,7 +343,7 @@ class Detail extends Controller
 			->setName('thresholds')
 			->addOptions(array(
 				'label' => 'Threshold',
-				'auto_initialize' => false,
+				'auto_initialize' => false
 			));
 
 
@@ -345,7 +362,7 @@ class Detail extends Controller
 		}
 
 
-		$form->add($thresholdsForm->getForm(), 'form');
+		$form->add($thresholdsForm->getForm(), 'form', array('attr' => array('class' => 'nested')));
 
 		$productChoices = array();
 		$productSelection = array();
