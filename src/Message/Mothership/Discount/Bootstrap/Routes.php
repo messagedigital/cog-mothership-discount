@@ -41,7 +41,7 @@ class Routes implements RoutesInterface
 		$router['ms.discount']->add('ms.discount.edit.action', 'edit/{discountID}', '::Controller:Detail#processAttributes')
 			->setRequirement('discountID', '\d+')
 			->setMethod('POST');
-		$router['ms.discount']->add('ms.discount.edit', 'edit/{discountID}', '::Controller:Detail#index')
+		$router['ms.discount']->add('ms.discount.edit', 'edit/{discountID}', '::Controller:Detail#attributes')
 			->setRequirement('discountID', '\d+');
 
 		$router['ms.discount']->add('ms.discount.edit.criteria.action', 'edit/{discountID}/criteria', '::Controller:Detail#processCriteria')

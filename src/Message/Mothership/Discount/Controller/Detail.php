@@ -8,7 +8,7 @@ use Message\Cog\ValueObject\DateTimeImmutable;
 
 class Detail extends Controller
 {
-	public function index($discountID)
+	public function attributes($discountID)
 	{
 		$discount = $this->get('discount.loader')->getByID($discountID);
 
