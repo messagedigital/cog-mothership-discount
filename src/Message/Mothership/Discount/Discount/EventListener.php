@@ -4,14 +4,15 @@ namespace Message\Mothership\Discount\Discount;
 
 use Message\Mothership\Commerce\Order\Events as OrderEvents;
 use Message\Mothership\Commerce\Order\Event;
-use Message\Mothership\Commerce\Order\Status\Status as BaseStatus;
 
 use Message\Cog\Event\SubscriberInterface;
+use Message\Cog\Event\EventListener as BaseListener;
+
 
 /**
  * Discount event listener.
  */
-class EventListener implements SubscriberInterface
+class EventListener extends BaseListener implements SubscriberInterface
 {
 	/**
 	 * {@inheritdoc}
@@ -20,53 +21,60 @@ class EventListener implements SubscriberInterface
 	{
 		return array(
 			OrderEvents::CREATE_START => array(
-				array('setDiscountItems', 300),
+				array('validateDiscount', 250),
+				array('updateOrderDiscounts', 200),
 			),
 			OrderEvents::ASSEMBLER_UPDATE => array(
-				array('validateDiscount'),
+				array('validateDiscount', 250),
+				array('updateOrderDiscounts', 200),
 			)
 		);
 	}
 
 	/**
-	 * Set the items the discount is applicable to.
-	 *
-	 * @todo once the discounts system is built, inspect this to find out which
-	 *       products a discount should apply to (if discount code recognised)
+	 * Goes through all discounts (with code) in the event's order and updates them by
+	 * reloading the Discount\Discount and generating a new Order\Discount from that.
 	 *
 	 * @param Event $event The event object
 	 */
-	public function setDiscountItems(Event\Event $event)
+	public function updateOrderDiscounts(Event\Event $event)
 	{
-		foreach ($event->getOrder()->discounts as $orderDiscount) {
-			$discount = $this->get('discount.loader')->getByCode($orderDiscount->code);
-			foreach($event->getOrder()->items->all() as $item) {
-				foreach($this->products as $product) {
-					if($item->productID === $product->id) {
-						$orderDiscount->addItem($item);
-						continue;
-					}
-				}
+		$order = $event->getOrder();
+		$orderDiscountFactory = $this->get('discount.order-discount-factory')
+			->setOrder($order);
+
+		foreach ($discounts = $order->discounts as $key => $orderDiscount) {
+			if($orderDiscount->code) {
+				$discount = $this->get('discount.loader')->getByCode($orderDiscount->code);
+				$orderDiscountFactory->setDiscount($discount);
+				$orderDiscount = $orderDiscountFactory->createOrderDiscount();
+
+				$discounts->removeByCode($orderDiscount->code);
+				$discounts->append($orderDiscount);
 			}
 		}
 	}
 
+	/**
+	 * Validates all discounts the order in the event has and removes
+	 * invalid discounts from the basket.
+	 *
+	 * @todo  Add notification when discount is removed
+	 *
+	 * @param Event $event The event object
+	 */
 	public function validateDiscount(Event\Event $event)
 	{
 		$order = $event->getOrder();
 		$discountValidator = $this->get('discount.validator')->setOrder($order);
 		foreach($order->discounts as $orderDiscount) {
 			try {
-				$discountValidator->validate($orderDiscount->code);
+				$orderDiscount = $discountValidator->validate($orderDiscount->code);
 			} catch(OrderValidityException $e) {
-				$order->discounts->remove($orderDiscount->id);
-				$this->addFlash(
+				$this->get('basket')->removeDiscount($orderDiscount);
+				$this->get('http.session')->getFlashBag()->add(
 					'warning',
-					sprintf(
-						'Discount `%s` had to be removed from your order as it is not valid anymore: %s',
-						$orderDiscount->name,
-						$e->getMessage()
-					)
+					sprintf('Discount `%s` is not valid anymore and had to be removed: %s', $orderDiscount->code, $e->getMessage())
 				);
 			}
 		}

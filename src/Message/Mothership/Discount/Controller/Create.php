@@ -30,7 +30,7 @@ class Create extends Controller
 			$discount->start = ($data['start'] !== null ? $data['start'] : null);
 			$discount->end   = ($data['end']   !== null ? $data['end']   : null);
 
-			if(!$discount->hasValidStartEnd()) {
+			if($discount->start !== null && $discount->end !== null && $discount->start > $discount->end) {
 				$this->addFlash('error', 'Start date must be before end date!');
 			} else {
 				$discount = $this->get('discount.create')->create($discount);

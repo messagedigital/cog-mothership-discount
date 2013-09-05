@@ -3,10 +3,10 @@
 namespace Message\Mothership\Discount\Controller;
 
 use Message\Cog\Controller\Controller;
-use Message\Moethership\Discount\Discount;
+use Message\Mothership\Discount\Discount;
 
 /**
- * Controller to manage adding gift vouchers to orders
+ * Controller to manage adding discounts to the order in the basket
  */
 class AddDiscount extends Controller
 {
@@ -22,11 +22,23 @@ class AddDiscount extends Controller
 	{
 		$form = $this->_getDiscountForm();
 		if ($form->isValid() && $data = $form->getFilteredData()) {
-			$discountValidator = $this->get('discount.validator')->setOrder($this->get('basket')->getOrder());
+			$code = strtoupper($data["code"]);
+			$order = $this->get('basket')->getOrder();
+			$discountValidator = $this->get('discount.validator')->setOrder($order);
+			$orderDiscount = null;
+
 			try {
-				$discountValidator->validate($data["code"]);
+				if($order->discounts->codeExists($code)) {
+					throw new Discount\OrderValidityException('This discount has already been used on this order.');
+				}
+				$orderDiscount = $discountValidator->validate($code);
 			} catch (Discount\OrderValidityException $e) {
-				$this->addFlash('error', $e->getMessage());
+				$this->addFlash('error', sprintf('The discount `%s` could not be added: %s', $code, $e->getMessage()));
+			}
+
+			if($orderDiscount) {
+				$this->get('basket')->addDiscount($orderDiscount);
+				$this->addFlash('success', 'You successfully added a discount');
 			}
 		} else {
 			$this->addFlash('error', 'Please enter a valid discount code');
@@ -41,7 +53,7 @@ class AddDiscount extends Controller
 		$form->setName('discount_form')
 			->setAction($this->generateUrl('ms.discount.add.action'))
 			->setMethod('post');
-		$form->add('code', 'text', 'I have a discount token / camapign code');
+		$form->add('code', 'text', 'I have a discount code');
 
 		return $form;
 	}

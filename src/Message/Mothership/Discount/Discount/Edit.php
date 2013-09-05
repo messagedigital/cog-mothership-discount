@@ -9,7 +9,7 @@ use Message\Cog\DB\Result;
 use Message\User\UserInterface;
 
 /**
- * Class for updating the attributes of a given Product object to the DB
+ * Class for updating the attributes of a given Discount object to the DB
  */
 class Edit implements DB\TransactionalInterface
 {
@@ -28,11 +28,11 @@ class Edit implements DB\TransactionalInterface
 	}
 
 	/**
-	 * Handles the bulk updating of most of the product properties
+	 * Handles updating the discount object and properties
 	 *
-	 * @param  Product $product Updated Product object to save
+	 * @param  Discount $discount Updated Discount object to save
 	 *
-	 * @return Product          Saved Product object
+	 * @return Discount          Saved Discount object
 	 */
 	public function save(Discount $discount)
 	{
@@ -79,6 +79,12 @@ class Edit implements DB\TransactionalInterface
 		return $discount;
 	}
 
+	/**
+	 * Clears discount-project-table for $discount and
+	 * adds all $discount->products.
+	 *
+	 * @param Discount $discount The discount holding the products to save
+	 */
 	protected function _saveProducts(Discount $discount)
 	{
 		$this->_query->run(
@@ -114,6 +120,12 @@ class Edit implements DB\TransactionalInterface
 		}
 	}
 
+	/**
+	 * Clears discount-threshold-table for $discount and
+	 * adds all $discount->thresholds.
+	 *
+	 * @param Discount $discount The discount holding the thresholds to save
+	 */
 	protected function _saveThresholds(Discount $discount)
 	{
 		$this->_query->run(
@@ -153,6 +165,12 @@ class Edit implements DB\TransactionalInterface
 		}
 	}
 
+	/**
+	 * Clears discount-amount-table for $discount and
+	 * adds all $discount->discountAmounts.
+	 *
+	 * @param Discount $discount The discount holding the DiscountAmounts to save
+	 */
 	protected function _saveDiscountAmounts(Discount $discount)
 	{
 		$this->_query->run(

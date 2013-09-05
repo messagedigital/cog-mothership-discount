@@ -8,6 +8,8 @@ class Sidebar extends Controller
 {
 	public function index()
 	{
+		
+		
 		return $this->render('Message:Mothership:Discount::sidebar', array(
 			'id_search_form' => $this->_getIDSearchForm(),
 			'date_search_form' => $this->_getDateSearchForm(),

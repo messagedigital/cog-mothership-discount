@@ -19,6 +19,12 @@ class Create
 		$this->_currentUser	= $currentUser;
 	}
 
+	/**
+	 * Creates a basic discount-object consisting of
+	 * code, name, description, start and end date
+	 *
+	 * @param Discount 	$discount 	The new discount to be saved
+	 */
 	public function create(Discount $discount)
 	{
 		if (!$discount->authorship->createdAt()) {

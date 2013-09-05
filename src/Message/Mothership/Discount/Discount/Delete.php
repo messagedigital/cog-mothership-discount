@@ -9,7 +9,7 @@ use Message\Cog\DB\Result;
 use Message\User\UserInterface;
 
 /**
- * Decorator for deleting & restoring pages.
+ * Decorator for deleting & restoring discounts.
  */
 class Delete
 {
@@ -19,8 +19,8 @@ class Delete
 	/**
 	 * Constructor.
 	 *
-	 * @param DB\Query             $query           The database query instance to use
-	 * @param UserInterface       $currentUser     The currently logged in user
+	 * @param DB\Query            $query          The database query instance to use
+	 * @param UserInterface       $currentUser    The currently logged in user
 	 */
 	public function __construct(DB\Query $query, UserInterface $user)
 	{
@@ -38,7 +38,6 @@ class Delete
 	 */
 	public function delete(Discount $discount)
 	{
-		// Maybe don't allow deletion when orders use discount?
 		$discount->authorship->delete(new DateTimeImmutable, $this->_currentUser->id);
 
 		$result = $this->_query->run('

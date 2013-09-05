@@ -27,7 +27,11 @@ class Services implements ServicesInterface
 		};
 
 		$services['discount.validator'] = function($c) {
-			return new Discount\Discount\Validator($c['discount.loader']);
+			return new Discount\Discount\Validator($c['discount.loader'], $c['discount.order-discount-factory']);
+		};
+
+		$services['discount.order-discount-factory'] = function($c) {
+			return new Discount\Discount\OrderDiscountFactory();
 		};
 	}
 }
