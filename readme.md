@@ -132,3 +132,4 @@ Furthermore it updates the OrderDiscount by loading the latest verion of the dis
 * Currency Collection necessary for iterating over all currencies in create-view!
 * Validation for Start/End-Date and Percentage/Fixed Amount instead of checking it in the controller
 * Add a method to add discount-amount if `freeShipping` is enabled on the discount.
+* Translations!
