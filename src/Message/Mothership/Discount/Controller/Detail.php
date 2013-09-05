@@ -71,8 +71,9 @@ class Detail extends Controller
 		$current = ucfirst(trim(strrchr($this->get('http.request.master')->get('_controller'), '::'), ':'));
 		
 		return $this->render('Message:Mothership:Discount::tabs', array(
-			'tabs'    => $tabs,
-			'current' => $current,
+			'tabs'    	 => $tabs,
+			'current' 	 => $current,
+			'discountID' => $discountID,
 		));
 	}
 
@@ -265,10 +266,10 @@ class Detail extends Controller
 			'minute' => 'Minute'
 		);
 
-		$form->add('start', 'datetime', 'Start', array('empty_value' => $dateEmptyValues, 'data' =>  $discount->start))
+		$form->add('start', 'datetime', 'Start date', array('empty_value' => $dateEmptyValues, 'data' =>  $discount->start))
 			->val()->optional();
 
-		$form->add('end', 'datetime', 'End', array('empty_value' => $dateEmptyValues, 'data' =>  $discount->end))
+		$form->add('end', 'datetime', 'End date', array('empty_value' => $dateEmptyValues, 'data' =>  $discount->end))
 			->val()->optional();
 
 		return $form;

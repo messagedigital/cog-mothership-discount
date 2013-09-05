@@ -1,0 +1,23 @@
+<div class="topbar">
+	<ul class="tabs">
+		<li>
+			<a href="{{ url('ms.discount.edit', {discountID: discount.id}) }}" data-live>Attributes</a>
+		</li>
+		<li>
+			<a href="{{ url('ms.discount.edit.benefit', {discountID: discount.id}) }}" data-live>Benefit</a>
+		</li>
+		<li>
+			<a href="{{ url('ms.discount.edit.criteria', {discountID: discount.id}) }}" data-live>Criteria</a>
+		</li>
+		<li>
+			<a href="{{ url('ms.discount.view.orders', {discountID: discount.id}) }}" data-live>Orders</a>
+		</li>
+	</ul>
+
+	<div class="controls">
+		<form action="{{ url('ms.discount.delete', {discountID: discount.id}) }}" method="post" id="delete-page">
+			<input type="hidden" name="_method" value="DELETE">
+			<button name="delete[delete]" value="delete" id="delete" type="submit" class="button small delete">{{ 'Delete'|trans }}</button>
+		</form>
+	</div>
+</div>

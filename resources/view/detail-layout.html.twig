@@ -16,11 +16,6 @@
 
 	{{ render(controller('Message:Mothership:Discount::Controller:Detail#tabs', {'discountID': discount.id })) }}
 
-	<form action="{{ url('ms.discount.delete', {discountID: discount.id}) }}" method="post">
-		<input type="hidden" name="_method" value="DELETE">
-		<button name="delete[delete]" value="delete" id="delete" type="submit" class="button small delete">{{ 'Delete'|trans }}</button>
-	</form>
-
 	{% block discount_form %}
 	{% endblock %}
 	
