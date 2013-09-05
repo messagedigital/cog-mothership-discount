@@ -64,19 +64,27 @@ class Create extends Controller
 		$form->add('code', 'text', 'Code')
 			->val()->maxLength(10);
 
-		$dateEmptyValues = array(
-			'year' 	 => 'Year',
-			'month'  => 'Month',
-			'day' 	 => 'Day',
-			'hour' 	 => 'Hour',
-			'minute' => 'Minute'
-		);
+		$form->add(
+			'start',
+			'datetime',
+			'Start date',
+			array(
+				'date_widget' => 'single_text',
+	    		'time_widget' => 'single_text',
+	    		'data' 		  =>  new \DateTime
+    		)
+    	)->val()->optional();
 
-		$form->add('start', 'datetime', 'Start date', array('empty_value' => $dateEmptyValues))
-			->val()->optional();
-
-		$form->add('end', 'datetime', 'End date', array('empty_value' => $dateEmptyValues))
-			->val()->optional();
+		$form->add(
+			'end',
+			'datetime',
+			'End date',
+			array(
+				'date_widget' => 'single_text',
+	    		'time_widget' => 'single_text',
+	    		'data' 		  =>  new \DateTime
+    		)
+    	)->val()->optional();
 
 		return $form;
 	}

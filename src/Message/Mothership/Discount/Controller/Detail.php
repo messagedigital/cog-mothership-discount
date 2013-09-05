@@ -258,19 +258,27 @@ class Detail extends Controller
 		$form->add('description', 'textarea', 'Description', array('data' => $discount->description))
 			->val()->optional();
 
-		$dateEmptyValues = array(
-			'year' 	 => 'Year',
-			'month'  => 'Month',
-			'day' 	 => 'Day',
-			'hour' 	 => 'Hour',
-			'minute' => 'Minute'
-		);
+		$form->add(
+			'start',
+			'datetime',
+			'Start date',
+			array(
+				'date_widget' => 'single_text',
+	    		'time_widget' => 'single_text',
+	    		'data' 		  =>  $discount->start
+    		)
+    	)->val()->optional();
 
-		$form->add('start', 'datetime', 'Start date', array('empty_value' => $dateEmptyValues, 'data' =>  $discount->start))
-			->val()->optional();
-
-		$form->add('end', 'datetime', 'End date', array('empty_value' => $dateEmptyValues, 'data' =>  $discount->end))
-			->val()->optional();
+		$form->add(
+			'end',
+			'datetime',
+			'End date',
+			array(
+				'date_widget' => 'single_text',
+	    		'time_widget' => 'single_text',
+	    		'data'		  =>  $discount->end
+    		)
+    	)->val()->optional();
 
 		return $form;
 	}
