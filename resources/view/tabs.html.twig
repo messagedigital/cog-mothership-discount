@@ -1,4 +1,4 @@
-<div class="topbar discounts">
+<div class="topbar discounts{{ " %s"|format(topbarClass) }}">
 	<ul class="tabs">
 		{% for name, url in tabs %}
 			<li class="{{ name == current ? 'active' : '' }}"><a href="{{ url }}" data-live>{{ name }}</a></li>

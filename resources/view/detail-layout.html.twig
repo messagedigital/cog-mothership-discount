@@ -13,8 +13,7 @@
 		{% endif %}
 	</h1>
 </hgroup>
-
-	{{ render(controller('Message:Mothership:Discount::Controller:Detail#tabs', {'discountID': discount.id })) }}
+	{{ render(controller('Message:Mothership:Discount::Controller:Detail#tabs', {'discountID': discount.id, 'topbarClass': topbarClass})) }}
 
 	{% block discount_form %}
 	{% endblock %}

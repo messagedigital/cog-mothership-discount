@@ -56,10 +56,11 @@ class Detail extends Controller
 			'orderDiscounts' 	=> $orderDiscounts,
 			'totalDiscount'		=> $totalDiscount,
 			'totalGross'		=> $totalGross,
+			'topbarClass'		=> 'ctl-clear',
 		));
 	}
 
-	public function tabs($discountID)
+	public function tabs($discountID, $topbarClass = '')
 	{
 		$tabs = array(
 			'Attributes' => $this->generateUrl('ms.discount.edit', 			array('discountID' => $discountID)),
@@ -71,9 +72,10 @@ class Detail extends Controller
 		$current = ucfirst(trim(strrchr($this->get('http.request.master')->get('_controller'), '::'), ':'));
 		
 		return $this->render('Message:Mothership:Discount::tabs', array(
-			'tabs'    	 => $tabs,
-			'current' 	 => $current,
-			'discountID' => $discountID,
+			'tabs'    	  => $tabs,
+			'current' 	  => $current,
+			'discountID'  => $discountID,
+			'topbarClass' => $topbarClass,
 		));
 	}
 
