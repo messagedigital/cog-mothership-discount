@@ -30,12 +30,12 @@ class Create extends Controller
 			$discount->start = ($data['start'] !== null ? $data['start'] : null);
 			$discount->end   = ($data['end']   !== null ? $data['end']   : null);
 
-			if($discount->start !== null && $discount->end !== null && $discount->start > $discount->end) {
+			if ($discount->start !== null && $discount->end !== null && $discount->start > $discount->end) {
 				$this->addFlash('error', 'Start date must be before end date!');
 			} else {
 				$discount = $this->get('discount.create')->create($discount);
 
-				if($discount->id) {
+				if ($discount->id) {
 					$this->addFlash('success', sprintf('You successfully added discount "%s"!', $discount->name));
 					return $this->redirectToRoute('ms.discount.edit', array('discountID' => $discount->id));
 				}
@@ -69,22 +69,20 @@ class Create extends Controller
 			'datetime',
 			'Start date',
 			array(
-				'date_widget' => 'single_text',
-	    		'time_widget' => 'single_text',
 	    		'data' 		  =>  new \DateTime
     		)
-    	)->val()->optional();
+    	)
+    		->val()->optional();
 
 		$form->add(
 			'end',
 			'datetime',
 			'End date',
 			array(
-				'date_widget' => 'single_text',
-	    		'time_widget' => 'single_text',
 	    		'data' 		  =>  new \DateTime
     		)
-    	)->val()->optional();
+    	)
+    		->val()->optional();
 
 		return $form;
 	}

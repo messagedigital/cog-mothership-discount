@@ -37,9 +37,9 @@ class Edit implements DB\TransactionalInterface
 	public function save(Discount $discount)
 	{
 		$discount->authorship->update(
-				new DateTimeImmutable,
-				$this->_currentUser->id
-			);
+			new DateTimeImmutable,
+			$this->_currentUser->id
+		);
 
 		$result = $this->_query->run(
 			'UPDATE
@@ -66,7 +66,7 @@ class Edit implements DB\TransactionalInterface
 				'freeShipping' 	=> $discount->freeShipping,
 				'discountID' 	=> $discount->id,
 				'updatedBy'		=> $discount->authorship->updatedBy(),
-				'updatedAt'		=> $discount->authorship->updatedAt(),				
+				'updatedAt'		=> $discount->authorship->updatedAt(),
 			)
 		);
 
@@ -97,7 +97,7 @@ class Edit implements DB\TransactionalInterface
 			)
 		);
 
-		if(count($discount->products) !== 0) {
+		if (count($discount->products) !== 0) {
 			$options = array();
 			$inserts = array();
 			foreach ($discount->products as $product) {
@@ -138,7 +138,7 @@ class Edit implements DB\TransactionalInterface
 			)
 		);
 
-		if(count($discount->thresholds) !== 0) {
+		if (count($discount->thresholds) !== 0) {
 			$options = array();
 			$inserts = array();
 			foreach ($discount->thresholds as $threshold) {
@@ -183,7 +183,7 @@ class Edit implements DB\TransactionalInterface
 			)
 		);
 
-		if(count($discount->discountAmounts) !== 0) {
+		if (count($discount->discountAmounts) !== 0) {
 			$options = array();
 			$inserts = array();
 			foreach ($discount->discountAmounts as $discountAmount) {

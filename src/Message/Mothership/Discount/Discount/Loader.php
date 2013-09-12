@@ -83,7 +83,7 @@ class Loader
 			AND
 				(
 					end IS NULL
-					OR NOT end < :from?d 
+					OR NOT end < :from?d
 				)
 			',
 			array(
@@ -137,7 +137,7 @@ class Loader
 				end < :now?d
 				AND	end IS NOT NULL
 			)
-				
+
 			', array(
 				"now" => new \DateTime(),
 			)
@@ -312,7 +312,7 @@ class Loader
 		));
 
 		$products = array();
-		foreach($results->flatten() as $productID) {
+		foreach ($results->flatten() as $productID) {
 			$products[$productID] = $this->_productLoader->getByID($productID);
 		}
 

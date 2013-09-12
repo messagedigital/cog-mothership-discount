@@ -44,10 +44,10 @@ class OrderDiscountFactory
 	 */
 	public function createOrderDiscount()
 	{
-		if($this->_order === null) {
+		if ($this->_order === null) {
 			throw new \Exception('Order must be set to create order discount!');
 		}
-		if($this->_discount === null) {
+		if ($this->_discount === null) {
 			throw new \Exception('Discount must be set to create order discount!');
 		}
 
@@ -60,18 +60,19 @@ class OrderDiscountFactory
 
 		$orderDiscount->order 		= $this->_order;
 
-		foreach($this->_discount->discountAmounts as $discountAmount) {
-			if($discountAmount->locale === $this->_order->locale && $discountAmount->currencyID === $this->_order->currencyID) {
+		// add discountAmount if it has the right locale and currencyID for the order
+		foreach ($this->_discount->discountAmounts as $discountAmount) {
+			if ($discountAmount->locale === $this->_order->locale && $discountAmount->currencyID === $this->_order->currencyID) {
 				$orderDiscount->amount = $discountAmount->amount;
 			}
 		}
 
-		if($this->_discount->appliesToOrder) {
+		if ($this->_discount->appliesToOrder) {
 			$orderDiscount->items = $this->_order->items;
 		} else {
-			foreach($this->_order->items->all() as $item) {
-				foreach($this->_discount->products as $product) {
-					if($item->productID === $product->id) {
+			foreach ($this->_order->items->all() as $item) {
+				foreach ($this->_discount->products as $product) {
+					if ($item->productID === $product->id) {
 						$orderDiscount->items->append($item);
 						continue;
 					}

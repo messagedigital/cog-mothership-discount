@@ -56,25 +56,25 @@ class Validator
 	 */
 	public function validate($discountCode)
 	{
-		if(null === $this->_order) {
+		if (null === $this->_order) {
 			throw new \Exception('Order must be set before discount code can be validated');
 		}
 
 		$discount = $this->_discountLoader->getByCode($discountCode);
-		if(!$discount) {
+		if (!$discount) {
 			throw new OrderValidityException('The entered code was not recognised.');
 		}
 
-		if(!$discount->isActive()) {
+		if (!$discount->isActive()) {
 			$message = ($discount->start < new \DateTime ? 'The discount has expired.' : 'The discount is not active yet.');
 			throw new OrderValidityException($message);
 		}
 
 		// check whether discount-threshold is reached
-		if(0 !== count($discount->thresholds)) {
-			foreach($discount->thresholds as $threshold) {
-				if($this->_order->locale === $threshold->locale && $this->_order->currencyID === $threshold->currencyID) {
-					if($this->_order->productGross < $threshold->threshold) {
+		if (0 !== count($discount->thresholds)) {
+			foreach ($discount->thresholds as $threshold) {
+				if ($this->_order->locale === $threshold->locale && $this->_order->currencyID === $threshold->currencyID) {
+					if ($this->_order->productGross < $threshold->threshold) {
 						throw new OrderValidityException('Your order value is less than the discount threshold.');
 					}
 				}
@@ -82,22 +82,22 @@ class Validator
 		}
 
 		// check whether order has at least one of the products the discount applies to
-		if(!$discount->appliesToOrder) {
+		if (!$discount->appliesToOrder) {
 			$appliesToItem = false;
 
-			foreach($discount->products as $product) {
-				foreach($this->_order->items->all() as $item) {
-					if($item->productID === $product->id) {
+			foreach ($discount->products as $product) {
+				foreach ($this->_order->items->all() as $item) {
+					if ($item->productID === $product->id) {
 						$appliesToItem = true;
 						break;
 					}
 				}
-				if($appliesToItem) {
+				if ($appliesToItem) {
 					break;
 				}
 			}
 
-			if(!$appliesToItem) {
+			if (!$appliesToItem) {
 				throw new OrderValidityException('Your order does not include any of the products the discount applies to.');
 			}
 		}

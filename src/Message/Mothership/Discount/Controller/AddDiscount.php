@@ -28,7 +28,7 @@ class AddDiscount extends Controller
 			$orderDiscount = null;
 
 			try {
-				if($order->discounts->codeExists($code)) {
+				if ($order->discounts->codeExists($code)) {
 					throw new Discount\OrderValidityException('This discount has already been used on this order.');
 				}
 				$orderDiscount = $discountValidator->validate($code);
@@ -36,7 +36,7 @@ class AddDiscount extends Controller
 				$this->addFlash('error', sprintf('The discount `%s` could not be added: %s', $code, $e->getMessage()));
 			}
 
-			if($orderDiscount) {
+			if ($orderDiscount) {
 				$this->get('basket')->addDiscount($orderDiscount);
 				$this->addFlash('success', 'You successfully added a discount');
 			}

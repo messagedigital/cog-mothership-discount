@@ -44,7 +44,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 			->setOrder($order);
 
 		foreach ($discounts = $order->discounts as $key => $orderDiscount) {
-			if($orderDiscount->code) {
+			if ($orderDiscount->code) {
 				$discount = $this->get('discount.loader')->getByCode($orderDiscount->code);
 				$orderDiscountFactory->setDiscount($discount);
 				$orderDiscount = $orderDiscountFactory->createOrderDiscount();
@@ -67,10 +67,10 @@ class EventListener extends BaseListener implements SubscriberInterface
 	{
 		$order = $event->getOrder();
 		$discountValidator = $this->get('discount.validator')->setOrder($order);
-		foreach($order->discounts as $orderDiscount) {
+		foreach ($order->discounts as $orderDiscount) {
 			try {
 				$orderDiscount = $discountValidator->validate($orderDiscount->code);
-			} catch(OrderValidityException $e) {
+			} catch (OrderValidityException $e) {
 				$this->get('basket')->removeDiscount($orderDiscount);
 				$this->get('http.session')->getFlashBag()->add(
 					'warning',

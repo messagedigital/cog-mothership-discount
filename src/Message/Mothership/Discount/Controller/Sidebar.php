@@ -8,8 +8,6 @@ class Sidebar extends Controller
 {
 	public function index()
 	{
-		
-		
 		return $this->render('Message:Mothership:Discount::sidebar', array(
 			'id_search_form' => $this->_getIDSearchForm(),
 			'date_search_form' => $this->_getDateSearchForm(),
@@ -21,7 +19,7 @@ class Sidebar extends Controller
 		$form = $this->_getIDSearchForm();
 		if ($form->isValid() && $data = $form->getFilteredData()) {
 			$discountID = $data['term'];
-			
+
 			$discount = $this->get('discount.loader')->getById($discountID);
 
 			if ($discount) {

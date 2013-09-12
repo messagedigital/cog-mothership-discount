@@ -45,12 +45,12 @@ class Detail extends Controller
 
 		$totalDiscount 	= 0;
 		$totalGross		= 0;
-		foreach($orderDiscounts as $orderDiscount) {
+		foreach ($orderDiscounts as $orderDiscount) {
 			// ADD CONVERSION HERE
 			$totalDiscount 	+= $orderDiscount->amount;
 			$totalGross 	+= $orderDiscount->order->totalGross;
 		}
-		
+
 		return $this->render('::orders', array(
 			'discount' 			=> $discount,
 			'orderDiscounts' 	=> $orderDiscounts,
@@ -68,9 +68,9 @@ class Detail extends Controller
 			'Criteria' 	 => $this->generateUrl('ms.discount.edit.criteria', array('discountID' => $discountID)),
 			'Orders'  	 => $this->generateUrl('ms.discount.view.orders', 	array('discountID' => $discountID)),
 		);
-		
+
 		$current = ucfirst(trim(strrchr($this->get('http.request.master')->get('_controller'), '::'), ':'));
-		
+
 		return $this->render('Message:Mothership:Discount::tabs', array(
 			'tabs'    	  => $tabs,
 			'current' 	  => $current,
@@ -141,14 +141,14 @@ class Detail extends Controller
 			$discount->start = ($data['start'] !== null ? $data['start'] : null);
 			$discount->end   = ($data['end']   !== null ? $data['end']   : null);
 
-			if($discount->start !== null && $discount->end !== null && $discount->start > $discount->end) {
+			if ($discount->start !== null && $discount->end !== null && $discount->start > $discount->end) {
 				$this->addFlash('error', 'Start date must be before end date!');
 			} else {
 				$discount = $this->get('discount.edit')->save($discount);
 
 				$this->addFlash('success', sprintf('You successfully saved discount attributes for discount "%s".', $discount->name));
 				return $this->redirectToRoute('ms.discount.edit', array('discountID' => $discount->id));
-			}			
+			}
 		}
 
 		return $this->render('::attributes', array(
@@ -169,8 +169,8 @@ class Detail extends Controller
 			$discount->percentage   = ($data['percentage'] !== null ? $data['percentage'] : null);
 			$discount->freeShipping = $data['freeShipping'];
 
-			foreach($data['discountAmounts'] as $currencyID => $amount) {
-				if($amount !== null) {
+			foreach ($data['discountAmounts'] as $currencyID => $amount) {
+				if ($amount !== null) {
 					$discountAmount = new Discount\DiscountAmount;
 					$discountAmount->currencyID = $currencyID;
 					$discountAmount->amount = $amount;
@@ -183,10 +183,10 @@ class Detail extends Controller
 			}
 
 			// TODO Replace this with form validation!
-			if($discount->percentage === null && count($discount->discountAmounts) === 0 && !$discount->freeShipping) {
+			if ($discount->percentage === null && count($discount->discountAmounts) === 0 && !$discount->freeShipping) {
 				$this->addFlash('error', 'Neither a percentage discount, nor a fixed discount amount, nor free shipping has been entered for this discount!');
-			} else if($discount->percentage !== null && count($discount->discountAmounts) > 0) {
-				$this->addFlash('error', 'Please either enter a percentage discount OR a fixed discount amount!');				
+			} else if ($discount->percentage !== null && count($discount->discountAmounts) > 0) {
+				$this->addFlash('error', 'Please either enter a percentage discount OR a fixed discount amount!');
 			} else {
 				$discount = $this->get('discount.edit')->save($discount);
 
@@ -210,8 +210,8 @@ class Detail extends Controller
 		$form = $this->_getCriteriaForm($discount);
 
 		if ($form->isValid() && $data = $form->getFilteredData()) {
-			foreach($data['thresholds'] as $currencyID => $thresholdAmount) {
-				if($thresholdAmount !== null) {
+			foreach ($data['thresholds'] as $currencyID => $thresholdAmount) {
+				if ($thresholdAmount !== null) {
 					$threshold = new Discount\Threshold;
 					$threshold->currencyID = $currencyID;
 					$threshold->threshold = $thresholdAmount;
@@ -223,7 +223,7 @@ class Detail extends Controller
 				}
 			}
 
-			foreach($data['products'] as $productID) {
+			foreach ($data['products'] as $productID) {
 				$discount->addProduct($this->get('product.loader')->getByID($productID));
 			}
 
@@ -265,22 +265,22 @@ class Detail extends Controller
 			'datetime',
 			'Start date',
 			array(
-				'date_widget' => 'single_text',
-	    		'time_widget' => 'single_text',
-	    		'data' 		  =>  $discount->start
+	    		'data' => $discount->start
     		)
-    	)->val()->optional();
+    	)
+    		->val()
+    		->optional();
 
 		$form->add(
 			'end',
 			'datetime',
 			'End date',
 			array(
-				'date_widget' => 'single_text',
-	    		'time_widget' => 'single_text',
-	    		'data'		  =>  $discount->end
+	    		'data' => $discount->end
     		)
-    	)->val()->optional();
+    	)
+    		->val()
+    		->optional();
 
 		return $form;
 	}
@@ -302,7 +302,8 @@ class Detail extends Controller
 			->optional();
 
 		$form->add('freeShipping', 'checkbox', 'Free Shipping', array('data' =>  $discount->freeShipping))
-			->val()->optional();
+			->val()
+			->optional();
 
 		$discountAmountsForm = $this->get('form')
 			->setName('discountAmounts')
@@ -321,9 +322,10 @@ class Detail extends Controller
 					'currency' => $currencyID,
 					'data' => $discount->getDiscountAmountForCurrencyID($currencyID),
 				)
-			)->val()
-				->min(0)
-				->optional();
+			)
+			->val()
+			->min(0)
+			->optional();
 		}
 
 		$form->add($discountAmountsForm->getForm(), 'form');
@@ -368,8 +370,9 @@ class Detail extends Controller
 					'currency' => $currencyID,
 					'data' => $discount->getThresholdForCurrencyID($currencyID),
 				)
-			)->val()
-				->optional();
+			)
+			->val()
+			->optional();
 		}
 
 
@@ -378,11 +381,11 @@ class Detail extends Controller
 		$productChoices = array();
 		$productSelection = array();
 
-		foreach($products as $product) {
+		foreach ($products as $product) {
 			$productChoices[] = array($product->id => $product->name);
 		}
 
-		foreach($discount->products as $product) {
+		foreach ($discount->products as $product) {
 			$productSelection[] = $product->id;
 		}
 
