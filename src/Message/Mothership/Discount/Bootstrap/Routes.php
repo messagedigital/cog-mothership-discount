@@ -11,7 +11,7 @@ class Routes implements RoutesInterface
 		$router['ms.discount']->setParent('ms.cp')->setPrefix('/discount');
 		$router['ms.discount']->add('ms.discount.dashboard', '', '::Controller:Dashboard#index');
 
-		$router['ms.discount']->add('ms.discount.sidebar.search.id.action', 'search/id', '::Controller:Sidebar#searchIDAction')
+		$router['ms.discount']->add('ms.discount.sidebar.search.code.action', 'search/code', '::Controller:Sidebar#searchCodeAction')
 			->setMethod('POST');
 
 		$router['ms.discount']->add('ms.discount.sidebar.search.date.action', 'search/date', '::Controller:Sidebar#searchDateAction');
@@ -33,7 +33,7 @@ class Routes implements RoutesInterface
 			->setRequirement('discountID', '\d+')
 			->setMethod('DELETE');
 
-		$router['ms.discount']->add('ms.discount.restore', '/{discountID}/restore/{hash}', '::Controller:Detail#restore')                                                                           
+		$router['ms.discount']->add('ms.discount.restore', '/{discountID}/restore/{hash}', '::Controller:Detail#restore')
 			->setRequirement('discountID', '\d+')
 			->setMethod('GET')
 			->enableCsrf('hash');

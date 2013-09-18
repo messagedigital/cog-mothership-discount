@@ -9,23 +9,23 @@ class Sidebar extends Controller
 	public function index()
 	{
 		return $this->render('Message:Mothership:Discount::sidebar', array(
-			'id_search_form' => $this->_getIDSearchForm(),
+			'code_search_form' => $this->_getCodeSearchForm(),
 			'date_search_form' => $this->_getDateSearchForm(),
 		));
 	}
 
-	public function searchIDAction()
+	public function searchCodeAction()
 	{
-		$form = $this->_getIDSearchForm();
+		$form = $this->_getCodeSearchForm();
 		if ($form->isValid() && $data = $form->getFilteredData()) {
-			$discountID = $data['term'];
+			$discountCode = $data['term'];
 
-			$discount = $this->get('discount.loader')->getById($discountID);
+			$discount = $this->get('discount.loader')->getByCode($discountCode);
 
 			if ($discount) {
 				return $this->redirectToRoute('ms.discount.edit', array('discountID' => $discount->id));
 			} else {
-				$this->addFlash('warning', sprintf('No search results were found for "%s"', $discountID));
+				$this->addFlash('warning', sprintf('No search results were found for "%s"', $discountCode));
 				return $this->redirectToReferer();
 			}
 		}
@@ -52,12 +52,12 @@ class Sidebar extends Controller
 		}
 	}
 
-	protected function _getIDSearchForm()
+	protected function _getCodeSearchForm()
 	{
 		$form = $this->get('form')
-			->setName('id_search')
+			->setName('code_search')
 			->setMethod('POST')
-			->setAction($this->generateUrl('ms.discount.sidebar.search.id.action'));
+			->setAction($this->generateUrl('ms.discount.sidebar.search.code.action'));
 		$form->add('term', 'search', 'Search');
 
 		return $form;

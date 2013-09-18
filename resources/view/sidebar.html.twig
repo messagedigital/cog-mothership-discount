@@ -1,8 +1,8 @@
 <div class="search">
-{{ form_start(id_search_form) }}
-	{{ form_row(id_search_form.term, { 'attr': {'placeholder': 'Enter discount id...' } }) }}
+{{ form_start(code_search_form) }}
+	{{ form_row(code_search_form.term, { 'attr': {'placeholder': 'Enter discount code...' } }) }}
 	<button type="submit">Search</button>
-{{ form_end(id_search_form) }}
+{{ form_end(code_search_form) }}
 </div>
 
 <a href="{{ url('ms.discount.create')}}" class="button small create discount" data-live>Add Discount</a>
