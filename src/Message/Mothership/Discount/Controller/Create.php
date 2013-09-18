@@ -56,20 +56,23 @@ class Create extends Controller
 
 		$form->add('name', 'text', 'Name')
 			->val()
-			->maxLength(255);
+			->maxLength(255)
+			->titlecase();
 
 		$form->add('description', 'textarea', 'Description')
 			->val()->optional();
 
 		$form->add('code', 'text', 'Code')
-			->val()->maxLength(10);
+			->val()
+			->maxLength(10)
+			->uppercase();
 
 		$form->add(
 			'start',
 			'datetime',
 			'Start date',
 			array(
-	    		'data' 		  =>  new \DateTime
+	    		'data' => new \DateTime
     		)
     	)
     		->val()->optional();
@@ -79,7 +82,7 @@ class Create extends Controller
 			'datetime',
 			'End date',
 			array(
-	    		'data' 		  =>  new \DateTime
+	    		'data' => new \DateTime
     		)
     	)
     		->val()->optional();

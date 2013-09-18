@@ -89,10 +89,9 @@ class Detail extends Controller
 	{
 		// Check that the delete request has been sent
 		if ($delete = $this->get('request')->get('delete')) {
-			// Load the file object
 			$discount = $this->get('discount.loader')->getByID($discountID);
 
-			if ($file = $this->get('discount.delete')->delete($discount)) {
+			if ($discount = $this->get('discount.delete')->delete($discount)) {
 				$this->addFlash(
 					'success',
 					sprintf(
@@ -116,7 +115,7 @@ class Detail extends Controller
 	 */
 	public function restore($discountID)
 	{
-		// Load the file
+		// Load the discount
 		$discount = $this->get('discount.loader')->includeDeleted(true)->getByID($discountID);
 
 		if ($this->get('discount.delete')->restore($discount)) {
@@ -242,11 +241,7 @@ class Detail extends Controller
 
 	protected function _getAttributesForm($discount)
 	{
-		// TODO: Add validation for percentage / discount amount -> only one of them should be filled in!
-
 		$products = $this->get('product.loader')->getAll();
-		// TODO: Replace with actual currency collection!
-		$currencies = array('GBP');
 
 		$form = $this->get('form')
 			->setName('discount-edit')
@@ -255,6 +250,7 @@ class Detail extends Controller
 
 		$form->add('name', 'text', 'Name', array('data' =>  $discount->name))
 			->val()
+			->titlecase()
 			->maxLength(255);
 
 		$form->add('description', 'textarea', 'Description', array('data' => $discount->description))
@@ -297,6 +293,7 @@ class Detail extends Controller
 
 		$form->add('percentage', 'percent', 'Percentage Discount Amount', array('type' => 'integer', 'data' =>  $discount->percentage))
 			->val()
+			->number()
 			->max(100)
 			->min(0)
 			->optional();
@@ -324,11 +321,11 @@ class Detail extends Controller
 				)
 			)
 			->val()
+			->number()
 			->min(0)
 			->optional();
 		}
-
-		$form->add($discountAmountsForm->getForm(), 'form');
+		$form->add($discountAmountsForm, 'form');
 
 		return $form;
 	}
@@ -346,10 +343,10 @@ class Detail extends Controller
 
 		$form->add('appliesTo', 'choice', 'Applies to', array(
 			'required' 	=> true,
-			'choices' 		=> array('Specific Products Only', 'Whole Order'),
-			'multiple' 		=> false,
-			'expanded' 		=> false,
-			'data' 			=> $discount->appliesToOrder,
+			'choices' 	=> array('Specific Products Only', 'Whole Order'),
+			'multiple' 	=> false,
+			'expanded' 	=> false,
+			'data' 		=> $discount->appliesToOrder,
 		));
 
 		$thresholdsForm = $this->get('form')
@@ -372,11 +369,12 @@ class Detail extends Controller
 				)
 			)
 			->val()
+			->min(0)
+			->number()
 			->optional();
 		}
 
-
-		$form->add($thresholdsForm->getForm(), 'form', array('attr' => array('class' => 'nested')));
+		$form->add($thresholdsForm, 'form');
 
 		$productChoices = array();
 		$productSelection = array();
@@ -395,7 +393,9 @@ class Detail extends Controller
 		    'expanded'  => true,
 		    'required'  => false,
 		    'data'		=> $productSelection,
-		));
+		))
+			->val()
+			->optional();
 
 		return $form;
 	}
