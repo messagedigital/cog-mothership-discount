@@ -5,11 +5,11 @@
 <div class="container-content edit-discount">
 	{{ form_start(form) }}
 
-		{{ form_row(form.percentage) }}
+		<div class="choose">{{ form_row(form.percentage) }}</div>
 
-		<p style="margin-bottom: 35px;"><strong>OR</strong></p>
+		<div class="choose or"><p><strong>OR</strong></p></div>
 
-		{{ form_row(form.discountAmounts) }}
+		<div class="choose">{{ form_row(form.discountAmounts) }}</div>
 
 		{{ form_row(form.freeShipping) }}
 		<button type="submit" id="save-content" class="button small save">Save discount</button>
