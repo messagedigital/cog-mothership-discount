@@ -62,7 +62,7 @@ class Create extends Controller
 		$form->add('description', 'textarea', 'Description')
 			->val()->optional();
 
-		$form->add('code', 'text', 'Code')
+		$form->add('code', 'text', 'Code', array('attr' => array('maxlength' => 10)))
 			->val()
 			->maxLength(10)
 			->uppercase();
