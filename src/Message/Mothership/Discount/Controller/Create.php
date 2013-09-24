@@ -49,6 +49,8 @@ class Create extends Controller
 
 	protected function _getForm()
 	{
+		$maxCodeLength = $this->get('cfg')->discount->maxCodeLength;
+
 		$form = $this->get('form')
 			->setName('discount-create')
 			->setAction($this->generateUrl('ms.discount.create.action'))
@@ -62,9 +64,9 @@ class Create extends Controller
 		$form->add('description', 'textarea', 'Description')
 			->val()->optional();
 
-		$form->add('code', 'text', 'Code', array('attr' => array('maxlength' => 10)))
+		$form->add('code', 'text', 'Code', array('attr' => array('maxlength' => $maxCodeLength)))
 			->val()
-			->maxLength(10)
+			->maxLength($maxCodeLength)
 			->uppercase();
 
 		$form->add(
