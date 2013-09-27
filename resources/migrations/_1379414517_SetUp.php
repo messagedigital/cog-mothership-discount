@@ -7,7 +7,7 @@ class _1379414517_SetUp extends Migration
 	public function up()
 	{
 		$this->run("
-			CREATE TABLE `discount` (
+			CREATE TABLE IF NOT EXISTS `discount` (
 			  `discount_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
 			  `code` varchar(100) DEFAULT '',
 			  `created_at` int(11) unsigned NOT NULL,
@@ -30,7 +30,7 @@ class _1379414517_SetUp extends Migration
 		");
 
 		$this->run("
-			CREATE TABLE `discount_amount` (
+			CREATE TABLE IF NOT EXISTS `discount_amount` (
 			  `discount_id` int(11) unsigned NOT NULL,
 			  `currency_id` char(3) NOT NULL,
 			  `locale` varchar(50) NOT NULL,
@@ -43,7 +43,7 @@ class _1379414517_SetUp extends Migration
 		");
 
 		$this->run("
-			CREATE TABLE `discount_product` (
+			CREATE TABLE IF NOT EXISTS `discount_product` (
 			  `discount_id` int(11) unsigned NOT NULL,
 			  `product_id` int(11) unsigned NOT NULL DEFAULT '0',
 			  PRIMARY KEY (`discount_id`,`product_id`),
@@ -53,7 +53,7 @@ class _1379414517_SetUp extends Migration
 		");
 
 		$this->run("
-			CREATE TABLE `discount_threshold` (
+			CREATE TABLE IF NOT EXISTS `discount_threshold` (
 			  `discount_id` int(11) unsigned NOT NULL,
 			  `currency_id` char(3) NOT NULL,
 			  `locale` varchar(50) NOT NULL,
