@@ -67,14 +67,15 @@ class EventListener extends BaseListener implements SubscriberInterface
 	{
 		$order = $event->getOrder();
 		$discountValidator = $this->get('discount.validator')->setOrder($order);
-		foreach ($order->discounts as $orderDiscount) {
+
+		foreach ($order->discounts->all() as $orderDiscount) {
 			try {
 				$orderDiscount = $discountValidator->validate($orderDiscount->code);
 			} catch (OrderValidityException $e) {
 				$this->get('basket')->removeDiscount($orderDiscount);
 				$this->get('http.session')->getFlashBag()->add(
 					'warning',
-					sprintf('Discount `%s` is not valid anymore and had to be removed: %s', $orderDiscount->code, $e->getMessage())
+					sprintf('Discount `%s` was removed: %s', $orderDiscount->code, $e->getMessage())
 				);
 			}
 		}

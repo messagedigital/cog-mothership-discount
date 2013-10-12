@@ -60,6 +60,10 @@ class Validator
 			throw new \Exception('Order must be set before discount code can be validated');
 		}
 
+		if(0 === $this->_order->items->count()) {
+			throw new OrderValidityException('Your basket is empty');
+		}
+
 		$discount = $this->_discountLoader->getByCode($discountCode);
 		if (!$discount) {
 			throw new OrderValidityException('The entered code was not recognised.');
