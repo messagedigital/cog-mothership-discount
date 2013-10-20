@@ -21,17 +21,21 @@
 					<td><a href="{{ url('ms.commerce.order.detail.view', {'orderID': order.id }) }}">{{ order.id }}</a></td>
 					<td>{{ order.authorship.createdAt|date }}</td>
 					<td><a href="">{{ order.user.name }}</a></td>
-					<td>{{ order.totalDiscount|price(order.currencyID) }}</td>
-					<td>{{ order.totalGross|price(order.currencyID) }}</td>
+
+					{% set discountAmound = (order.conversionRate ? order.totalDiscount * order.conversionRate : order.totalDiscount) %}
+					{% set gross          = (order.conversionRate ? order.totalGross * order.conversionRate    : order.totalGross) %}
+				
+					<td>{{ discountAmount|price }}</td>
+					<td>{{ gross|price }}</td>
 				</tr>
 			{% endfor %}
-			{#
+			
 			<tr>
 				<td colspan="3"><span>Totals</span></td>
 				<td>{{ totalDiscount|price}}</td>
 				<td>{{ totalGross|price }}</td>
 			</tr>
-			#}
+			
 		</tbody>
 	</table>
 {% else %}

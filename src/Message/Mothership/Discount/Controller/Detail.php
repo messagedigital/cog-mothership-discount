@@ -46,9 +46,19 @@ class Detail extends Controller
 		$totalDiscount 	= 0;
 		$totalGross		= 0;
 		foreach ($orderDiscounts as $orderDiscount) {
-			// ADD CONVERSION HERE
-			$totalDiscount 	+= $orderDiscount->amount;
-			$totalGross 	+= $orderDiscount->order->totalGross;
+			$order = $orderDiscount->order;
+
+			// check this with the currency set on the system!
+			if($order->currencyID !== 'GBP') {
+				$discountAmount = $orderDiscount->amount * $order->conversionRate;
+				$gross          = $order->totalGross * $order->conversionRate;
+			} else {
+				$discountAmount = $orderDiscount->amount;
+				$gross          = $order->totalGross;
+			}
+
+			$totalDiscount 	+= $discountAmount;
+			$totalGross 	+= $gross;
 		}
 
 		return $this->render('::orders', array(
@@ -174,7 +184,7 @@ class Detail extends Controller
 					$discountAmount->currencyID = $currencyID;
 					$discountAmount->amount = $amount;
 
-					// TODO LOCALE?!?
+					// TODO uselocale!
 					$discountAmount->locale = 'en_GB';
 
 					$discount->addDiscountAmount($discountAmount);
