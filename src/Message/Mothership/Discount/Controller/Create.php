@@ -37,7 +37,7 @@ class Create extends Controller
 
 				if ($discount->id) {
 					$this->addFlash('success', sprintf('You successfully added discount "%s"!', $discount->name));
-					return $this->redirectToRoute('ms.discount.edit', array('discountID' => $discount->id));
+					return $this->redirectToRoute('ms.cp.discount.edit', array('discountID' => $discount->id));
 				}
 			}
 		}
@@ -53,7 +53,7 @@ class Create extends Controller
 
 		$form = $this->get('form')
 			->setName('discount-create')
-			->setAction($this->generateUrl('ms.discount.create.action'))
+			->setAction($this->generateUrl('ms.cp.discount.create.action'))
 			->setMethod('post');
 
 		$form->add('name', 'text', 'Name')
