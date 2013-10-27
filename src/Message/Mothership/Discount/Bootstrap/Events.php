@@ -21,8 +21,8 @@ class Events implements EventsInterface, ContainerAwareInterface
 	public function registerEvents($dispatcher)
 	{
 		$dispatcher->addListener(Event::BUILD_MAIN_MENU, function($event) {
-			$event->addItem('ms.cp.discount.dashboard', 'Discounts', array(
-				'ms.cp.discount'
+			$event->addItem('ms.discount.dashboard', 'Discounts', array(
+				'ms.discount'
 			));
 		});
 

@@ -51,7 +51,7 @@ class AddDiscount extends Controller
 	{
 		$form = $this->get('form');
 		$form->setName('discount_form')
-			->setAction($this->generateUrl('ms.discount.process'))
+			->setAction($this->generateUrl('ms.discount.add.action'))
 			->setMethod('post');
 		$form->add('code', 'text', 'I have a discount code');
 

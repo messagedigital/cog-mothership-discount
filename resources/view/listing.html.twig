@@ -26,7 +26,7 @@
 		<tbody>
 			{% for discount in discounts %}
 				<tr>
-					<td><a href="{{ url('ms.cp.discount.edit', {'discountID': discount.id }) }}">{{ discount.code|upper }}</a></td>
+					<td><a href="{{ url('ms.discount.edit', {'discountID': discount.id }) }}">{{ discount.code|upper }}</a></td>
 					<td>{{ discount.name|title }}</td>
 					<td>{{ discount.authorship.createdAt|date }}</td>
 					<td>

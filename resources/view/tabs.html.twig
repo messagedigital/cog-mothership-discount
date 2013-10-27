@@ -6,7 +6,7 @@
 	</ul>
 
 	<div class="controls">
-	    <form action="{{ url('ms.cp.discount.delete', {discountID: discountID}) }}" method="post" id="delete-page">
+	    <form action="{{ url('ms.discount.delete', {discountID: discountID}) }}" method="post" id="delete-page">
 	        <input type="hidden" name="_method" value="DELETE">
 	        <button name="delete[delete]" value="delete" id="delete" type="submit" class="button small delete">{{ 'Delete'|trans }}</button>
 	    </form>
