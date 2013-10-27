@@ -266,25 +266,27 @@ class Detail extends Controller
 		$form->add('description', 'textarea', 'Description', array('data' => $discount->description))
 			->val()->optional();
 
-		$form->add(
-			'start',
-			'datetime',
-			'Start date',
-			array(
-	    		'data' => $discount->start
-    		)
-    	)
+		$form
+			->add(
+				'start',
+				'datetime',
+				'Start date',
+				array(
+		    		'data' => $discount->start
+	    		)
+	    	)
     		->val()
     		->optional();
 
-		$form->add(
-			'end',
-			'datetime',
-			'End date',
-			array(
-	    		'data' => $discount->end
-    		)
-    	)
+		$form
+			->add(
+				'end',
+				'datetime',
+				'End date',
+				array(
+		    		'data' => $discount->end
+	    		)
+	    	)
     		->val()
     		->optional();
 
@@ -325,14 +327,15 @@ class Detail extends Controller
 				'money',
 				$currencyID,
 				array(
-					'label' => $currencyID,
 					'currency' => $currencyID,
 					'data' => $discount->getDiscountAmountForCurrencyID($currencyID),
 				)
 			)
 			->val()
 			->number()
+			->error(sprintf('Fixed Discount Amount in %s must be numeric.', $currencyID))
 			->min(0)
+			->error(sprintf('Fixed Discount Amount in %s cannot be negative.', $currencyID))
 			->optional();
 		}
 		$form->add($discountAmountsForm, 'form');
@@ -380,7 +383,9 @@ class Detail extends Controller
 			)
 			->val()
 			->min(0)
+			->error(sprintf('Threshold in %s cannot be negative.', $currencyID))
 			->number()
+			->error(sprintf('Threshold in %s must be numeric.', $currencyID))
 			->optional();
 		}
 
