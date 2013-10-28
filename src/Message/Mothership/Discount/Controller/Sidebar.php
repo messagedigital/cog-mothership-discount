@@ -23,7 +23,7 @@ class Sidebar extends Controller
 			$discount = $this->get('discount.loader')->getByCode($discountCode);
 
 			if ($discount) {
-				return $this->redirectToRoute('ms.discount.edit', array('discountID' => $discount->id));
+				return $this->redirectToRoute('ms.cp.discount.edit', array('discountID' => $discount->id));
 			} else {
 				$this->addFlash('warning', sprintf('No search results were found for "%s"', $discountCode));
 				return $this->redirectToReferer();
@@ -43,7 +43,7 @@ class Sidebar extends Controller
 				return $this->redirectToReferer();
 			}
 
-			return $this->redirectToRoute('ms.discount.listing.active.date',
+			return $this->redirectToRoute('ms.cp.discount.listing.active.date',
 				array(
 					'fromTimestamp' => $from->getTimestamp(),
 					'toTimestamp' => $to->getTimestamp(),
@@ -57,7 +57,7 @@ class Sidebar extends Controller
 		$form = $this->get('form')
 			->setName('code_search')
 			->setMethod('POST')
-			->setAction($this->generateUrl('ms.discount.sidebar.search.code.action'));
+			->setAction($this->generateUrl('ms.cp.discount.sidebar.search.code.action'));
 		$form->add('term', 'search', 'Search');
 
 		return $form;
@@ -68,7 +68,7 @@ class Sidebar extends Controller
 		$form = $this->get('form')
 			->setName('date_search')
 			->setMethod('GET')
-			->setAction($this->generateUrl('ms.discount.sidebar.search.date.action'));
+			->setAction($this->generateUrl('ms.cp.discount.sidebar.search.date.action'));
 
 		$form->add('from', 'text', 'From', array('attr' => array('placeholder' => 'From...')));
 		$form->add('to', 'text', 'To', array('attr' => array('placeholder' => 'To...')));

@@ -73,10 +73,10 @@ class Detail extends Controller
 	public function tabs($discountID, $topbarClass = '')
 	{
 		$tabs = array(
-			'Attributes' => $this->generateUrl('ms.discount.edit', 			array('discountID' => $discountID)),
-			'Benefit'	 => $this->generateUrl('ms.discount.edit.benefit', 	array('discountID' => $discountID)),
-			'Criteria' 	 => $this->generateUrl('ms.discount.edit.criteria', array('discountID' => $discountID)),
-			'Orders'  	 => $this->generateUrl('ms.discount.view.orders', 	array('discountID' => $discountID)),
+			'Attributes' => $this->generateUrl('ms.cp.discount.edit', 			array('discountID' => $discountID)),
+			'Benefit'	 => $this->generateUrl('ms.cp.discount.edit.benefit', 	array('discountID' => $discountID)),
+			'Criteria' 	 => $this->generateUrl('ms.cp.discount.edit.criteria', array('discountID' => $discountID)),
+			'Orders'  	 => $this->generateUrl('ms.cp.discount.view.orders', 	array('discountID' => $discountID)),
 		);
 
 		$current = ucfirst(trim(strrchr($this->get('http.request.master')->get('_controller'), '::'), ':'));
@@ -107,7 +107,7 @@ class Detail extends Controller
 					sprintf(
 						'%s was deleted. <a href="%s">Undo</a>',
 						$discount->name,
-						$this->generateUrl('ms.discount.restore', array('discountID' => $discount->id))
+						$this->generateUrl('ms.cp.discount.restore', array('discountID' => $discount->id))
 					)
 				);
 			} else {
@@ -115,7 +115,7 @@ class Detail extends Controller
 			}
 
 		}
-		return $this->redirect($this->generateUrl('ms.discount.dashboard'));
+		return $this->redirect($this->generateUrl('ms.cp.discount.dashboard'));
 	}
 
 	/**
@@ -134,7 +134,7 @@ class Detail extends Controller
 			$this->addFlash('error', sprintf('%s could not be restored.', $discount->name));
 		}
 
-		return $this->redirect($this->generateUrl('ms.discount.dashboard'));
+		return $this->redirect($this->generateUrl('ms.cp.discount.dashboard'));
 	}
 
 
@@ -156,7 +156,7 @@ class Detail extends Controller
 				$discount = $this->get('discount.edit')->save($discount);
 
 				$this->addFlash('success', sprintf('You successfully saved discount attributes for discount "%s".', $discount->name));
-				return $this->redirectToRoute('ms.discount.edit', array('discountID' => $discount->id));
+				return $this->redirectToRoute('ms.cp.discount.edit', array('discountID' => $discount->id));
 			}
 		}
 
@@ -200,7 +200,7 @@ class Detail extends Controller
 				$discount = $this->get('discount.edit')->save($discount);
 
 				$this->addFlash('success', sprintf('You successfully saved benefits for discount "%s".', $discount->name));
-				return $this->redirectToRoute('ms.discount.edit.benefit', array('discountID' => $discount->id));
+				return $this->redirectToRoute('ms.cp.discount.edit.benefit', array('discountID' => $discount->id));
 			}
 		}
 
@@ -239,7 +239,7 @@ class Detail extends Controller
 			$discount = $this->get('discount.edit')->save($discount);
 
 			$this->addFlash('success', sprintf('You successfully saved criteria for discount "%s".', $discount->name));
-			return $this->redirectToRoute('ms.discount.edit.criteria', array('discountID' => $discount->id));
+			return $this->redirectToRoute('ms.cp.discount.edit.criteria', array('discountID' => $discount->id));
 
 		}
 
@@ -255,7 +255,7 @@ class Detail extends Controller
 
 		$form = $this->get('form')
 			->setName('discount-edit')
-			->setAction($this->generateUrl('ms.discount.edit.action', array('discountID' => $discount->id)))
+			->setAction($this->generateUrl('ms.cp.discount.edit.action', array('discountID' => $discount->id)))
 			->setMethod('post');
 
 		$form->add('name', 'text', 'Name', array('data' =>  $discount->name))
@@ -300,7 +300,7 @@ class Detail extends Controller
 
 		$form = $this->get('form')
 			->setName('benefit-edit')
-			->setAction($this->generateUrl('ms.discount.edit.benefit.action', array('discountID' => $discount->id)))
+			->setAction($this->generateUrl('ms.cp.discount.edit.benefit.action', array('discountID' => $discount->id)))
 			->setMethod('post');
 
 		$form->add('percentage', 'percent', 'Percentage Discount Amount', array('type' => 'integer', 'data' =>  $discount->percentage))
@@ -351,7 +351,7 @@ class Detail extends Controller
 
 		$form = $this->get('form')
 			->setName('criteria-edit')
-			->setAction($this->generateUrl('ms.discount.edit.criteria.action', array('discountID' => $discount->id)))
+			->setAction($this->generateUrl('ms.cp.discount.edit.criteria.action', array('discountID' => $discount->id)))
 			->setMethod('post');
 
 		$form->add('appliesTo', 'choice', 'Applies to', array(
