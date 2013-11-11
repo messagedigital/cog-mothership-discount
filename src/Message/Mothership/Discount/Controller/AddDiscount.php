@@ -29,19 +29,22 @@ class AddDiscount extends Controller
 
 			try {
 				if ($order->discounts->codeExists($code)) {
-					throw new Discount\OrderValidityException('This discount has already been used on this order.');
+					throw new Discount\OrderValidityException($this->trans('ms.discount.add.error.used'));
 				}
 				$orderDiscount = $discountValidator->validate($code);
 			} catch (Discount\OrderValidityException $e) {
-				$this->addFlash('error', sprintf('The discount `%s` could not be added: %s', $code, $e->getMessage()));
+				$this->addFlash('error', $this->trans('ms.discount.add.error.message', array(
+					'%code%' => $code,
+					'%message%' => $e->getMessage()
+				)));
 			}
 
 			if ($orderDiscount) {
 				$this->get('basket')->addDiscount($orderDiscount);
-				$this->addFlash('success', 'You successfully added a discount');
+				$this->addFlash('success', $this->trans('ms.discount.add.success'));
 			}
 		} else {
-			$this->addFlash('error', 'Please enter a valid discount code');
+			$this->addFlash('error', $this->trans('ms.discount.add.error.invalid'));
 		}
 
 		return $this->redirectToReferer();
@@ -53,7 +56,7 @@ class AddDiscount extends Controller
 		$form->setName('discount_form')
 			->setAction($this->generateUrl('ms.discount.process'))
 			->setMethod('post');
-		$form->add('code', 'text', 'I have a discount code');
+		$form->add('code', 'text', $this->trans('ms.discount.add.label'));
 
 		return $form;
 	}
