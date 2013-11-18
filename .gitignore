@@ -1,10 +1,4 @@
-/translations/.DS_Store
-/src/Message/Mothership/Discount/Discount/.DS_Store
-/src/Message/Mothership/Discount/Controller/Discount/.DS_Store
-/src/Message/Mothership/Discount/Controller/.DS_Store
-/src/Message/Mothership/Discount/Bootstrap/.DS_Store
-/src/Message/Mothership/Discount/.DS_Store
-/src/Message/Mothership/.DS_Store
-/src/Message/.DS_Store
-/src/.DS_Store
-/.DS_Store
+.DS_Store
+vendor
+tmp
+.idea
