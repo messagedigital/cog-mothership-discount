@@ -70,7 +70,9 @@ class EventListener extends BaseListener implements SubscriberInterface
 
 		foreach ($order->discounts->all() as $orderDiscount) {
 			try {
-				$orderDiscount = $discountValidator->validate($orderDiscount->code);
+				if ($orderDiscount->discount) {
+					$orderDiscount = $discountValidator->validate($orderDiscount->code);
+				}
 			} catch (OrderValidityException $e) {
 				$this->get('basket')->removeDiscount($orderDiscount);
 				$this->get('http.session')->getFlashBag()->add(
