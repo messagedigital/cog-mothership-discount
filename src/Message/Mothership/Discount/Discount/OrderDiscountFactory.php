@@ -67,6 +67,12 @@ class OrderDiscountFactory
 			}
 		}
 
+		// If this is a free shipping discount, apply it as the equivalent of
+		// the shipping list price.
+		if ($this->_discount->freeShipping) {
+			$this->_order->shippingDiscount = $this->_order->shippingListPrice;
+		}
+
 		if ($this->_discount->appliesToOrder) {
 			$orderDiscount->items = $this->_order->items;
 		} else {
