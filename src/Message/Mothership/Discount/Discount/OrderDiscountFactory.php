@@ -52,10 +52,10 @@ class OrderDiscountFactory
 		}
 
 		$orderDiscount = new Order\Entity\Discount\Discount;
+		$orderDiscount->discount	= $this->_discount;
 		$orderDiscount->code 		= $this->_discount->code;
 		$orderDiscount->name 		= $this->_discount->name;
 		$orderDiscount->description = $this->_discount->description;
-
 		$orderDiscount->percentage 	= $this->_discount->percentage;
 
 		$orderDiscount->order 		= $this->_order;
