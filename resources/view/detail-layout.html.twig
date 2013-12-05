@@ -7,9 +7,9 @@
 	<h1>
 		{{ discount.name|title }} ({{ discount.code|upper }})
 		{% if discount.active %}
-			<div class="flag active">{{ "Active"|trans }}</div>
+			<span class="flag active">{{ "Active"|trans }}</span>
 		{% else %}
-			<div class="flag inactive">{{ "Inactive"|trans }}</div>
+			<span class="flag inactive">{{ "Inactive"|trans }}</span>
 		{% endif %}
 		{% if not discount.end is null %}<span>Expires: {{ discount.end|date }}</span>{% endif %}
 	</h1>
