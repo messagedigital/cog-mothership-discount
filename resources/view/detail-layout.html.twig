@@ -5,7 +5,12 @@
 {% block main %}
 <hgroup class="title">
 	<h1>
-		{{ discount.name|title }} ({{ discount.code|upper }}) {# {{ discount.active ? "Active"|trans : "Inactive"|trans }} #}
+		{{ discount.name|title }} ({{ discount.code|upper }})
+		{% if discount.active %}
+			<div class="flag active">{{ "Active"|trans }}</div>
+		{% else %}
+			<div class="flag inactive">{{ "Inactive"|trans }}</div>
+		{% endif %}
 		{% if not discount.end is null %}<span>Expires: {{ discount.end|date }}</span>{% endif %}
 	</h1>
 </hgroup>
