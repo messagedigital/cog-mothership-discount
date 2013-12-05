@@ -2,7 +2,19 @@
 {% block discount_form %}
 <div class="container-content edit-discount">
 	{{ form_start(form) }}
-		{{ form_rest(form) }}
+		<div class="group">
+			<h2 class="title">Discount conditions</h2>
+			<div class="content">
+				{{ form_row(form['appliesTo']) }}
+				{{ form_row(form['thresholds']) }}		
+			</div>
+		</div>
+		<div class="group">
+			<h2 class="title">Products</h2>
+			<div class="content">
+				{{ form_widget(form.products) }}
+			</div>
+		</div>
 		<button type="submit" class="button small save" id="save-content">Save discount</button>
 	{{ form_end(form) }}
 </div>
