@@ -4,12 +4,13 @@
 		{{ form_start(form) }}
 			<div class="group choose">
 				<div class="content">
-					{{ form_row(form.percentage) }}
-				</div>
-			</div>
-			<div class="group choose">
-				<div class="content">
-				{{ form_row(form.discountAmounts) }}
+					<div class="option">
+						{{ form_row(form.percentage) }}
+					</div>
+					<p class="or"><strong>OR</strong></p>
+					<div class="option">
+						{{ form_row(form.discountAmounts) }}
+					</div>
 				</div>
 			</div>
 			{{ form_row(form.freeShipping) }}
