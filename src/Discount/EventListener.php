@@ -74,7 +74,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 					$orderDiscount = $discountValidator->validate($orderDiscount->code);
 				}
 			} catch (OrderValidityException $e) {
-				$this->get('basket')->removeDiscount($orderDiscount);
+				$this->get('basket')->removeEntity('discounts', $orderDiscount);
 				$this->get('http.session')->getFlashBag()->add(
 					'info',
 					sprintf('Discount `%s` was removed: %s', $orderDiscount->code, $e->getMessage())
