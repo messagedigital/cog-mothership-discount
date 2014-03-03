@@ -7,7 +7,7 @@ use Message\Cog\Controller\Controller;
 use Message\Cog\ValueObject\DateTimeImmutable;
 use Symfony\Component\Validator\Constraints;
 
-use Message\Mothership\Discount\Form\Type\DiscountType;
+use Message\Mothership\Discount\Form\DiscountForm;
 
 class Create extends Controller
 {
@@ -15,7 +15,7 @@ class Create extends Controller
 	{
 		$maxCodeLength = $this->get('cfg')->discount->maxCodeLength;
 		return $this->render('::create', array(
-			'form'  => $this->createForm(new DiscountType($maxCodeLength)),
+			'form'  => $this->createForm(new DiscountForm($maxCodeLength)),
 
 		));
 	}
@@ -23,7 +23,7 @@ class Create extends Controller
 	public function process()
 	{
 		$maxCodeLength = $this->get('cfg')->discount->maxCodeLength;
-		$form = $this->createForm(new DiscountType($maxCodeLength));
+		$form = $this->createForm(new DiscountForm($maxCodeLength));
 
 		$form->handleRequest();
 

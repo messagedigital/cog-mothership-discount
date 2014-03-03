@@ -6,3 +6,20 @@ ms.discount:
       message: The discount `%code%` could not be added: %message%
       used: This discount has already been used on this order.
       invalid: Please enter a valid discount code
+  discount:
+    attributes:
+      name:
+        label: Name
+        help: The discount's name.
+      description:
+        label: Description
+        help: A description of the discount.
+      code:
+        label: Code
+        help: A unique code the discount can be identified by.
+      start:
+        label: Start Date
+        help: This discount will not be usable before this date/time.
+      end:
+        label: End Date
+        help: This discount will not be usable after this date/time. Can be left empty.
