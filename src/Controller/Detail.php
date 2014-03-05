@@ -11,10 +11,26 @@ class Detail extends Controller
 	public function attributes($discountID)
 	{
 		$discount = $this->get('discount.loader')->getByID($discountID);
+		// this is necessary to not display changes in the discount object, before it's persisted
+		$viewDiscount = clone $discount;
+
+		$form = $this->createForm($this->get('discount.form.discount.attributes'), $discount);
+		$form->handleRequest();
+
+		if ($form->isValid()) {
+			$discount = $form->getData();
+            $discount = $this->get('discount.edit')->save($discount);
+
+            if ($discount->id) {
+				$this->addFlash('success', $this->trans('ms.discount.discount.edit.success', array(
+					'%name%' => $discount->name,
+				)));
+            }
+		}
 
 		return $this->render('::attributes', array(
-			'discount'  => $discount,
-			'form'  	=> $this->_getAttributesForm($discount),
+			'discount'  => $viewDiscount,
+			'form'  	=> $form,
 		));
 	}
 
@@ -22,9 +38,24 @@ class Detail extends Controller
 	{
 		$discount = $this->get('discount.loader')->getByID($discountID);
 
+		$form = $this->createForm($this->get('discount.form.discount.benefit'), $discount);
+
+		$form->handleRequest();
+
+		if ($form->isValid()) {
+			$discount = $form->getData();
+            $discount = $this->get('discount.edit')->save($discount);
+
+            if ($discount->id) {
+				$this->addFlash('success', $this->trans('ms.discount.discount.edit.success', array(
+					'%name%' => $discount->name,
+				)));
+            }
+		}
+
 		return $this->render('::benefit', array(
 			'discount'  => $discount,
-			'form'  	=> $this->_getBenefitForm($discount),
+			'form'  	=> $form,
 		));
 	}
 
@@ -32,9 +63,24 @@ class Detail extends Controller
 	{
 		$discount = $this->get('discount.loader')->getByID($discountID);
 
+		$form = $this->createForm($this->get('discount.form.discount.criteria'), $discount);
+
+		$form->handleRequest();
+
+		if ($form->isValid()) {
+
+            $discount = $this->get('discount.edit')->save($discount);
+
+            if ($discount->id) {
+				$this->addFlash('success', $this->trans('ms.discount.discount.edit.success', array(
+					'%name%' => $discount->name,
+				)));
+            }
+		}
+
 		return $this->render('::criteria', array(
 			'discount'  => $discount,
-			'form'  	=> $this->_getCriteriaForm($discount),
+			'form'  	=> $form,
 		));
 	}
 
@@ -75,7 +121,7 @@ class Detail extends Controller
 		$tabs = array(
 			'Attributes' => $this->generateUrl('ms.cp.discount.edit', 			array('discountID' => $discountID)),
 			'Benefit'	 => $this->generateUrl('ms.cp.discount.edit.benefit', 	array('discountID' => $discountID)),
-			'Criteria' 	 => $this->generateUrl('ms.cp.discount.edit.criteria', array('discountID' => $discountID)),
+			'Criteria' 	 => $this->generateUrl('ms.cp.discount.edit.criteria',  array('discountID' => $discountID)),
 			'Orders'  	 => $this->generateUrl('ms.cp.discount.view.orders', 	array('discountID' => $discountID)),
 		);
 
@@ -225,7 +271,7 @@ class Detail extends Controller
 					$threshold->currencyID = $currencyID;
 					$threshold->threshold = $thresholdAmount;
 
-					// TODO LOCALE?!?
+					// TODO LOCALE!
 					$threshold->locale = 'en_GB';
 
 					$discount->addThreshold($threshold);

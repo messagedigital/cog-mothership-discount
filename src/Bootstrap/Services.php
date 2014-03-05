@@ -26,6 +26,18 @@ class Services implements ServicesInterface
 			return new Discount\Discount\Delete($c['db.query'], $c['user.current']);
 		};
 
+		$services['discount.form.discount.attributes'] = function($c) {
+			return new Discount\Form\DiscountAttributesForm($c['cfg']->discount->maxCodeLength, $c['user.current']);
+		};
+
+		$services['discount.form.discount.benefit'] = function($c) {
+			return new Discount\Form\DiscountBenefitForm(['GBP'], $c['user.current']);
+		};
+
+		$services['discount.form.discount.criteria'] = function($c) {
+			return new Discount\Form\DiscountCriteriaForm($c['product.loader']->getAll(), ['GBP'], $c['user.current']);
+		};
+
 		$services['discount.validator'] = function($c) {
 			return new Discount\Discount\Validator($c['discount.loader'], $c['discount.order-discount-factory']);
 		};

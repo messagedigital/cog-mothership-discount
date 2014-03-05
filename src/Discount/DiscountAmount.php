@@ -10,5 +10,5 @@ class DiscountAmount
 	public $discount;
 	public $locale;
 	public $currencyID;
-	public $amount;	
+	public $amount;
 }

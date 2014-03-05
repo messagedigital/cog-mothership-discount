@@ -1,12 +1,12 @@
 ms.discount:
-  add:
-    label: I have a discount code
-    success: You successfully added a discount
-    error:
-      message: The discount `%code%` could not be added: %message%
-      used: This discount has already been used on this order.
-      invalid: Please enter a valid discount code
   discount:
+    create:
+      label: Create a new discount
+      success: You have successfully created the discount `%name%`.
+      button: Create discount
+    edit:
+      success: You have successfully updated the discount `%name%`.
+      button: Save discount
     attributes:
       name:
         label: Name
@@ -23,3 +23,27 @@ ms.discount:
       end:
         label: End Date
         help: This discount will not be usable after this date/time. Can be left empty.
+    benefit:
+      percentage:
+        label: Percentage Discount Amount
+      discount-amounts:
+        label: Fixed Discount Amount
+      free-shipping:
+        label: Free Shipping
+        help: Should the discount include free shipping?
+    criteria:
+      applies-to:
+        label: Applies to
+        help: The discount can either be applied to whole orders or only to orders with certain products.
+      products:
+        label: Products
+      thresholds:
+        label: Threshold
+        help: If you choose a threshold, the discount can only be applied to orders with a total greater than or equal to the treshold.
+    add:
+      label: I have a discount code
+      success: You successfully added a discount.
+      error:
+        message: The discount `%code%` could not be added: %message%.
+        used: This discount has already been used on this order.
+        invalid: Please enter a valid discount code.

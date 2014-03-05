@@ -4,13 +4,8 @@
 
 <div class="container-content edit-discount">
 	{{ form_start(form) }}
-		{{ form_row(form.name) }}
-		{{ form_row(form.description) }}
-
-		{{ form_row(form.start) }}
-		{{ form_row(form.end) }}
-
-		<button type="submit" id="save-content" class="button small save">Save discount</button>
+		{{ form_rest(form) }}
+		<button type="submit" id="save-content" class="button small save">{{ 'ms.discount.discount.edit.button'|trans }}</button>
 	{{ form_end(form) }}
 </div>
 {% endblock %}

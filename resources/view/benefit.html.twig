@@ -9,10 +9,13 @@
 
 		<div class="choose or"><p><strong>OR</strong></p></div>
 
-		<div class="choose">{{ form_row(form.discountAmounts) }}</div>
+		<div class="choose">
+			<label>{{ 'ms.discount.discount.benefit.discount-amounts.label'|trans }}</label>
+			{{ form_row(form.GBP) }}
+		</div>
 
 		{{ form_row(form.freeShipping) }}
-		<button type="submit" id="save-content" class="button small save">Save discount</button>
+		<button type="submit" id="save-content" class="button small save">{{ 'ms.discount.discount.edit.button'|trans }}</button>
 	{{ form_end(form) }}
 </div>
 {% endblock %}

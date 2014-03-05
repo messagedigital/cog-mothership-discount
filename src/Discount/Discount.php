@@ -36,18 +36,37 @@ class Discount
 	{
 		$this->products[$product->id] = $product;
 		$appliesToOrder = true;
+
+		return $this;
+	}
+
+	public function removeProduct(Product $product)
+	{
+		if(array_key_exists($product->id, $this->products)) {
+			unset($this->products[$product->id]);
+		}
+
+		if(0 === count($this->products)){
+
+		}
+
+		return $this;
 	}
 
 	public function addThreshold(Threshold $threshold)
 	{
 		$threshold->discount = $this;
 		$this->thresholds[$threshold->currencyID] = $threshold;
+
+		return $this;
 	}
 
 	public function addDiscountAmount(DiscountAmount $amount)
 	{
 		$amount->discount = $this;
 		$this->discountAmounts[$amount->currencyID] = $amount;
+
+		return $this;
 	}
 
 	/**
