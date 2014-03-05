@@ -11,6 +11,8 @@ use Message\Cog\ValueObject\DateTimeImmutable;
 
 class DiscountCriteriaForm extends Form\AbstractType
 {
+    const APPLIES_TO_PRODUCTS = 0;
+    const APPLIES_TO_ORDER    = 1;
 
     /**
      * User set on the authorship object
@@ -65,7 +67,7 @@ class DiscountCriteriaForm extends Form\AbstractType
             'required' => false,
         ]);
 
-        $builder->addEventListener(Form\FormEvents::POST_SET_DATA, [$this, 'onPreSetData']);
+        $builder->addEventListener(Form\FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
         $builder->addEventListener(Form\FormEvents::POST_SUBMIT, array($this, 'onPostSubmit'));
 
     }
@@ -86,14 +88,14 @@ class DiscountCriteriaForm extends Form\AbstractType
             ]);
         }
 
-        $form->add('appliesToOrder', 'choice', [
+        $form->add('appliesTo', 'choice', [
             'label'       => 'ms.discount.discount.criteria.applies-to.label',
             'choices'     => [
-                self::PRODUCT => 'Specific Products Only',
-                self::ORDER   => 'Whole Order',
+                self::APPLIES_TO_PRODUCTS => 'ms.discount.discount.criteria.applies-to.choices.products.label',
+                self::APPLIES_TO_ORDER    => 'ms.discount.discount.criteria.applies-to.choices.order.label',
             ],
             'mapped'      => false,
-            'data'        => (0 === count($discount->products)),
+            'data'        => (0 === count($discount->products) ? self::APPLIES_TO_ORDER : self::APPLIES_TO_PRODUCTS),
             'multiple'    => false,
             'expanded'    => false,
             'constraints' => new Constraints\NotBlank,
@@ -108,8 +110,15 @@ class DiscountCriteriaForm extends Form\AbstractType
 
     public function validate(Form\FormInterface $form)
     {
-        if() {
-            $form->addError(new Form\FormError('Please only fill in either a percentage OR a fixed discount.'));
+        $discount = $form->getData();
+
+        if(self::APPLIES_TO_ORDER === $form->get('appliesTo')->getData() && 0 !== count($discount->products)) {
+            $form->get('products')->addError(new Form\FormError('No products can be chosen if the
+                discount applies to a whole order. Please either deselect the products or change
+                `Applies to` to `Specific Products Only`.'));
+        } elseif(self::APPLIES_TO_PRODUCTS === $form->get('appliesTo')->getData() && 0 === count($discount->products)) {
+            $form->get('products')->addError(new Form\FormError('Please choose at least one product the discount
+                can be applied to or change `Applies to` to `Whole Order`.'));
         }
     }
 
@@ -123,11 +132,7 @@ class DiscountCriteriaForm extends Form\AbstractType
 
         foreach($this->_currencies as $currencyID) {
             $amount = $form->get($currencyID)->getData();
-            $discountAmount = new DiscountAmount;
-            $discountAmount->amount = $amount;
-            $discountAmount->currencyID = $currencyID;
-
-            $discount->addDiscountAmount($discountAmount);
+            $discount->addThreshold($currencyID, $amount);
         }
     }
 

@@ -112,11 +112,7 @@ class DiscountBenefitForm extends Form\AbstractType
 
         foreach($this->_currencies as $currencyID) {
             $amount = $form->get($currencyID)->getData();
-            $discountAmount = new DiscountAmount;
-            $discountAmount->amount = $amount;
-            $discountAmount->currencyID = $currencyID;
-
-            $discount->addDiscountAmount($discountAmount);
+            $discount->addDiscountAmount($currencyID, $amount);
         }
     }
 

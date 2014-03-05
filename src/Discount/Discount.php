@@ -53,36 +53,28 @@ class Discount
 		return $this;
 	}
 
-	public function addThreshold(Threshold $threshold)
+	public function addThreshold($currencyID, $amount)
 	{
-		$threshold->discount = $this;
-		$this->thresholds[$threshold->currencyID] = $threshold;
+		$this->thresholds[$currencyID] = $amount;
 
 		return $this;
 	}
 
-	public function addDiscountAmount(DiscountAmount $amount)
+	public function addDiscountAmount($currencyID, $amount)
 	{
-		$amount->discount = $this;
-		$this->discountAmounts[$amount->currencyID] = $amount;
+		$this->discountAmounts[$currencyID] = $amount;
 
 		return $this;
 	}
 
-	/**
-	 * @todo add Locale!
-	 */
 	public function getThresholdForCurrencyID($currencyID)
 	{
-		return array_key_exists($currencyID, $this->thresholds) ? $this->thresholds[$currencyID]->threshold : null;
+		return array_key_exists($currencyID, $this->thresholds) ? $this->thresholds[$currencyID] : null;
 	}
 
-	/**
-	 * @todo add Locale!
-	 */
 	public function getDiscountAmountForCurrencyID($currencyID)
 	{
-		return array_key_exists($currencyID, $this->discountAmounts) ? $this->discountAmounts[$currencyID]->amount : null;
+		return array_key_exists($currencyID, $this->discountAmounts) ? $this->discountAmounts[$currencyID] : null;
 	}
 
 	public function isActive()

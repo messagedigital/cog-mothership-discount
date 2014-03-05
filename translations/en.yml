@@ -35,10 +35,15 @@ ms.discount:
       applies-to:
         label: Applies to
         help: The discount can either be applied to whole orders or only to orders with certain products.
+        choices:
+          products:
+            label: Specific Products Only
+          order:
+            label: Whole Order
       products:
         label: Products
       thresholds:
-        label: Threshold
+        label: Thresholds
         help: If you choose a threshold, the discount can only be applied to orders with a total greater than or equal to the treshold.
     add:
       label: I have a discount code
