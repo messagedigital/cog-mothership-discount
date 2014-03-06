@@ -5,8 +5,7 @@
 <div class="container-content edit-discount">
 	{{ form_start(form) }}
 		{{ form_row(form.appliesTo) }}
-		<label>{{ 'ms.discount.discount.criteria.thresholds.label'|trans }}</label>
-		{{ form_row(form.GBP) }}
+		{{ form_row(form.thresholds) }}
 		{{ form_row(form.products) }}
 		<button type="submit" id="save-content" class="button small save">{{ 'ms.discount.discount.edit.button'|trans }}</button>
 	{{ form_end(form) }}

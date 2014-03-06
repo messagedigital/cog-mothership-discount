@@ -132,7 +132,6 @@ class DiscountAttributesForm extends Form\AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => 'Message\Mothership\Discount\Discount\Discount',
-            'required' => false,
         ));
     }
 

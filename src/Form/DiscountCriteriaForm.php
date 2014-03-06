@@ -57,6 +57,13 @@ class DiscountCriteriaForm extends Form\AbstractType
 
     public function buildForm(Form\FormBuilderInterface $builder, array $options)
     {
+        $builder->add('thresholds', 'currency_set', [
+            'label'   => 'ms.discount.discount.criteria.thresholds.label',
+            'options' => [
+                'label' => false,
+            ],
+        ]);
+
         $builder->add('products', 'entity', [
             'label'    => 'ms.discount.discount.criteria.products.label',
             'property' => 'displayName',
@@ -64,7 +71,6 @@ class DiscountCriteriaForm extends Form\AbstractType
             'mapped'   => true,
             'multiple' => true,
             'expanded' => true,
-            'required' => false,
         ]);
 
         $builder->addEventListener(Form\FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
@@ -76,17 +82,6 @@ class DiscountCriteriaForm extends Form\AbstractType
     {
         $form = $event->getForm();
         $discount = $event->getData();
-
-        foreach ($this->_currencies as $currencyID) {
-            $form->add($currencyID, 'money', [
-                'currency'    => $currencyID,
-                'data'        => $discount->getThresholdForCurrencyID($currencyID),
-                'required'    => false,
-                'label'       => false,
-                'mapped'      => false,
-                'constraints' => new Constraints\GreaterThan(['value' => 0]),
-            ]);
-        }
 
         $form->add('appliesTo', 'choice', [
             'label'       => 'ms.discount.discount.criteria.applies-to.label',
@@ -105,7 +100,6 @@ class DiscountCriteriaForm extends Form\AbstractType
     public function onPostSubmit(Form\FormEvent $event)
     {
         $this->validate($event->getForm());
-        $this->processCurrencies($event);
     }
 
     public function validate(Form\FormInterface $form)
@@ -119,20 +113,6 @@ class DiscountCriteriaForm extends Form\AbstractType
         } elseif(self::APPLIES_TO_PRODUCTS === $form->get('appliesTo')->getData() && 0 === count($discount->products)) {
             $form->get('products')->addError(new Form\FormError('Please choose at least one product the discount
                 can be applied to or change `Applies to` to `Whole Order`.'));
-        }
-    }
-
-    /**
-     * Processes currencies and adds them to discount
-     */
-    public function processCurrencies(Form\FormEvent $event)
-    {
-        $form = $event->getForm();
-        $discount = $form->getData();
-
-        foreach($this->_currencies as $currencyID) {
-            $amount = $form->get($currencyID)->getData();
-            $discount->addThreshold($currencyID, $amount);
         }
     }
 
