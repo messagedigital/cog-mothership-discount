@@ -46,7 +46,6 @@ class DiscountAttributesForm extends Form\AbstractType
     public function buildForm(Form\FormBuilderInterface $builder, array $options)
     {
         $builder->add('name', 'text', [
-            'required'        => false,
             'constraints'     => [
                 new Constraints\NotBlank,
                 new Constraints\Length(['max' => 255]),
@@ -56,7 +55,6 @@ class DiscountAttributesForm extends Form\AbstractType
         ]);
 
         $builder->add('description', 'textarea', [
-            'required'        => false,
             'label'           => 'ms.discount.discount.attributes.description.label',
             'contextual_help' => 'ms.discount.discount.attributes.description.help',
         ]);
@@ -65,14 +63,12 @@ class DiscountAttributesForm extends Form\AbstractType
             'label'           => 'ms.discount.discount.attributes.start.label',
             'contextual_help' => 'ms.discount.discount.attributes.start.help',
             'data'            => new \DateTime,
-            'required'        => false,
         ]);
 
         $builder->add('end', 'datetime', [
             'label'           => 'ms.discount.discount.attributes.end.label',
             'contextual_help' => 'ms.discount.discount.attributes.end.help',
             'data'            => new \DateTime,
-            'required'        => false,
         ]);
 
         $builder->addEventListener(Form\FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
@@ -92,7 +88,6 @@ class DiscountAttributesForm extends Form\AbstractType
                     new Constraints\NotBlank,
                 ],
                 'attr'            => ['maxlength' => $this->_maxCodeLength],
-                'required'        => false,
                 'label'           => 'ms.discount.discount.attributes.code.label',
                 'contextual_help' => 'ms.discount.discount.attributes.code.help',
             ]);
@@ -128,7 +123,7 @@ class DiscountAttributesForm extends Form\AbstractType
         $form = $event->getForm();
         $discount = $form->getData();
 
-        if ($discount->start !== null && $discount->end !== null && $discount->start > $discount->end) {
+        if (null !== $discount->start && null !== $discount->end && $discount->start > $discount->end) {
             $form->get('start')->addError(new Form\FormError('Start date must be before end date.'));
         }
     }
@@ -137,7 +132,7 @@ class DiscountAttributesForm extends Form\AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => 'Message\Mothership\Discount\Discount\Discount',
-            'errors_with_fields' => false,
+            'required' => false,
         ));
     }
 
