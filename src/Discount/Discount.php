@@ -35,7 +35,7 @@ class Discount
 	public function addProduct(Product $product)
 	{
 		$this->products[$product->id] = $product;
-		$appliesToOrder = true;
+		$this->appliesToOrder = true;
 
 		return $this;
 	}
@@ -47,7 +47,7 @@ class Discount
 		}
 
 		if(0 === count($this->products)){
-			$appliesToOrder = false;
+			$this->appliesToOrder = false;
 		}
 
 		return $this;
