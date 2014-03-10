@@ -40,7 +40,7 @@ class AddDiscount extends Controller
 			}
 
 			if ($orderDiscount) {
-				$this->get('basket')->addDiscount($orderDiscount);
+				$this->get('basket')->addEntity('discounts', $orderDiscount);
 				$this->addFlash('success', $this->trans('ms.discount.add.success'));
 			}
 		} else {
