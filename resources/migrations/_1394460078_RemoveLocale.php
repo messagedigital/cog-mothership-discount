@@ -2,7 +2,7 @@
 
 use Message\Cog\Migration\Adapter\MySQL\Migration;
 
-class _1379414517_SetUp extends Migration
+class _1394460078_RemoveLocale extends Migration
 {
 	public function up()
 	{
