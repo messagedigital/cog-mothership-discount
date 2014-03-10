@@ -2,7 +2,6 @@
 
 namespace Message\Mothership\Discount\Form;
 
-use Message\User\User;
 use Symfony\Component\Form;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Message\Mothership\Discount\Discount\Discount;
@@ -11,120 +10,97 @@ use Message\Cog\ValueObject\DateTimeImmutable;
 
 class DiscountCriteriaForm extends Form\AbstractType
 {
-    const APPLIES_TO_PRODUCTS = 0;
-    const APPLIES_TO_ORDER    = 1;
+	const APPLIES_TO_PRODUCTS = 0;
+	const APPLIES_TO_ORDER    = 1;
 
-    /**
-     * User set on the authorship object
-     */
-    protected $_user;
+	/**
+	 * All products available
+	 * @var array
+	 */
+	protected $_products;
 
-    /**
-     * All products available
-     * @var array
-     */
-    protected $_products;
+	public function __construct(array $products)
+	{
+		$this->_products = $products;
 
-    /**
-     * Available currencies
-     * @var array
-     */
-    protected $_currencies;
+		return $this;
+	}
 
-    public function __construct(array $products, array $currencies, User $user)
-    {
-        $this->_currencies = $currencies;
-        $this->_products = $products;
-        $this->_user = $user;
+	public function setProducts(array $products)
+	{
+		$this->_products = $products;
+	}
 
-        return $this;
-    }
+	public function buildForm(Form\FormBuilderInterface $builder, array $options)
+	{
+		$builder->add('thresholds', 'currency_set', [
+			'label'   => 'ms.discount.discount.criteria.thresholds.label',
+			'options' => [
+				'label' => false,
+			],
+		]);
 
-    public function setUser(User $user)
-    {
-        $this->_user = $user;
-    }
+		$builder->add('products', 'entity', [
+			'label'    => 'ms.discount.discount.criteria.products.label',
+			'property' => 'displayName',
+			'choices'  => $this->_products,
+			'mapped'   => true,
+			'multiple' => true,
+			'expanded' => true,
+		]);
 
-    public function setProducts(array $products)
-    {
-        $this->_products = $products;
-    }
+		$builder->addEventListener(Form\FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
+		$builder->addEventListener(Form\FormEvents::POST_SUBMIT, array($this, 'onPostSubmit'));
 
-    public function setCurrencies(array $currencies)
-    {
-        $this->_currencies = $currencies;
-    }
+	}
 
-    public function buildForm(Form\FormBuilderInterface $builder, array $options)
-    {
-        $builder->add('thresholds', 'currency_set', [
-            'label'   => 'ms.discount.discount.criteria.thresholds.label',
-            'options' => [
-                'label' => false,
-            ],
-        ]);
+	public function onPreSetData(Form\FormEvent $event)
+	{
+		$form = $event->getForm();
+		$discount = $event->getData();
 
-        $builder->add('products', 'entity', [
-            'label'    => 'ms.discount.discount.criteria.products.label',
-            'property' => 'displayName',
-            'choices'  => $this->_products,
-            'mapped'   => true,
-            'multiple' => true,
-            'expanded' => true,
-        ]);
+		$form->add('appliesTo', 'choice', [
+			'label'       => 'ms.discount.discount.criteria.applies-to.label',
+			'choices'     => [
+				self::APPLIES_TO_PRODUCTS => 'ms.discount.discount.criteria.applies-to.choices.products.label',
+				self::APPLIES_TO_ORDER    => 'ms.discount.discount.criteria.applies-to.choices.order.label',
+			],
+			'mapped'      => false,
+			'data'        => (0 === count($discount->products) ? self::APPLIES_TO_ORDER : self::APPLIES_TO_PRODUCTS),
+			'multiple'    => false,
+			'expanded'    => false,
+			'constraints' => new Constraints\NotBlank,
+		]);
+	}
 
-        $builder->addEventListener(Form\FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
-        $builder->addEventListener(Form\FormEvents::POST_SUBMIT, array($this, 'onPostSubmit'));
+	public function onPostSubmit(Form\FormEvent $event)
+	{
+		$this->validate($event->getForm());
+	}
 
-    }
+	public function validate(Form\FormInterface $form)
+	{
+		$discount = $form->getData();
 
-    public function onPreSetData(Form\FormEvent $event)
-    {
-        $form = $event->getForm();
-        $discount = $event->getData();
+		if(self::APPLIES_TO_ORDER === $form->get('appliesTo')->getData() && 0 !== count($discount->products)) {
+			$form->get('products')->addError(new Form\FormError('No products can be chosen if the
+				discount applies to a whole order. Please either deselect the products or change
+				`Applies to` to `Specific Products Only`.'));
+		} elseif(self::APPLIES_TO_PRODUCTS === $form->get('appliesTo')->getData() && 0 === count($discount->products)) {
+			$form->get('products')->addError(new Form\FormError('Please choose at least one product the discount
+				can be applied to or change `Applies to` to `Whole Order`.'));
+		}
+	}
 
-        $form->add('appliesTo', 'choice', [
-            'label'       => 'ms.discount.discount.criteria.applies-to.label',
-            'choices'     => [
-                self::APPLIES_TO_PRODUCTS => 'ms.discount.discount.criteria.applies-to.choices.products.label',
-                self::APPLIES_TO_ORDER    => 'ms.discount.discount.criteria.applies-to.choices.order.label',
-            ],
-            'mapped'      => false,
-            'data'        => (0 === count($discount->products) ? self::APPLIES_TO_ORDER : self::APPLIES_TO_PRODUCTS),
-            'multiple'    => false,
-            'expanded'    => false,
-            'constraints' => new Constraints\NotBlank,
-        ]);
-    }
+	public function setDefaultOptions(OptionsResolverInterface $resolver)
+	{
+		$resolver->setDefaults([
+			'data_class' => 'Message\\Mothership\\Discount\\Discount\\Discount',
+		]);
+	}
 
-    public function onPostSubmit(Form\FormEvent $event)
-    {
-        $this->validate($event->getForm());
-    }
-
-    public function validate(Form\FormInterface $form)
-    {
-        $discount = $form->getData();
-
-        if(self::APPLIES_TO_ORDER === $form->get('appliesTo')->getData() && 0 !== count($discount->products)) {
-            $form->get('products')->addError(new Form\FormError('No products can be chosen if the
-                discount applies to a whole order. Please either deselect the products or change
-                `Applies to` to `Specific Products Only`.'));
-        } elseif(self::APPLIES_TO_PRODUCTS === $form->get('appliesTo')->getData() && 0 === count($discount->products)) {
-            $form->get('products')->addError(new Form\FormError('Please choose at least one product the discount
-                can be applied to or change `Applies to` to `Whole Order`.'));
-        }
-    }
-
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $resolver->setDefaults(array(
-            'data_class' => 'Message\Mothership\Discount\Discount\Discount',
-        ));
-    }
-
-    public function getName()
-    {
-        return 'discount_criteria';
-    }
+	public function getName()
+	{
+		return 'discount_criteria';
+	}
 }

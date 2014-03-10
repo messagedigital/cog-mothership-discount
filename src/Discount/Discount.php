@@ -47,7 +47,7 @@ class Discount
 		}
 
 		if(0 === count($this->products)){
-
+			$appliesToOrder = false;
 		}
 
 		return $this;
