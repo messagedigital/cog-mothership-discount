@@ -7,7 +7,7 @@
 {% block main %}
 
 <hgroup class="title">
-	<h1>{{ title|title }}</h1>
+	<h1>{{ title }}</h1>
 </hgroup>
 
 <div class="container-content extended create-discount">
@@ -51,7 +51,7 @@
 		</tbody>
 	</table>
 {% else %}
-	<p>No {{ title }} exist yet!</p>
+	<p>Currently there are no discounts.</p>
 {% endif %}
 </div>
 {% endblock %}

@@ -1,21 +1,20 @@
 {% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
-
 {% block sidebar %}
 	{{ render(controller('Message:Mothership:Discount::Controller:Sidebar#index')) }}
 {% endblock %}
-
 {% block main %}
 <hgroup class="title">
 	<h1>
-		Discount "{{ discount.name|title }}" - code: {{ discount.code|upper }} - {{ discount.active ? "Active"|trans : "Inactive"|trans }}
-		{% if discount.authorship.updatedAt %}
-			<span class="updated-date">(Last updated: {{ discount.authorship.updatedAt|date }})</span>
+		{{ discount.name|title }} ({{ discount.code|upper }})
+		{% if discount.active %}
+			<span class="flag active">{{ "Active"|trans }}</span>
+		{% else %}
+			<span class="flag inactive">{{ "Inactive"|trans }}</span>
 		{% endif %}
+		{% if not discount.end is null %}<span>Expires: {{ discount.end|date }}</span>{% endif %}
 	</h1>
 </hgroup>
 	{{ render(controller('Message:Mothership:Discount::Controller:Detail#tabs', {'discountID': discount.id, 'topbarClass': topbarClass})) }}
-
 	{% block discount_form %}
 	{% endblock %}
-	
 {% endblock %}

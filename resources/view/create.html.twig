@@ -1,15 +1,11 @@
 {% extends 'Message:Mothership:Discount::detail-layout' %}
-
 {% block sidebar %}
 	{{ render(controller('Message:Mothership:Discount::Controller:Sidebar#index')) }}
 {% endblock %}
-
 {% block main %}
-
 <hgroup class="title">
-	<h1>Create a discount</h1>
+	<h1>Add a new discount</h1>
 </hgroup>
-
 <div class="container-content create-discount">
 	{{ form_start(form) }}
 		{{ form_rest(form) }}
