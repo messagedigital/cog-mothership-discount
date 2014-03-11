@@ -1,8 +1,54 @@
 ms.discount:
-  add:
-    label: I have a discount code
-    success: You successfully added a discount
-    error:
-      message: The discount `%code%` could not be added: %message%
-      used: This discount has already been used on this order.
-      invalid: Please enter a valid discount code
+  discount:
+    create:
+      label: Add a new discount
+      success: You have successfully created the discount `%name%`.
+      button: Create discount
+    edit:
+      success: You have successfully updated the discount `%name%`.
+      button: Save changes
+    attributes:
+      name:
+        label: Name
+        help: The discount's name.
+      description:
+        label: Description
+        help: A description of the discount.
+      code:
+        label: Code
+        help: A unique code the discount can be identified by.
+      start:
+        label: Start Date
+        help: This discount will not be usable before this date/time.
+      end:
+        label: End Date
+        help: This discount will not be usable after this date/time. Can be left empty.
+    benefit:
+      percentage:
+        label: Percentage Discount Amount
+      discount-amounts:
+        label: Fixed Discount Amount
+      free-shipping:
+        label: Free Shipping
+        help: Should the discount include free shipping?
+    criteria:
+      applies-to:
+        label: Applies to
+        help: The discount can either be applied to whole orders or only to orders with certain products.
+        choices:
+          products:
+            label: Specific Products Only
+          order:
+            label: Whole Order
+      products:
+        label: Products
+      thresholds:
+        label: Thresholds
+        help: If you choose a threshold, the discount can only be applied to orders with a total greater than or equal to the treshold.
+    add:
+      label: I have a discount code
+      success: You successfully added a discount.
+      error:
+        message: The discount `%code%` could not be added: %message%.
+        used: This discount has already been used on this order.
+        invalid: Please enter a valid discount code.

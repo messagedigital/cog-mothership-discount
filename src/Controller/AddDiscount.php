@@ -29,11 +29,11 @@ class AddDiscount extends Controller
 
 			try {
 				if ($order->discounts->codeExists($code)) {
-					throw new Discount\OrderValidityException($this->trans('ms.discount.add.error.used'));
+					throw new Discount\OrderValidityException($this->trans('ms.discount.discount.add.error.used'));
 				}
 				$orderDiscount = $discountValidator->validate($code);
 			} catch (Discount\OrderValidityException $e) {
-				$this->addFlash('error', $this->trans('ms.discount.add.error.message', array(
+				$this->addFlash('error', $this->trans('ms.discount.discount.add.error.message', array(
 					'%code%' => $code,
 					'%message%' => $e->getMessage()
 				)));
@@ -41,10 +41,10 @@ class AddDiscount extends Controller
 
 			if ($orderDiscount) {
 				$this->get('basket')->addEntity('discounts', $orderDiscount);
-				$this->addFlash('success', $this->trans('ms.discount.add.success'));
+				$this->addFlash('success', $this->trans('ms.discount.discount.add.success'));
 			}
 		} else {
-			$this->addFlash('error', $this->trans('ms.discount.add.error.invalid'));
+			$this->addFlash('error', $this->trans('ms.discount.discount.add.error.invalid'));
 		}
 
 		return $this->redirectToReferer();
@@ -56,7 +56,7 @@ class AddDiscount extends Controller
 		$form->setName('discount_form')
 			->setAction($this->generateUrl('ms.discount.process'))
 			->setMethod('post');
-		$form->add('code', 'text', $this->trans('ms.discount.add.label'));
+		$form->add('code', 'text', $this->trans('ms.discount.discount.add.label'));
 
 		return $form;
 	}

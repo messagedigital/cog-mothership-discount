@@ -4,91 +4,32 @@ namespace Message\Mothership\Discount\Controller;
 
 use Message\Mothership\Discount\Discount;
 use Message\Cog\Controller\Controller;
-use Message\Cog\ValueObject\DateTimeImmutable;
+use Symfony\Component\Validator\Constraints;
+
+use Message\Mothership\Discount\Form\DiscountForm;
 
 class Create extends Controller
 {
 	public function index()
 	{
-		return $this->render('::create', array(
-			'form'  => $this->_getForm(),
-		));
-	}
+		$form = $this->createForm($this->get('discount.form.create'));
+		$form->handleRequest();
 
-	public function process()
-	{
-		$form = $this->_getForm();
-		if ($form->isValid() && $data = $form->getFilteredData()) {
-			$discount = new Discount\Discount;
+		if ($form->isValid()) {
+			$discount = $form->getData();
+			$discount = $this->get('discount.create')->create($discount);
 
-			$discount->code 		= $data['code'];
-			$discount->name 		= $data['name'];
-			$discount->description 	= $data['description'];
+			if ($discount->id) {
+				$this->addFlash('success', $this->trans('ms.discount.discount.create.success', array(
+					'%name%' => $discount->name,
+				)));
 
-			$discount->authorship->create(new DateTimeImmutable, $this->get('user.current')->id);
-
-			$discount->start = ($data['start'] !== null ? $data['start'] : null);
-			$discount->end   = ($data['end']   !== null ? $data['end']   : null);
-
-			if ($discount->start !== null && $discount->end !== null && $discount->start > $discount->end) {
-				$this->addFlash('error', 'Start date must be before end date!');
-			} else {
-				$discount = $this->get('discount.create')->create($discount);
-
-				if ($discount->id) {
-					$this->addFlash('success', sprintf('You successfully added discount "%s"!', $discount->name));
-					return $this->redirectToRoute('ms.cp.discount.edit', array('discountID' => $discount->id));
-				}
+				return $this->redirectToRoute('ms.cp.discount.edit', array('discountID' => $discount->id));
 			}
 		}
 
 		return $this->render('::create', array(
-			'form'  => $form,
+			'form' => $form,
 		));
-	}
-
-	protected function _getForm()
-	{
-		$maxCodeLength = $this->get('cfg')->discount->maxCodeLength;
-
-		$form = $this->get('form')
-			->setName('discount-create')
-			->setAction($this->generateUrl('ms.cp.discount.create.action'))
-			->setMethod('post');
-
-		$form->add('name', 'text', 'Name')
-			->val()
-			->maxLength(255)
-			->titlecase();
-
-		$form->add('description', 'textarea', 'Description')
-			->val()->optional();
-
-		$form->add('code', 'text', 'Code', array('attr' => array('maxlength' => $maxCodeLength)))
-			->val()
-			->maxLength($maxCodeLength)
-			->uppercase();
-
-		$form->add(
-			'start',
-			'datetime',
-			'Start date',
-			array(
-	    		'data' => new \DateTime
-    		)
-    	)
-    		->val()->optional();
-
-		$form->add(
-			'end',
-			'datetime',
-			'End date',
-			array(
-	    		'data' => new \DateTime
-    		)
-    	)
-    		->val()->optional();
-
-		return $form;
 	}
 }

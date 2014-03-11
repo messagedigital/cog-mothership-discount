@@ -4,12 +4,14 @@
 {% endblock %}
 {% block main %}
 <hgroup class="title">
-	<h1>Add a new discount</h1>
+	<h1>{{ 'ms.discount.discount.create.label'|trans }}</h1>
 </hgroup>
 <div class="container-content create-discount">
 	{{ form_start(form) }}
+		{{ form_row(form.name) }}
+		{{ form_row(form.code) }}
 		{{ form_rest(form) }}
-		<button type="submit" id="save-content" class="button small save">Create discount</button>
+		<button type="submit" id="save-content" class="button small save">{{ 'ms.discount.discount.create.button'|trans }}</button>
 	{{ form_end(form) }}
 </div>
 {% endblock %}
