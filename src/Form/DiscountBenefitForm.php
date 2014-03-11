@@ -45,9 +45,9 @@ class DiscountBenefitForm extends Form\AbstractType
 
 	public function validate(Form\FormInterface $form)
 	{
-		if(null !== $form->get('percentage')->getData() && array() !== $form->get('discountAmounts')->getData()) {
+		if (null !== $form->get('percentage')->getData() && array() !== $form->get('discountAmounts')->getData()) {
 			$form->addError(new Form\FormError('Please only fill in either a percentage OR a fixed discount.'));
-		} elseif(null === $form->get('percentage')->getData() && array() === $form->get('discountAmounts')->getData() && false === $form->get('freeShipping')->getData()) {
+		} elseif (null === $form->get('percentage')->getData() && array() === $form->get('discountAmounts')->getData() && false === $form->get('freeShipping')->getData()) {
 			$form->addError(new Form\FormError('Neither a percentage discount, nor a fixed discount amount, nor free shipping have been added to this discount.'));
 		}
 	}
