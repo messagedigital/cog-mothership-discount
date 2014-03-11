@@ -9,45 +9,44 @@ class Services implements ServicesInterface
 {
 	public function registerServices($services)
 	{
-
-		$services['discount.loader'] = function($c) {
+		$services['discount.loader'] = $services->factory(function($c) {
 			return new Discount\Discount\Loader($c['db.query'], $c['product.loader']);
-		};
+		});
 
-		$services['discount.create'] = function($c) {
+		$services['discount.create'] = $services->factory(function($c) {
 			return new Discount\Discount\Create($c['db.query'], $c['user.current']);
-		};
+		});
 
-		$services['discount.edit'] = function($c) {
+		$services['discount.edit'] = $services->factory(function($c) {
 			return new Discount\Discount\Edit($c['db.transaction'], $c['user.current']);
-		};
+		});
 
-		$services['discount.delete'] = function($c) {
+		$services['discount.delete'] = $services->factory(function($c) {
 			return new Discount\Discount\Delete($c['db.query'], $c['user.current']);
-		};
+		});
 
-		$services['discount.form.create'] = function($c) {
+		$services['discount.form.create'] = $services->factory(function($c) {
 			return new Discount\Form\DiscountCreateForm($c['cfg']->discount->maxCodeLength);
-		};
+		});
 
-		$services['discount.form.attributes'] = function($c) {
+		$services['discount.form.attributes'] = $services->factory(function($c) {
 			return new Discount\Form\DiscountAttributesForm($c['cfg']->discount->maxCodeLength);
-		};
+		});
 
-		$services['discount.form.benefit'] = function($c) {
+		$services['discount.form.benefit'] = $services->factory(function($c) {
 			return new Discount\Form\DiscountBenefitForm;
-		};
+		});
 
-		$services['discount.form.criteria'] = function($c) {
+		$services['discount.form.criteria'] = $services->factory(function($c) {
 			return new Discount\Form\DiscountCriteriaForm($c['product.loader']->getAll());
-		};
+		});
 
-		$services['discount.validator'] = function($c) {
+		$services['discount.validator'] = $services->factory(function($c) {
 			return new Discount\Discount\Validator($c['discount.loader'], $c['discount.order-discount-factory']);
-		};
+		});
 
-		$services['discount.order-discount-factory'] = function($c) {
+		$services['discount.order-discount-factory'] = $services->factory(function($c) {
 			return new Discount\Discount\OrderDiscountFactory();
-		};
+		});
 	}
 }

@@ -1,12 +1,12 @@
 ms.discount:
   discount:
     create:
-      label: Create a new discount
+      label: Add a new discount
       success: You have successfully created the discount `%name%`.
       button: Create discount
     edit:
       success: You have successfully updated the discount `%name%`.
-      button: Save discount
+      button: Save changes
     attributes:
       name:
         label: Name

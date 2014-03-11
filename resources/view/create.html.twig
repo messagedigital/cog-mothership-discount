@@ -1,15 +1,11 @@
 {% extends 'Message:Mothership:Discount::detail-layout' %}
-
 {% block sidebar %}
 	{{ render(controller('Message:Mothership:Discount::Controller:Sidebar#index')) }}
 {% endblock %}
-
 {% block main %}
-
 <hgroup class="title">
 	<h1>{{ 'ms.discount.discount.create.label'|trans }}</h1>
 </hgroup>
-
 <div class="container-content create-discount">
 	{{ form_start(form) }}
 		{{ form_row(form.name) }}
