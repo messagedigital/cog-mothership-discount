@@ -44,7 +44,6 @@ class DiscountCriteriaForm extends Form\AbstractType
 			'label'    => 'ms.discount.discount.criteria.products.label',
 			'property' => 'displayName',
 			'choices'  => $this->_products,
-			'mapped'   => true,
 			'multiple' => true,
 			'expanded' => true,
 		]);
