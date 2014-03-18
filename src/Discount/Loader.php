@@ -240,7 +240,6 @@ class Loader
 		$result = $this->_query->run(
 			'SELECT
 				discount_id,
-				locale,
 				currency_id AS currencyID,
 				threshold
 			FROM
@@ -252,16 +251,10 @@ class Loader
 			)
 		);
 
-		$thresholds = $result->bindTo('Message\\Mothership\\Discount\\Discount\\Threshold');
 		$return = array();
 
 		foreach ($result as $key => $data) {
-			$thresholds[$key]->discount = $discount;
-			$thresholds[$key]->threshold = (float) $data->threshold;
-
-			// TODO Maybe load Locale-Object??
-
-			$return[$data->currencyID] = $thresholds[$key];
+			$return[$data->currencyID] = (float) $data->threshold;
 		}
 
 		return $return;
@@ -272,7 +265,6 @@ class Loader
 		$result = $this->_query->run(
 			'SELECT
 				discount_id,
-				locale,
 				currency_id AS currencyID,
 				amount
 			FROM
@@ -284,15 +276,10 @@ class Loader
 			)
 		);
 
-		$discountAmounts = $result->bindTo('Message\\Mothership\\Discount\\Discount\\DiscountAmount');
 		$return = array();
 
 		foreach ($result as $key => $data) {
-			$discountAmounts[$key]->discount = $discount;
-			$discountAmounts[$key]->amount = (float) $data->amount;
-
-			// TODO Maybe load Locale-Object??
-			$return[$data->currencyID] = $discountAmounts[$key];
+			$return[$data->currencyID] = (float) $data->amount;
 		}
 
 		return $return;

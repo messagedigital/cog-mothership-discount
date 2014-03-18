@@ -61,9 +61,9 @@ class OrderDiscountFactory
 		$orderDiscount->order 		= $this->_order;
 
 		// add discountAmount if it has the right locale and currencyID for the order
-		foreach ($this->_discount->discountAmounts as $discountAmount) {
-			if ($discountAmount->locale === $this->_order->locale && $discountAmount->currencyID === $this->_order->currencyID) {
-				$orderDiscount->amount = $discountAmount->amount;
+		foreach ($this->_discount->discountAmounts as $currencyID => $discountAmount) {
+			if ($currencyID === $this->_order->currencyID) {
+				$orderDiscount->amount = $discountAmount;
 			}
 		}
 

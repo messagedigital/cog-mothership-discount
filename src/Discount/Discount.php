@@ -35,35 +35,46 @@ class Discount
 	public function addProduct(Product $product)
 	{
 		$this->products[$product->id] = $product;
-		$appliesToOrder = true;
+		$this->appliesToOrder = true;
+
+		return $this;
 	}
 
-	public function addThreshold(Threshold $threshold)
+	public function removeProduct(Product $product)
 	{
-		$threshold->discount = $this;
-		$this->thresholds[$threshold->currencyID] = $threshold;
+		if(array_key_exists($product->id, $this->products)) {
+			unset($this->products[$product->id]);
+		}
+
+		if(0 === count($this->products)){
+			$this->appliesToOrder = false;
+		}
+
+		return $this;
 	}
 
-	public function addDiscountAmount(DiscountAmount $amount)
+	public function addThreshold($currencyID, $amount)
 	{
-		$amount->discount = $this;
-		$this->discountAmounts[$amount->currencyID] = $amount;
+		$this->thresholds[$currencyID] = $amount;
+
+		return $this;
 	}
 
-	/**
-	 * @todo add Locale!
-	 */
+	public function addDiscountAmount($currencyID, $amount)
+	{
+		$this->discountAmounts[$currencyID] = $amount;
+
+		return $this;
+	}
+
 	public function getThresholdForCurrencyID($currencyID)
 	{
-		return array_key_exists($currencyID, $this->thresholds) ? $this->thresholds[$currencyID]->threshold : null;
+		return array_key_exists($currencyID, $this->thresholds) ? $this->thresholds[$currencyID] : null;
 	}
 
-	/**
-	 * @todo add Locale!
-	 */
 	public function getDiscountAmountForCurrencyID($currencyID)
 	{
-		return array_key_exists($currencyID, $this->discountAmounts) ? $this->discountAmounts[$currencyID]->amount : null;
+		return array_key_exists($currencyID, $this->discountAmounts) ? $this->discountAmounts[$currencyID] : null;
 	}
 
 	public function isActive()

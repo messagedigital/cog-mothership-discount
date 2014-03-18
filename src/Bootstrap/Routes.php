@@ -25,10 +25,7 @@ class Routes implements RoutesInterface
 		$router['ms.cp.discount']->add('ms.cp.discount.listing.active.date', 'listing/active/from/{fromTimestamp}/to/{toTimestamp}', 'Message:Mothership:Discount::Controller:Listing#active');
 		$router['ms.cp.discount']->add('ms.cp.discount.listing.inactive', 'listing/inactive', 'Message:Mothership:Discount::Controller:Listing#inactive');
 
-		$router['ms.cp.discount']->add('ms.cp.discount.create.action', 'create', 'Message:Mothership:Discount::Controller:Create#process')
-			->setMethod('POST');
 		$router['ms.cp.discount']->add('ms.cp.discount.create', 'create', 'Message:Mothership:Discount::Controller:Create#index');
-
 
 		$router['ms.cp.discount']->add('ms.cp.discount.delete', '/{discountID}/delete', 'Message:Mothership:Discount::Controller:Detail#delete')
 			->setRequirement('discountID', '\d+')
@@ -39,21 +36,12 @@ class Routes implements RoutesInterface
 			->setMethod('GET')
 			->enableCsrf('hash');
 
-		$router['ms.cp.discount']->add('ms.cp.discount.edit.action', 'edit/{discountID}', 'Message:Mothership:Discount::Controller:Detail#processAttributes')
-			->setRequirement('discountID', '\d+')
-			->setMethod('POST');
 		$router['ms.cp.discount']->add('ms.cp.discount.edit', 'edit/{discountID}', 'Message:Mothership:Discount::Controller:Detail#attributes')
 			->setRequirement('discountID', '\d+');
 
-		$router['ms.cp.discount']->add('ms.cp.discount.edit.criteria.action', 'edit/{discountID}/criteria', 'Message:Mothership:Discount::Controller:Detail#processCriteria')
-			->setRequirement('discountID', '\d+')
-			->setMethod('POST');
 		$router['ms.cp.discount']->add('ms.cp.discount.edit.criteria', 'edit/{discountID}/criteria', 'Message:Mothership:Discount::Controller:Detail#criteria')
 			->setRequirement('discountID', '\d+');
 
-		$router['ms.cp.discount']->add('ms.cp.discount.edit.benefit.action', 'edit/{discountID}/benefit', 'Message:Mothership:Discount::Controller:Detail#processBenefit')
-			->setRequirement('discountID', '\d+')
-			->setMethod('POST');
 		$router['ms.cp.discount']->add('ms.cp.discount.edit.benefit', 'edit/{discountID}/benefit', 'Message:Mothership:Discount::Controller:Detail#benefit')
 			->setRequirement('discountID', '\d+');
 

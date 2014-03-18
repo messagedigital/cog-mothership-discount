@@ -1,11 +1,11 @@
 <div class="search">
 {{ form_start(code_search_form) }}
-	{{ form_row(code_search_form.term, { 'attr': {'placeholder': 'Enter discount code...' } }) }}
+	{{ form_row(code_search_form.term, { 'attr': {'placeholder': 'Search discounts...' } }) }}
 	<button type="submit">Search</button>
 {{ form_end(code_search_form) }}
 </div>
 
-<a href="{{ url('ms.cp.discount.create')}}" class="button small create discount" data-live>Add Discount</a>
+<a href="{{ url('ms.cp.discount.create')}}" class="button small create discount" data-live>Add a new discount</a>
 
 <ol class="menu">
 	<li>

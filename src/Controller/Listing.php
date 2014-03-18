@@ -27,7 +27,7 @@ class Listing extends Controller
 
 		return $this->render('::listing', array(
 			'discounts' => $discounts,
-			'title' 	=> 'Active Discounts',
+			'title' 	=> 'Active discounts',
 		));
 	}
 
@@ -37,7 +37,7 @@ class Listing extends Controller
 
 		return $this->render('::listing', array(
 			'discounts' => $discounts,
-			'title' 	=> 'Inactive Discounts',
+			'title' 	=> 'Inactive discounts',
 		));
 	}
 }

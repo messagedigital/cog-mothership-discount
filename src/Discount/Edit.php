@@ -138,15 +138,14 @@ class Edit implements DB\TransactionalInterface
 			)
 		);
 
-		if (count($discount->thresholds) !== 0) {
+		if (0 !== count($discount->thresholds)) {
 			$options = array();
 			$inserts = array();
-			foreach ($discount->thresholds as $threshold) {
+			foreach ($discount->thresholds as $currencyID => $threshold) {
 				$options[] = $discount->id;
-				$options[] = $threshold->currencyID;
-				$options[] = $threshold->locale;
-				$options[] = $threshold->threshold;
-				$inserts[] = '(?i, ?s, ?s, ?f)';
+				$options[] = $currencyID;
+				$options[] = $threshold;
+				$inserts[] = '(?i, ?s, ?f)';
 			}
 
 			$result = $this->_query->run(
@@ -155,7 +154,6 @@ class Edit implements DB\TransactionalInterface
 					(
 						discount_id,
 						currency_id,
-						locale,
 						threshold
 					)
 				VALUES
@@ -186,12 +184,11 @@ class Edit implements DB\TransactionalInterface
 		if (count($discount->discountAmounts) !== 0) {
 			$options = array();
 			$inserts = array();
-			foreach ($discount->discountAmounts as $discountAmount) {
+			foreach ($discount->discountAmounts as $currencyID => $discountAmount) {
 				$options[] = $discount->id;
-				$options[] = $discountAmount->currencyID;
-				$options[] = $discountAmount->locale;
-				$options[] = $discountAmount->amount;
-				$inserts[] = '(?i, ?s, ?s, ?f)';
+				$options[] = $currencyID;
+				$options[] = $discountAmount;
+				$inserts[] = '(?i, ?s, ?f)';
 			}
 
 			$result = $this->_query->run(
@@ -200,7 +197,6 @@ class Edit implements DB\TransactionalInterface
 					(
 						discount_id,
 						currency_id,
-						locale,
 						amount
 					)
 				VALUES

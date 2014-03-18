@@ -76,9 +76,9 @@ class Validator
 
 		// check whether discount-threshold is reached
 		if (0 !== count($discount->thresholds)) {
-			foreach ($discount->thresholds as $threshold) {
-				if ($this->_order->locale === $threshold->locale && $this->_order->currencyID === $threshold->currencyID) {
-					if ($this->_order->productGross < $threshold->threshold) {
+			foreach ($discount->thresholds as $currencyID => $threshold) {
+				if ($this->_order->currencyID === $currencyID) {
+					if ($this->_order->productGross < $threshold) {
 						throw new OrderValidityException('Your order value is less than the discount threshold.');
 					}
 				}
