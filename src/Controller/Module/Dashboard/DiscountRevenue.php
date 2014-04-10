@@ -43,7 +43,7 @@ class DiscountRevenue extends Controller
 		}
 
 		return $this->render(
-			'Message:Mothership:Commerce::module:dashboard:discount-revenue',
+			'Message:Mothership:Discount::module:dashboard:discount-revenue',
 			$data
 		);
 	}

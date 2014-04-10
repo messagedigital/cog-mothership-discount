@@ -1,6 +1,6 @@
 <?php
 
-namespace Message\Mothership\Commerce;
+namespace Message\Mothership\Discount;
 
 use Message\Cog\Event\SubscriberInterface;
 use Message\Cog\Event\EventListener as BaseListener;
@@ -36,7 +36,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 	 */
 	public function buildDashboardIndex(DashboardEvent $event)
 	{
-		$event->addReference('Message:Mothership:Commerce::Controller:Module:Dashboard:DiscountRevenue#index');
+		$event->addReference('Message:Mothership:Discount::Controller:Module:Dashboard:DiscountRevenue#index');
 	}
 
 	/**
