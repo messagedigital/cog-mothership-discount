@@ -31,8 +31,8 @@ class DiscountRevenue extends Controller
 					SUM(total_gross) as sum_total_gross
 				FROM order_summary
 				WHERE total_discount > 0
-				AND created_at > {$since}
-			");
+				AND created_at > ?
+			", [$since]);
 
 			$data = [
 				'total_discount' => $totals[0]->sum_total_discount,
