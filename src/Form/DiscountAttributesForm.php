@@ -47,6 +47,11 @@ class DiscountAttributesForm extends Form\AbstractType
 			'contextual_help' => 'ms.discount.discount.attributes.description.help',
 		]);
 
+		$builder->add('emailTo', 'textarea', [
+			'label'           => 'ms.discount.discount.attributes.email-to.label',
+			'contextual_help' => 'ms.discount.discount.attributes.email-to.help',
+		]);
+
 		$builder->add('start', 'datetime', [
 			'label'           => 'ms.discount.discount.attributes.start.label',
 			'contextual_help' => 'ms.discount.discount.attributes.start.help',
