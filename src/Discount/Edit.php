@@ -73,10 +73,68 @@ class Edit implements DB\TransactionalInterface
 		$this->_saveDiscountAmounts($discount);
 		$this->_saveThresholds($discount);
 		$this->_saveProducts($discount);
+		$this->_saveEmails($discount);
 
 		$this->_query->commit();
 
 		return $discount;
+	}
+
+	public function markEmailAsUsed(Discount $discount)
+	{
+		$this->_query->run("
+			UPDATE
+				discount_email
+			SET
+				used_at = :usedAt?d
+			WHERE
+				discount_id = :id?s
+		", [
+			'usedAt' => new \DateTime(),
+			'id'     => $discount->id,
+		]);
+	}
+
+	protected function _saveEmails(Discount $discount)
+	{
+		$emailSqlValues = $this->_getEmailSqlValues($discount);
+
+		$this->_query->run("
+			DELETE FROM
+				discount_email
+			WHERE
+				discount_id = :id?i
+		", [
+			'id' => $discount->id,
+		]);
+
+		$this->_query->run("
+			INSERT INTO
+				discount_email
+				(
+					discount_id,
+					email
+				)
+			VALUES
+			" . $emailSqlValues . "
+		");
+
+		return $discount;
+	}
+
+	protected function _getEmailSqlValues(Discount $discount)
+	{
+		$values = [];
+		foreach ($discount->emails as $email) {
+			$value = '(' . PHP_EOL;
+			$value .= ((int) $discount->id) . ',' . PHP_EOL;
+			$value .= "'" . $email . "'" . PHP_EOL;
+			$value .= ')';
+
+			$values[] = $value;
+		}
+
+		return implode(',' . PHP_EOL, $values);
 	}
 
 	/**
@@ -119,6 +177,8 @@ class Edit implements DB\TransactionalInterface
 			);
 		}
 	}
+
+
 
 	/**
 	 * Clears discount-threshold-table for $discount and

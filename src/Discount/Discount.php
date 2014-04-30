@@ -14,7 +14,7 @@ class Discount
 	public $code;
 	public $name;
 	public $description;
-	public $emailTo;
+	public $emails;
 
 	public $start;
 	public $end;

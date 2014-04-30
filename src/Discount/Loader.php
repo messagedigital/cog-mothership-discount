@@ -228,6 +228,7 @@ class Loader
 
 			$discounts[$key]->thresholds 		= $this->_loadThresholds($discounts[$key]);
 			$discounts[$key]->discountAmounts 	= $this->_loadDiscountAmounts($discounts[$key]);
+			$discounts[$key]->emails            = $this->_loadEmails($discounts[$key]);
 
 			$return[$row->id] = $discounts[$key];
 		}
@@ -283,6 +284,22 @@ class Loader
 		}
 
 		return $return;
+	}
+
+	protected function _loadEmails(Discount $discount)
+	{
+		$result = $this->_query->run("
+			SELECT
+				email
+			FROM
+				discount_email
+			WHERE
+				discount_id = :id?i
+		", [
+			'id' => $discount->id,
+		]);
+
+		return $result->flatten();
 	}
 
 	protected function _loadProducts($discountID)

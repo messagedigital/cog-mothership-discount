@@ -66,14 +66,19 @@ class EventListener extends BaseListener implements SubscriberInterface
 	public function validateDiscount(Event\Event $event)
 	{
 		$order = $event->getOrder();
-		$discountValidator = $this->get('discount.validator')->setOrder($order);
+		$discountValidator      = $this->get('discount.validator')->setOrder($order);
+		$discountEmailValidator = $this->get('discount.email.validator')->setOrder($order);
 
 		foreach ($order->discounts as $orderDiscount) {
 			try {
 				if ($orderDiscount->code) {
 					$orderDiscount = $discountValidator->validate($orderDiscount->code);
 				}
-			} catch (OrderValidityException $e) {
+				if (count($orderDiscount->emails)) {
+					$orderDiscount = $discountEmailValidator->validate($orderDiscount);
+				}
+			}
+			catch (OrderValidityException $e) {
 				$order->discounts->remove($orderDiscount);
 
 				if ($event instanceof Event\Event\AssemblerEvent) {

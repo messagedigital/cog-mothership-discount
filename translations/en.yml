@@ -14,7 +14,7 @@ ms.discount:
       description:
         label: Description
         help: A description of the discount.
-      email-to:
+      emails:
         label: Send to
         help: A list of email addresses to send these discounts to, separate with line breaks
       code:

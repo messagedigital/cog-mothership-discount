@@ -20,6 +20,7 @@ class Detail extends Controller
 
 		if ($form->isValid()) {
 			$discount = $form->getData();
+
 			$discount = $this->get('discount.edit')->save($discount);
 
 			$this->addFlash('success', $this->trans('ms.discount.discount.edit.success', array(

@@ -11,7 +11,8 @@ class _1398866595_DiscountEmail extends Migration
 				discount_email
 				(
 					discount_id INT(11),
-					email varchar(255)
+					email VARCHAR(255),
+					used_at INT(11) DEFAULT NULL
 				)
 			;
 		");
@@ -20,7 +21,7 @@ class _1398866595_DiscountEmail extends Migration
 	public function down()
 	{
 		$this->run("
-			DROP discount_email
+			DROP TABLE discount_email;
 		");
 	}
 }
