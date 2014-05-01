@@ -67,8 +67,8 @@ class EventListener extends BaseListener implements SubscriberInterface
 	 */
 	public function validateDiscount(Event\Event $event)
 	{
-		$order = $event->getOrder();
-		$discountValidator      = $this->get('discount.validator')->setOrder($order);
+		$order             = $event->getOrder();
+		$discountValidator = $this->get('discount.validator')->setOrder($order);
 
 		foreach ($order->discounts as $orderDiscount) {
 			try {
@@ -100,9 +100,6 @@ class EventListener extends BaseListener implements SubscriberInterface
 				$discount = $this->get('discount.loader')->getByCode($orderDiscount->code);
 				if (in_array($order->userEmail, $discount->emails)) {
 					$this->get('discount.edit')->markEmailAsUsed($discount, $order->userEmail);
-				}
-				else {
-					de($discount->emails, $order->userEmail);
 				}
 			}
 		}

@@ -14,9 +14,6 @@ ms.discount:
       description:
         label: Description
         help: A description of the discount.
-      emails:
-        label: Send to
-        help: A list of email addresses to send these discounts to, separate with line breaks
       code:
         label: Code
         help: A unique code the discount can be identified by.
@@ -48,6 +45,9 @@ ms.discount:
       thresholds:
         label: Thresholds
         help: If you choose a threshold, the discount can only be applied to orders with a total greater than or equal to the treshold.
+      emails:
+        label: Allowed email address
+        help: A list of email addresses that qualify for this discount, separate with line breaks. Leave blank to allow for all email addresses
     add:
       label: I have a discount code
       success: You successfully added a discount.

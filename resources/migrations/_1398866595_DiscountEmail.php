@@ -12,8 +12,9 @@ class _1398866595_DiscountEmail extends Migration
 				(
 					discount_id INT(11),
 					email VARCHAR(255),
-					used_at INT(11) DEFAULT NULL
-				)
+					used_at INT(11) DEFAULT NULL,
+					PRIMARY KEY (discount_id, email)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8
 			;
 		");
 	}

@@ -102,6 +102,7 @@ class Edit implements DB\TransactionalInterface
 
 	protected function _saveEmails(Discount $discount)
 	{
+		$emailDeleteParams = $this->_getEmailDeleteParams($discount);
 		$emailSqlValues = $this->_getEmailSqlValues($discount);
 
 		$this->_query->run("
@@ -109,12 +110,14 @@ class Edit implements DB\TransactionalInterface
 				discount_email
 			WHERE
 				discount_id = :id?i
+			AND
+				" . $emailDeleteParams .  "
 		", [
 			'id' => $discount->id,
 		]);
 
 		$this->_query->run("
-			INSERT INTO
+			INSERT IGNORE INTO
 				discount_email
 				(
 					discount_id,
@@ -140,6 +143,17 @@ class Edit implements DB\TransactionalInterface
 		}
 
 		return implode(',' . PHP_EOL, $values);
+	}
+
+	protected function _getEmailDeleteParams(Discount $discount)
+	{
+		$sql = [];
+
+		foreach ($discount->emails as $email) {
+			$sql[] = "email != '" . $email . "'";
+		}
+
+		return PHP_EOL . implode(PHP_EOL . 'AND' . PHP_EOL, $sql) . PHP_EOL;
 	}
 
 	/**
