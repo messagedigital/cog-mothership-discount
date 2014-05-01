@@ -29,7 +29,7 @@ class EmailValidator
 		return $this;
 	}
 
-	public function validateEmail(Discount $discount)
+	public function validate(Discount $discount)
 	{
 		$result = $this->_query->run("
 			SELECT
@@ -37,7 +37,7 @@ class EmailValidator
 			FROM
 				discount_email
 			WHERE
-				used_by != NULL
+				used_at != NULL
 			AND
 				discount_id = :id?i
 			AND
@@ -48,7 +48,7 @@ class EmailValidator
 		]);
 
 		if ($result->count()) {
-			throw new OrderValidityException('This code has already been used by this email.');
+			throw new OrderValidityException('This code has already been used by this email address.');
 		}
 
 		return true;

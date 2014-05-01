@@ -80,7 +80,7 @@ class Edit implements DB\TransactionalInterface
 		return $discount;
 	}
 
-	public function markEmailAsUsed(Discount $discount)
+	public function markEmailAsUsed(Discount $discount, $email)
 	{
 		$this->_query->run("
 			UPDATE
@@ -89,9 +89,12 @@ class Edit implements DB\TransactionalInterface
 				used_at = :usedAt?d
 			WHERE
 				discount_id = :id?s
+			AND
+				email = :email?s
 		", [
 			'usedAt' => new \DateTime(),
 			'id'     => $discount->id,
+			'email'  => $email,
 		]);
 	}
 
