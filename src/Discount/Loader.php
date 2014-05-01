@@ -217,18 +217,18 @@ class Loader
 			$products = $this->_loadProducts($row->id);
 			$appliesToOrder = (0 === count($products));
 
-			$discounts[$key]->percentage 		= ($row->percentage !== null ? (float) $row->percentage : null);
+			$discounts[$key]->percentage      = ($row->percentage !== null ? (float) $row->percentage : null);
 
-			$discounts[$key]->products 			= $products;
-			$discounts[$key]->appliesToOrder 	= $appliesToOrder;
+			$discounts[$key]->products        = $products;
+			$discounts[$key]->appliesToOrder  = $appliesToOrder;
 
-			$discounts[$key]->start 			= ($row->start ? new DateTimeImmutable(date('c', $row->start)) : null);
-			$discounts[$key]->end 				= ($row->end ? new DateTimeImmutable(date('c', $row->end)) : null);
-			$discounts[$key]->freeShipping  	= (bool) $row->freeShipping;
+			$discounts[$key]->start           = ($row->start ? new DateTimeImmutable(date('c', $row->start)) : null);
+			$discounts[$key]->end             = ($row->end ? new DateTimeImmutable(date('c', $row->end)) : null);
+			$discounts[$key]->freeShipping    = (bool) $row->freeShipping;
 
-			$discounts[$key]->thresholds 		= $this->_loadThresholds($discounts[$key]);
-			$discounts[$key]->discountAmounts 	= $this->_loadDiscountAmounts($discounts[$key]);
-			$discounts[$key]->emails            = $this->_loadEmails($discounts[$key]);
+			$discounts[$key]->thresholds      = $this->_loadThresholds($discounts[$key]);
+			$discounts[$key]->discountAmounts = $this->_loadDiscountAmounts($discounts[$key]);
+			$discounts[$key]->emails          = $this->_loadEmails($discounts[$key]);
 
 			$return[$row->id] = $discounts[$key];
 		}
