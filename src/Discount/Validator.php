@@ -4,6 +4,7 @@ namespace Message\Mothership\Discount\Discount;
 
 use Message\Cog\Service\Container;
 use Message\Cog\ValueObject\Authorship;
+use Message\Cog\DB\Query;
 use Message\Mothership\Commerce\Product\Product;
 use Message\Mothership\Commerce\Order\Order;
 
@@ -13,18 +14,22 @@ use Message\Mothership\Commerce\Order\Order;
  */
 class Validator
 {
+	const ALREADY_USED  = 'This code has already been used by this email address.';
+	const INVALID_EMAIL = 'This discount applies to certain email addresses only, please ensure you are allowed to use this discount code';
+
 	/**
 	 * The order-object of the order-discount to validate
 	 */
 	protected $_order;
 	protected $_discountLoader;
 	protected $_orderDiscountFactory;
+	protected $_query;
 
-
-	public function __construct(Loader $discountLoader, OrderDiscountFactory $orderDiscountFactory)
+	public function __construct(Loader $discountLoader, OrderDiscountFactory $orderDiscountFactory, Query $query)
 	{
 		$this->_discountLoader = $discountLoader;
 		$this->_orderDiscountFactory = $orderDiscountFactory;
+		$this->_query = $query;
 	}
 
 	public function setOrder(Order $order)
@@ -106,10 +111,52 @@ class Validator
 			}
 		}
 
+		$this->_validateEmail($discount);
+
 		$this->_orderDiscountFactory
 			->setOrder($this->_order)
 			->setDiscount($discount);
 
 		return $this->_orderDiscountFactory->createOrderDiscount();
+	}
+
+	protected function _validateEmail(Discount $discount)
+	{
+		if (!empty($discount->emails)) {
+
+			if ($this->_order->userEmail || $this->_order->user) {
+
+				$email = $this->_order->userEmail ?: $this->_order->user->email;
+
+				if (!$email) {
+					throw new OrderValidityException(self::INVALID_EMAIL);
+				}
+
+				$result = $this->_query->run("
+					SELECT
+						used_at
+					FROM
+						discount_email
+					WHERE
+
+						discount_id = :id?i
+					AND
+						email = :email?s
+				", [
+					'id' => $discount->id,
+					'email' => $email,
+				])->flatten();
+
+				if (empty($result)) {
+					throw new OrderValidityException(self::INVALID_EMAIL);
+				}
+
+				$usedAt = array_shift($result);
+
+				if ($usedAt) {
+					throw new OrderValidityException(self::ALREADY_USED);
+				}
+			}
+		}
 	}
 }

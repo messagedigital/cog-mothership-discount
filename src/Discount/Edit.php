@@ -96,6 +96,8 @@ class Edit implements DB\TransactionalInterface
 			'id'     => $discount->id,
 			'email'  => $email,
 		]);
+
+		$this->_query->commit();
 	}
 
 	protected function _saveEmails(Discount $discount)

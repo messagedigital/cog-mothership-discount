@@ -69,15 +69,11 @@ class EventListener extends BaseListener implements SubscriberInterface
 	{
 		$order = $event->getOrder();
 		$discountValidator      = $this->get('discount.validator')->setOrder($order);
-		$discountEmailValidator = $this->get('discount.email.validator')->setOrder($order);
 
 		foreach ($order->discounts as $orderDiscount) {
 			try {
 				if ($orderDiscount->code) {
 					$orderDiscount = $discountValidator->validate($orderDiscount->code);
-				}
-				if (count($orderDiscount->discount->emails)) {
-					$orderDiscount = $discountEmailValidator->validate($orderDiscount->discount);
 				}
 			}
 			catch (OrderValidityException $e) {
@@ -100,8 +96,14 @@ class EventListener extends BaseListener implements SubscriberInterface
 		$order = $event->getOrder();
 
 		foreach ($order->discounts as $orderDiscount) {
-			if (!empty($orderDiscount->discount->emails)) {
-				$this->get('discount.edit')->markEmailAsUsed($orderDiscount->discount, $order->userEmail);
+			if ($orderDiscount->code) {
+				$discount = $this->get('discount.loader')->getByCode($orderDiscount->code);
+				if (in_array($order->userEmail, $discount->emails)) {
+					$this->get('discount.edit')->markEmailAsUsed($discount, $order->userEmail);
+				}
+				else {
+					de($discount->emails, $order->userEmail);
+				}
 			}
 		}
 	}
