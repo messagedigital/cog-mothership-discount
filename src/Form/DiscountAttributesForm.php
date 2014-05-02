@@ -2,11 +2,11 @@
 
 namespace Message\Mothership\Discount\Form;
 
+use Message\Mothership\Discount\Discount\Discount;
+
 use Symfony\Component\Form;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Message\Mothership\Discount\Discount\Discount;
 use Symfony\Component\Validator\Constraints;
-use Message\Cog\ValueObject\DateTimeImmutable;
 
 class DiscountAttributesForm extends Form\AbstractType
 {
@@ -64,7 +64,8 @@ class DiscountAttributesForm extends Form\AbstractType
 	 * Method called on Form\FormEvents::POST_SUBMIT
 	 * @param  FormFormEvent $event
 	 */
-	public function onPostSubmit(Form\FormEvent $event) {
+	public function onPostSubmit(Form\FormEvent $event)
+	{
 		$this->validateStartEndDate($event);
 		$this->filter($event->getForm()->getData());
 	}

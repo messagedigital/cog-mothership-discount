@@ -10,7 +10,6 @@ use Message\User\UserInterface;
 class Create
 {
 	protected $_query;
-	protected $_locale;
 	protected $_currentUser;
 
 	public function __construct(DB\Query $query, UserInterface $currentUser)
@@ -57,7 +56,7 @@ class Create
 		);
 
 		$discount->id = $result->id();
-		
+
 		return $discount;
 	}
 }
