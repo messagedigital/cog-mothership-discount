@@ -103,16 +103,16 @@ class Edit implements DB\TransactionalInterface
 	protected function _saveEmails(Discount $discount)
 	{
 		$emailDeleteParams = $this->_getEmailDeleteParams($discount);
-		$emailSqlValues = $this->_getEmailSqlValues($discount);
+		$emailSqlValues    = $this->_getEmailSqlValues($discount);
 
 		$this->_query->run("
 			DELETE FROM
 				discount_email
 			WHERE
 				discount_id = :id?i
-			AND
+			 ". ($emailDeleteParams ? "AND
 				" . $emailDeleteParams .  "
-		", [
+		" : ""), [
 			'id' => $discount->id,
 		]);
 
@@ -155,7 +155,9 @@ class Edit implements DB\TransactionalInterface
 			$sql[] = "email != '" . $email . "'";
 		}
 
-		return PHP_EOL . implode(PHP_EOL . 'AND' . PHP_EOL, $sql) . PHP_EOL;
+		$sql = implode(PHP_EOL . 'AND' . PHP_EOL, $sql);
+
+		return $sql ? PHP_EOL . $sql . PHP_EOL : '';
 	}
 
 	/**

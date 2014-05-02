@@ -27,7 +27,9 @@ class DiscountEmailTransformer implements DataTransformerInterface
 	{
 		foreach ($emails as $key => $email) {
 			$email        = strtolower(trim($email));
-			$emails[$key] = $email;
+			if ($email) {
+				$emails[$key] = $email;
+			}
 		}
 
 		return array_unique($emails);
