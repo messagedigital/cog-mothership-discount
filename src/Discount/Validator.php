@@ -141,10 +141,10 @@ class Validator
 
 						discount_id = :id?i
 					AND
-						email = :email?s
+						LOWER(email) = :email?s
 				", [
-					'id' => $discount->id,
-					'email' => $email,
+					'id'    => $discount->id,
+					'email' => strtolower($email),
 				])->flatten();
 
 				if (empty($result)) {
