@@ -1,6 +1,6 @@
 <?php
 
-namespace Message\Mothership\Discount\Form;
+namespace Message\Mothership\Discount\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
 

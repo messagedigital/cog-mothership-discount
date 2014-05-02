@@ -5,6 +5,7 @@ namespace Message\Mothership\Discount\Form;
 use Symfony\Component\Form;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Message\Mothership\Discount\Discount\Discount;
+use Message\Mothership\Discount\Form\DataTransformer\DiscountEmailTransformer;
 use Symfony\Component\Validator\Constraints;
 use Message\Cog\ValueObject\DateTimeImmutable;
 

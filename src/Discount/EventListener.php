@@ -75,8 +75,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 				if ($orderDiscount->code) {
 					$orderDiscount = $discountValidator->validate($orderDiscount->code);
 				}
-			}
-			catch (OrderValidityException $e) {
+			} catch (OrderValidityException $e) {
 				$order->discounts->remove($orderDiscount);
 
 				if ($event instanceof Event\Event\AssemblerEvent) {
