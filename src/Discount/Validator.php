@@ -138,7 +138,6 @@ class Validator
 					FROM
 						discount_email
 					WHERE
-
 						discount_id = :id?i
 					AND
 						LOWER(email) = :email?s
