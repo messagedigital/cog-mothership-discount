@@ -141,10 +141,10 @@ class Validator
 
 						discount_id = :id?i
 					AND
-						email = :email?s
+						LOWER(email) = :email?s
 				", [
-					'id' => $discount->id,
-					'email' => $email,
+					'id'    => $discount->id,
+					'email' => strtolower($email),
 				])->flatten();
 
 				if (empty($result)) {
@@ -153,9 +153,9 @@ class Validator
 
 				$usedAt = array_shift($result);
 
-				if ($usedAt) {
-					throw new OrderValidityException(self::ALREADY_USED);
-				}
+//				if ($usedAt) {
+//					throw new OrderValidityException(self::ALREADY_USED);
+//				}
 			}
 		}
 	}
