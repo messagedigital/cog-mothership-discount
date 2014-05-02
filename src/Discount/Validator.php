@@ -57,11 +57,11 @@ class Validator
 	public function validate($discountCode)
 	{
 		if (null === $this->_order) {
-			throw new \Exception('Order must be set before discount code can be validated');
+			throw new \Exception('Order must be set before discount code can be validated.');
 		}
 
 		if(0 === $this->_order->items->count()) {
-			throw new OrderValidityException('Your basket is empty');
+			throw new OrderValidityException('Your basket is empty.');
 		}
 
 		$discount = $this->_discountLoader->getByCode($discountCode);
