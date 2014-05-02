@@ -8,7 +8,6 @@ use Message\Mothership\Commerce\Order\Event;
 use Message\Cog\Event\SubscriberInterface;
 use Message\Cog\Event\EventListener as BaseListener;
 
-
 /**
  * Discount event listener.
  */
@@ -20,14 +19,17 @@ class EventListener extends BaseListener implements SubscriberInterface
 	static public function getSubscribedEvents()
 	{
 		return array(
-			OrderEvents::CREATE_START => array(
-				array('validateDiscount', 250),
-				array('updateOrderDiscounts', 200),
-			),
-			OrderEvents::ASSEMBLER_UPDATE => array(
-				array('validateDiscount', 250),
-				array('updateOrderDiscounts', 200),
-			)
+			OrderEvents::CREATE_START => [
+				['validateDiscount', 250],
+				['updateOrderDiscounts', 200],
+			],
+			OrderEvents::ASSEMBLER_UPDATE => [
+				['validateDiscount', 250],
+				['updateOrderDiscounts', 200],
+			],
+			OrderEvents::CREATE_COMPLETE => [
+				['updateDiscountEmail', 250],
+			],
 		);
 	}
 
@@ -65,7 +67,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 	 */
 	public function validateDiscount(Event\Event $event)
 	{
-		$order = $event->getOrder();
+		$order             = $event->getOrder();
 		$discountValidator = $this->get('discount.validator')->setOrder($order);
 
 		foreach ($order->discounts as $orderDiscount) {
@@ -84,6 +86,20 @@ class EventListener extends BaseListener implements SubscriberInterface
 					'info',
 					sprintf('Discount `%s` was removed: %s', $orderDiscount->code, $e->getMessage())
 				);
+			}
+		}
+	}
+
+	public function updateDiscountEmail(Event\Event $event)
+	{
+		$order = $event->getOrder();
+
+		foreach ($order->discounts as $orderDiscount) {
+			if ($orderDiscount->code) {
+				$discount = $this->get('discount.loader')->getByCode($orderDiscount->code);
+				if (in_array($order->userEmail, $discount->emails)) {
+					$this->get('discount.edit')->markEmailAsUsed($discount, $order->userEmail);
+				}
 			}
 		}
 	}

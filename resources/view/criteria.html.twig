@@ -10,6 +10,12 @@
 				{{ form_widget(form.products) }}
 			</div>
 		</div>
+		<div class="group">
+			<h2 class="title">{{ 'ms.discount.discount.criteria.eligability.title' | trans }}</h2>
+			<div class="content">
+				{{ form_row(form.emails) }}
+			</div>
+		</div>
 		<button type="submit" class="button small save" id="save-content">{{ 'ms.discount.discount.edit.button'|trans }}</button>
 	{{ form_end(form) }}
 </div>

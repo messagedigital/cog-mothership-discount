@@ -5,6 +5,7 @@ namespace Message\Mothership\Discount\Form;
 use Symfony\Component\Form;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Message\Mothership\Discount\Discount\Discount;
+use Message\Mothership\Discount\Form\DataTransformer\DiscountEmailTransformer;
 use Symfony\Component\Validator\Constraints;
 use Message\Cog\ValueObject\DateTimeImmutable;
 
@@ -47,6 +48,15 @@ class DiscountCriteriaForm extends Form\AbstractType
 			'multiple' => true,
 			'expanded' => true,
 		]);
+
+		$builder->add(
+			$builder->create('emails', 'textarea', [
+					'label'           => 'ms.discount.discount.criteria.emails.label',
+					'contextual_help' => 'ms.discount.discount.criteria.emails.help',
+				]
+			)
+				->addModelTransformer(new DiscountEmailTransformer)
+		);
 
 		$builder->addEventListener(Form\FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
 		$builder->addEventListener(Form\FormEvents::POST_SUBMIT, array($this, 'onPostSubmit'));
