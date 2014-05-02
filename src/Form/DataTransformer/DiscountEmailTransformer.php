@@ -26,7 +26,7 @@ class DiscountEmailTransformer implements DataTransformerInterface
 	protected function _parseEmails(array $emails)
 	{
 		foreach ($emails as $key => $email) {
-			$email        = trim($email);
+			$email        = strtolower(trim($email));
 			$emails[$key] = $email;
 		}
 

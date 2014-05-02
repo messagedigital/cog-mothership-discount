@@ -116,16 +116,18 @@ class Edit implements DB\TransactionalInterface
 			'id' => $discount->id,
 		]);
 
-		$this->_query->run("
-			INSERT IGNORE INTO
-				discount_email
-				(
-					discount_id,
-					email
-				)
-			VALUES
-			" . $emailSqlValues . "
-		");
+		if (!empty($discount->emails)) {
+			$this->_query->run("
+				INSERT IGNORE INTO
+					discount_email
+					(
+						discount_id,
+						email
+					)
+				VALUES
+				" . $emailSqlValues . "
+			");
+		}
 
 		return $discount;
 	}
