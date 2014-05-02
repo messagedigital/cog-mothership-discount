@@ -26,7 +26,7 @@ class Services implements ServicesInterface
 		});
 
 		$services['discount.form.create'] = $services->factory(function($c) {
-			return new Discount\Form\DiscountCreateForm($c['cfg']->discount->maxCodeLength);
+			return new Discount\Form\DiscountCreateForm($c['cfg']->discount->maxCodeLength, $c['discount.loader']);
 		});
 
 		$services['discount.form.attributes'] = $services->factory(function($c) {
