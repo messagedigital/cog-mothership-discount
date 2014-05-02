@@ -73,10 +73,91 @@ class Edit implements DB\TransactionalInterface
 		$this->_saveDiscountAmounts($discount);
 		$this->_saveThresholds($discount);
 		$this->_saveProducts($discount);
+		$this->_saveEmails($discount);
 
 		$this->_query->commit();
 
 		return $discount;
+	}
+
+	public function markEmailAsUsed(Discount $discount, $email)
+	{
+		$this->_query->run("
+			UPDATE
+				discount_email
+			SET
+				used_at = :usedAt?d
+			WHERE
+				discount_id = :id?s
+			AND
+				email = :email?s
+		", [
+			'usedAt' => new \DateTime(),
+			'id'     => $discount->id,
+			'email'  => $email,
+		]);
+
+		$this->_query->commit();
+	}
+
+	protected function _saveEmails(Discount $discount)
+	{
+		$emailDeleteParams = $this->_getEmailDeleteParams($discount);
+		$emailSqlValues    = $this->_getEmailSqlValues($discount);
+
+		$this->_query->run("
+			DELETE FROM
+				discount_email
+			WHERE
+				discount_id = :id?i
+			 ". ($emailDeleteParams ? "AND
+				" . $emailDeleteParams .  "
+		" : ""), [
+			'id' => $discount->id,
+		]);
+
+		if (!empty($discount->emails)) {
+			$this->_query->run("
+				INSERT IGNORE INTO
+					discount_email
+					(
+						discount_id,
+						email
+					)
+				VALUES
+				" . $emailSqlValues . "
+			");
+		}
+
+		return $discount;
+	}
+
+	protected function _getEmailSqlValues(Discount $discount)
+	{
+		$values = [];
+		foreach ($discount->emails as $email) {
+			$value = '(' . PHP_EOL;
+			$value .= ((int) $discount->id) . ',' . PHP_EOL;
+			$value .= "'" . $email . "'" . PHP_EOL;
+			$value .= ')';
+
+			$values[] = $value;
+		}
+
+		return implode(',' . PHP_EOL, $values);
+	}
+
+	protected function _getEmailDeleteParams(Discount $discount)
+	{
+		$sql = [];
+
+		foreach ($discount->emails as $email) {
+			$sql[] = "email != '" . $email . "'";
+		}
+
+		$sql = implode(PHP_EOL . 'AND' . PHP_EOL, $sql);
+
+		return $sql ? PHP_EOL . $sql . PHP_EOL : '';
 	}
 
 	/**
@@ -119,6 +200,8 @@ class Edit implements DB\TransactionalInterface
 			);
 		}
 	}
+
+
 
 	/**
 	 * Clears discount-threshold-table for $discount and
