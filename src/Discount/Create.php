@@ -58,6 +58,8 @@ class Create
 
 		$discount->id = $result->id();
 
+		return $discount;
+
 	}
 
 }
