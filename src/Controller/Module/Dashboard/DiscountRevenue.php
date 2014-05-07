@@ -11,9 +11,6 @@ use Message\Cog\Controller\Controller;
  */
 class DiscountRevenue extends Controller
 {
-	const CACHE_KEY = 'dashboard.module.discount-revenue';
-	const CACHE_TTL = 3600;
-
 	/**
 	 * Get the total gross and customer savings on discounted orders for the
 	 * past 7 days.
@@ -22,29 +19,31 @@ class DiscountRevenue extends Controller
 	 */
 	public function index()
 	{
-		if (false === $data = $this->get('cache')->fetch(self::CACHE_KEY)) {
-			$since = strtotime(date('Y-m-d')) - (60 * 60 * 24 * 6);
+		$grossDataset = $this->get('statistics')->get('discounted.sales.gross.daily');
+		$discountDataset = $this->get('statistics')->get('discount.gross.daily');
 
-			$totals = $this->get('db.query')->run("
-				SELECT
-					SUM(total_discount) as sum_total_discount,
-					SUM(total_gross) as sum_total_gross
-				FROM order_summary
-				WHERE total_discount > 0
-				AND created_at > ?
-			", [$since]);
+		$gross = $grossDataset->getTotal($grossDataset::WEEK_AGO);
+		$discount = $discountDataset->getTotal($discountDataset::WEEK_AGO);
 
-			$data = [
-				'total_discount' => $totals[0]->sum_total_discount,
-				'total_gross'    => $totals[0]->sum_total_gross,
-			];
+		$rows = [];
 
-			$this->get('cache')->store(self::CACHE_KEY, $data, self::CACHE_TTL);
-		}
+		$rows[] = [
+			'label' => 'Income from discounted orders',
+			'value' => $gross
+		];
 
-		return $this->render(
-			'Message:Mothership:Discount::module:dashboard:discount-revenue',
-			$data
-		);
+		$rows[] = [
+			'label' => 'Customer savings',
+			'value' => $discount
+		];
+
+		return $this->render('Message:Mothership:ControlPanel::module:dashboard:column-graph', [
+			'label' => 'Discounted Revenue (week)',
+			'keys' => [
+				'label' => 'Value',
+				'value' => 'Amount',
+			],
+			'rows' => $rows,
+		]);
 	}
 }

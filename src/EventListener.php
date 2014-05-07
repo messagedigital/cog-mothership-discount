@@ -4,7 +4,8 @@ namespace Message\Mothership\Discount;
 
 use Message\Cog\Event\SubscriberInterface;
 use Message\Cog\Event\EventListener as BaseListener;
-
+use Message\Mothership\Commerce\Order\Events as OrderEvents;
+use Message\Mothership\Commerce\Order\Event\Event as OrderEvent;
 use Message\Mothership\ControlPanel\Event\Dashboard\DashboardEvent;
 
 /**
@@ -20,6 +21,9 @@ class EventListener extends BaseListener implements SubscriberInterface
 	static public function getSubscribedEvents()
 	{
 		return array(
+			OrderEvents::CREATE_COMPLETE => array(
+				array('recordDiscountRevenue'),
+			),
 			DashboardEvent::DASHBOARD_INDEX => array(
 				'buildDashboardIndex'
 			),
@@ -47,5 +51,23 @@ class EventListener extends BaseListener implements SubscriberInterface
 	public function buildDashboardDiscounts(DashboardEvent $event)
 	{
 		$event->addReference('Message:Mothership:Discount::Controller:Module:Dashboard:DiscountRevenue#index');
+	}
+
+	/**
+	 * Record the additional discount statistics if the order was discounted.
+	 *
+	 * @param  Event\Event $event
+	 */
+	public function recordDiscountRevenue(OrderEvent $event)
+	{
+		$order = $event->getOrder();
+
+		if ($order->totalDiscount > 0) {
+			$this->get('statistics')->get('discounted.sales.gross.daily')
+				->increment($order->totalGross);
+
+			$this->get('statistics')->get('discount.gross.daily')
+				->increment($order->totalDiscount);
+		}
 	}
 }
