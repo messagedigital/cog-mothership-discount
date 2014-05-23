@@ -31,7 +31,7 @@
 
 		"message/cog"                    : "~3.0",
 		"message/cog-user"               : "~1.0",
-		"message/cog-mothership-commerce": "~2.0"
+		"message/cog-mothership-commerce": "~3.0"
 	},
 	"suggest": {
 	}
