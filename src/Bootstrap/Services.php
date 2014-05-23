@@ -38,7 +38,7 @@ class Services implements ServicesInterface
 		});
 
 		$services['discount.form.criteria'] = $services->factory(function($c) {
-			return new Discount\Form\DiscountCriteriaForm($c['product.loader']->getAll());
+			return new Discount\Form\DiscountCriteriaForm($c['db.query'], $c['product.loader']);
 		});
 
 		$services['discount.validator'] = $services->factory(function($c) {

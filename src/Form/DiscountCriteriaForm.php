@@ -4,10 +4,12 @@ namespace Message\Mothership\Discount\Form;
 
 use Symfony\Component\Form;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Message\Mothership\Discount\Discount\Discount;
-use Message\Mothership\Discount\Form\DataTransformer\DiscountEmailTransformer;
 use Symfony\Component\Validator\Constraints;
-use Message\Cog\ValueObject\DateTimeImmutable;
+
+use Message\Cog\Db\Query;
+use Message\Mothership\Commerce\Product\Loader;
+use Message\Mothership\Discount\Form\DataTransformer\DiscountEmailTransformer;
+use Message\Mothership\Discount\Form\DataTransformer\DiscountProductTransformer;
 
 class DiscountCriteriaForm extends Form\AbstractType
 {
@@ -15,14 +17,26 @@ class DiscountCriteriaForm extends Form\AbstractType
 	const APPLIES_TO_ORDER    = 1;
 
 	/**
+	 * @var \Message\Cog\Db\Query
+	 */
+	protected $_query;
+
+	/**
+	 * @var \Message\Mothership\Commerce\Product\Loader
+	 */
+	protected $_loader;
+
+	/**
 	 * All products available
 	 * @var array
 	 */
 	protected $_products;
 
-	public function __construct(array $products)
+	public function __construct(Query $query, Loader $loader)
 	{
-		$this->_products = $products;
+		$this->_query    = $query;
+		$this->_loader   = $loader;
+		$this->_products = $this->_getProducts();
 
 		return $this;
 	}
@@ -41,13 +55,15 @@ class DiscountCriteriaForm extends Form\AbstractType
 			],
 		]);
 
-		$builder->add('products', 'entity', [
-			'label'    => 'ms.discount.discount.criteria.products.label',
-			'property' => 'displayName',
-			'choices'  => $this->_products,
-			'multiple' => true,
-			'expanded' => true,
-		]);
+		$builder->add(
+			$builder->create('products', 'choice', [
+				'label'    => 'ms.discount.discount.criteria.products.label',
+				'choices'  => $this->_products,
+				'multiple' => true,
+				'expanded' => true,
+			])
+				->addModelTransformer(new DiscountProductTransformer($this->_loader))
+		);
 
 		$builder->add(
 			$builder->create('emails', 'textarea', [
@@ -111,5 +127,28 @@ class DiscountCriteriaForm extends Form\AbstractType
 	public function getName()
 	{
 		return 'discount_criteria';
+	}
+
+	protected function _getProducts()
+	{
+		$result = $this->_query->run("
+			SELECT
+				product_id,
+				name
+			FROM
+				product
+			WHERE
+				deleted_at IS NULL
+			ORDER BY
+				name ASC
+		");
+
+		$products = [];
+
+		foreach ($result as $row) {
+			$products[$row->product_id] = $row->name;
+		}
+
+		return $products;
 	}
 }
