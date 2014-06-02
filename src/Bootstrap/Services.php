@@ -55,12 +55,8 @@ class Services implements ServicesInterface
 	public function registerStatisticsDatasets($services)
 	{
 		$services->extend('statistics', function($statistics, $c) {
-			$factory = $c['statistics.dataset.factory'];
-
-			$statistics->addDatasets([
-				$factory->create('discounted.sales.gross.daily', $factory::COUNTER, $factory::DAILY),
-				$factory->create('discount.gross.daily', $factory::COUNTER, $factory::DAILY),
-			]);
+			$statistics->add(new Discount\Statistic\DiscountGross($c['db.query'], $c['statistics.counter.key'], $c['statistics.range.date']));
+			$statistics->add(new Discount\Statistic\DiscountedSalesGross($c['db.query'], $c['statistics.counter.key'], $c['statistics.range.date']));
 
 			return $statistics;
 		});

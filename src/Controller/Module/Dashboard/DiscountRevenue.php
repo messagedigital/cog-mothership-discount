@@ -19,11 +19,11 @@ class DiscountRevenue extends Controller
 	 */
 	public function index()
 	{
-		$grossDataset = $this->get('statistics')->get('discounted.sales.gross.daily');
-		$discountDataset = $this->get('statistics')->get('discount.gross.daily');
+		$grossDataset = $this->get('statistics')->get('discounted.sales.gross');
+		$discountDataset = $this->get('statistics')->get('discount.gross');
 
-		$gross = $grossDataset->getTotal($grossDataset::WEEK_AGO);
-		$discount = $discountDataset->getTotal($discountDataset::WEEK_AGO);
+		$gross = $grossDataset->range->getTotal($grossDataset->range->getWeekAgo());
+		$discount = $discountDataset->range->getTotal($grossDataset->range->getWeekAgo());
 
 		$rows = [];
 
