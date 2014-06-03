@@ -63,11 +63,11 @@ class EventListener extends BaseListener implements SubscriberInterface
 		$order = $event->getOrder();
 
 		if ($order->totalDiscount > 0) {
-			$this->get('statistics')->get('discounted.sales.gross.daily')
-				->increment($order->totalGross);
+			$this->get('statistics')->get('discounted.sales.gross')
+				->counter->increment($order->totalGross);
 
-			$this->get('statistics')->get('discount.gross.daily')
-				->increment($order->totalDiscount);
+			$this->get('statistics')->get('discount.gross')
+				->counter->increment($order->totalDiscount);
 		}
 	}
 }
