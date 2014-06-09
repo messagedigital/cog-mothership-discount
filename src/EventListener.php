@@ -24,6 +24,9 @@ class EventListener extends BaseListener implements SubscriberInterface
 			OrderEvents::CREATE_COMPLETE => array(
 				array('recordDiscountRevenue'),
 			),
+			OrderEvents::DELETE_END => array(
+				array('recordDiscountRevenueDeleted'),
+			),
 			DashboardEvent::DASHBOARD_INDEX => array(
 				'buildDashboardIndex'
 			),
@@ -68,6 +71,24 @@ class EventListener extends BaseListener implements SubscriberInterface
 
 			$this->get('statistics')->get('discount.gross')
 				->counter->increment($order->totalDiscount);
+		}
+	}
+
+	/**
+	 * Decrement the additional discount statistics if the order was discounted.
+	 *
+	 * @param  Event\Event $event
+	 */
+	public function recordDiscountRevenueDeleted(OrderEvent $event)
+	{
+		$order = $event->getOrder();
+
+		if ($order->totalDiscount > 0) {
+			$this->get('statistics')->get('discounted.sales.gross')
+				->counter->decrement($order->totalGross);
+
+			$this->get('statistics')->get('discount.gross')
+				->counter->decrement($order->totalDiscount);
 		}
 	}
 }
