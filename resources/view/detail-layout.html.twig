@@ -11,7 +11,11 @@
 		{% else %}
 			<span class="flag inactive">{{ "Inactive"|trans }}</span>
 		{% endif %}
-		{% if not discount.end is null %}<span>Expires: {{ discount.end|date }}</span>{% endif %}
+		{% if not discount.end is null %}
+			<span>Expires: {{ discount.end|date }}</span>
+		{% else %}
+			<span>No expiry date set</span>
+		{% endif %}
 	</h1>
 </hgroup>
 	{{ render(controller('Message:Mothership:Discount::Controller:Detail#tabs', {'discountID': discount.id, 'topbarClass': topbarClass})) }}
