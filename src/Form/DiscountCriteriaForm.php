@@ -24,7 +24,7 @@ class DiscountCriteriaForm extends Form\AbstractType
 	/**
 	 * @var \Message\Mothership\Commerce\Product\Loader
 	 */
-	protected $_loader;
+	protected $_productLoader;
 
 	/**
 	 * All products available
@@ -32,11 +32,11 @@ class DiscountCriteriaForm extends Form\AbstractType
 	 */
 	protected $_products;
 
-	public function __construct(Query $query, Loader $loader)
+	public function __construct(Query $query, Loader $productLoader)
 	{
-		$this->_query    = $query;
-		$this->_loader   = $loader;
-		$this->_products = $this->_getProducts();
+		$this->_query           = $query;
+		$this->_productLoader   = $productLoader;
+		$this->_products        = $this->_getProducts();
 
 		return $this;
 	}
@@ -62,7 +62,7 @@ class DiscountCriteriaForm extends Form\AbstractType
 				'multiple' => true,
 				'expanded' => true,
 			])
-				->addModelTransformer(new DiscountProductTransformer($this->_loader))
+				->addModelTransformer(new DiscountProductTransformer($this->_productLoader))
 		);
 
 		$builder->add(

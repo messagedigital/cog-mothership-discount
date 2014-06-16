@@ -10,11 +10,11 @@ class DiscountProductTransformer implements DataTransformerInterface
 	/**
 	 * @var \Message\Mothership\Commerce\Product\Loader
 	 */
-	protected $_loader;
+	protected $_productLoader;
 
-	public function __construct(Loader $loader)
+	public function __construct(Loader $productLoader)
 	{
-		$this->_loader = $loader;
+		$this->_productLoader = $productLoader;
 	}
 
 	public function transform($products)
@@ -32,6 +32,6 @@ class DiscountProductTransformer implements DataTransformerInterface
 	{
 		$products = (array) $products;
 
-		return $this->_loader->getByID($products);
+		return $this->_productLoader->getByID($products);
 	}
 }
