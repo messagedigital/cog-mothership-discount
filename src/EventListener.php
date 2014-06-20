@@ -24,9 +24,9 @@ class EventListener extends BaseListener implements SubscriberInterface
 			OrderEvents::CREATE_COMPLETE => array(
 				array('recordDiscountRevenue'),
 			),
-			OrderEvents::DELETE_END => array(
-				array('recordDiscountRevenueDeleted'),
-			),
+			// OrderEvents::DELETE_END => array(
+			// 	array('recordDiscountRevenueDeleted'),
+			// ),
 			DashboardEvent::DASHBOARD_INDEX => array(
 				'buildDashboardIndex'
 			),
