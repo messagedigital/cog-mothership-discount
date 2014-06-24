@@ -3,14 +3,19 @@
 namespace Message\Mothership\Discount\Controller;
 
 use Message\Cog\Controller\Controller;
-use Message\Cog\ValueObject\DateTimeImmutable;
-use Message\Mothership\Discount\Discount;
+use Message\Mothership\ControlPanel\Event\Dashboard\DashboardEvent;
 
 class Dashboard extends Controller
 {
-
 	public function index()
 	{
-		return $this->render('::dashboard');
+		$event = $this->get('event.dispatcher')->dispatch(
+			'dashboard.commerce.discounts',
+			new DashboardEvent
+		);
+
+		return $this->render('::dashboard', [
+			'dashboardReferences' => $event->getReferences()
+		]);
 	}
 }

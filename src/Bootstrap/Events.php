@@ -26,6 +26,7 @@ class Events implements EventsInterface, ContainerAwareInterface
 			));
 		});
 
+		$dispatcher->addSubscriber(new Discount\EventListener);
 		$dispatcher->addSubscriber(new Discount\Discount\EventListener);
 	}
 }
