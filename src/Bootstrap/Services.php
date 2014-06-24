@@ -9,6 +9,8 @@ class Services implements ServicesInterface
 {
 	public function registerServices($services)
 	{
+		$this->registerStatisticsDatasets($services);
+
 		$services['discount.loader'] = $services->factory(function($c) {
 			return new Discount\Discount\Loader($c['db.query'], $c['product.loader']);
 		});
@@ -47,6 +49,16 @@ class Services implements ServicesInterface
 
 		$services['discount.order-discount-factory'] = $services->factory(function($c) {
 			return new Discount\Discount\OrderDiscountFactory();
+		});
+	}
+
+	public function registerStatisticsDatasets($services)
+	{
+		$services->extend('statistics', function($statistics, $c) {
+			$statistics->add(new Discount\Statistic\DiscountGross($c['db.query'], $c['statistics.counter.key'], $c['statistics.range.date']));
+			$statistics->add(new Discount\Statistic\DiscountedSalesGross($c['db.query'], $c['statistics.counter.key'], $c['statistics.range.date']));
+
+			return $statistics;
 		});
 	}
 }
