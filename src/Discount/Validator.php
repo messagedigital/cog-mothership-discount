@@ -7,6 +7,7 @@ use Message\Cog\ValueObject\Authorship;
 use Message\Cog\DB\Query;
 use Message\Mothership\Commerce\Product\Product;
 use Message\Mothership\Commerce\Order\Order;
+use Message\Cog\Localisation\Translator;
 
 /**
  * Validator to check whether a discount (identified by it's code)
@@ -18,18 +19,41 @@ class Validator
 	const INVALID_EMAIL = 'This discount applies to certain email addresses only, please ensure you are allowed to use this discount code';
 
 	/**
-	 * The order-object of the order-discount to validate
+	 * @var Order
 	 */
 	protected $_order;
+
+	/**
+	 * @var Loader
+	 */
 	protected $_discountLoader;
+
+	/**
+	 * @var OrderDiscountFactory
+	 */
 	protected $_orderDiscountFactory;
+
+	/**
+	 * @var \Message\Cog\DB\Query
+	 */
 	protected $_query;
 
-	public function __construct(Loader $discountLoader, OrderDiscountFactory $orderDiscountFactory, Query $query)
+	/**
+	 * @var \Message\Cog\Localisation\Translator
+	 */
+	protected $_trans;
+
+	public function __construct(
+		Loader $discountLoader,
+		OrderDiscountFactory $orderDiscountFactory,
+		Query $query,
+		Translator $trans
+	)
 	{
 		$this->_discountLoader = $discountLoader;
 		$this->_orderDiscountFactory = $orderDiscountFactory;
 		$this->_query = $query;
+		$this->_trans = $trans;
 	}
 
 	public function setOrder(Order $order)
@@ -64,6 +88,10 @@ class Validator
 		if (null === $this->_order) {
 			throw new \Exception('Order must be set before discount code can be validated');
 		}
+
+		$this->_validateMaxNumberDiscounts()
+			->_validateAlreadyUsed($discountCode)
+		;
 
 		if(0 === $this->_order->items->count()) {
 			throw new OrderValidityException('Your basket is empty');
@@ -158,4 +186,34 @@ class Validator
 			}
 		}
 	}
+
+	protected function _validateMaxNumberDiscounts()
+	{
+		if (count($this->getOrder()->discounts) >= $this->_getMaxDiscounts()) {
+			throw new OrderValidityException($this->_trans->trans('ms.discount.discount.add.error.max', [
+				'%max%'    => $this->_getMaxDiscounts(),
+				'%plural%' => ($this->_getMaxDiscounts() === 1) ? '' : 's',
+			]));
+		}
+
+		return $this;
+	}
+
+	protected function _validateAlreadyUsed($code)
+	{
+		if ($this->getOrder()->discounts->codeExists($code)) {
+			throw new OrderValidityException($this->_trans->trans('ms.discount.discount.add.error.used'));
+		}
+
+		return $this;
+	}
+
+	/**
+	 * @todo Make able to set in config
+	 */
+	protected function _getMaxDiscounts()
+	{
+		return 1;
+	}
+
 }

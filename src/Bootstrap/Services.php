@@ -44,7 +44,12 @@ class Services implements ServicesInterface
 		});
 
 		$services['discount.validator'] = $services->factory(function($c) {
-			return new Discount\Discount\Validator($c['discount.loader'], $c['discount.order-discount-factory'], $c['db.query']);
+			return new Discount\Discount\Validator(
+				$c['discount.loader'],
+				$c['discount.order-discount-factory'],
+				$c['db.query'],
+				$c['translator']
+			);
 		});
 
 		$services['discount.order-discount-factory'] = $services->factory(function($c) {
