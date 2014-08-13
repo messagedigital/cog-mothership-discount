@@ -92,6 +92,7 @@ class Validator
 		}
 
 		$this->_validateMaxNumberDiscounts($adding);
+		
 		if ($adding) {
 				$this->_validateAlreadyUsed($discountCode);
 		}
