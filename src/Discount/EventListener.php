@@ -73,7 +73,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 		foreach ($order->discounts as $orderDiscount) {
 			try {
 				if ($orderDiscount->code) {
-					$orderDiscount = $discountValidator->validate($orderDiscount->code);
+					$orderDiscount = $discountValidator->validate($orderDiscount->code, false);
 				}
 			} catch (OrderValidityException $e) {
 				$order->discounts->remove($orderDiscount);
