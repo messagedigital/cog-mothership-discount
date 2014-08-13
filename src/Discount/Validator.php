@@ -50,10 +50,10 @@ class Validator
 		Translator $trans
 	)
 	{
-		$this->_discountLoader = $discountLoader;
+		$this->_discountLoader       = $discountLoader;
 		$this->_orderDiscountFactory = $orderDiscountFactory;
-		$this->_query = $query;
-		$this->_trans = $trans;
+		$this->_query                = $query;
+		$this->_trans                = $trans;
 	}
 
 	public function setOrder(Order $order)
@@ -189,7 +189,7 @@ class Validator
 
 	protected function _validateMaxNumberDiscounts()
 	{
-		if (count($this->getOrder()->discounts) >= $this->_getMaxDiscounts()) {
+		if (count($this->getOrder()->discounts) > $this->_getMaxDiscounts()) {
 			throw new OrderValidityException($this->_trans->trans('ms.discount.discount.add.error.max', [
 				'%max%'    => $this->_getMaxDiscounts(),
 				'%plural%' => ($this->_getMaxDiscounts() === 1) ? '' : 's',
@@ -201,9 +201,11 @@ class Validator
 
 	protected function _validateAlreadyUsed($code)
 	{
-		if ($this->getOrder()->discounts->codeExists($code)) {
-			throw new OrderValidityException($this->_trans->trans('ms.discount.discount.add.error.used'));
-		}
+		// @todo fix this issue where the code appears to be validated twice and therefore fails the second time round
+		// see https://github.com/messagedigital/cog-mothership-discount/issues/68
+//		if ($this->getOrder()->discounts->codeExists($code)) {
+//			throw new OrderValidityException($this->_trans->trans('ms.discount.discount.add.error.used'));
+//		}
 
 		return $this;
 	}
