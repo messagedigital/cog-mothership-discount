@@ -19,6 +19,8 @@ class Validator
 	const INVALID_EMAIL = 'This discount applies to certain email addresses only, please ensure you are allowed to use this discount code';
 
 	/**
+	 * The order-object of the order-discount to validate
+	 *
 	 * @var Order
 	 */
 	protected $_order;
@@ -92,7 +94,7 @@ class Validator
 		}
 
 		$this->_validateMaxNumberDiscounts($adding);
-		
+
 		if ($adding) {
 				$this->_validateAlreadyUsed($discountCode);
 		}
