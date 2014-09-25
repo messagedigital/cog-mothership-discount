@@ -220,13 +220,7 @@ class Loader
 				);
 			}
 
-			// $products = $this->_loadProducts($row->id);
-			// $appliesToOrder = (0 === count($products));
-
 			$discounts[$key]->percentage      = ($row->percentage !== null ? (float) $row->percentage : null);
-
-			// $discounts[$key]->products        = $products;
-			// $discounts[$key]->appliesToOrder  = $appliesToOrder;
 
 			$discounts[$key]->start           = ($row->start ? new DateTimeImmutable(date('c', $row->start)) : null);
 			$discounts[$key]->end             = ($row->end ? new DateTimeImmutable(date('c', $row->end)) : null);
@@ -307,26 +301,4 @@ class Loader
 
 		return $result->flatten();
 	}
-
-	protected function _loadProducts($discountID)
-	{
-		$results = $this->_query->run(
-			'SELECT
-				product_id	AS productID
-			FROM
-				discount_product
-			WHERE
-				discount_id = ?i
-		', array(
-			$discountID,
-		));
-
-		$products = array();
-		foreach ($results->flatten() as $productID) {
-			$products[$productID] = $this->_productLoader->getByID($productID);
-		}
-
-		return $products;
-	}
-
 }

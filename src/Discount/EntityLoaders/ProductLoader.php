@@ -29,7 +29,6 @@ class ProductLoader implements DiscountEntityLoaderInterface
 					discount_id = ?i', 
 				[$discount->id]
 			);
-
 		$products = $this->_productLoader->getByID($idQuery->flatten());
 
 		return new ProductCollection(is_array($products)?$products:[$products]);

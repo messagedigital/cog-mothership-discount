@@ -91,7 +91,7 @@ class DiscountCriteriaForm extends Form\AbstractType
 				self::APPLIES_TO_ORDER    => 'ms.discount.discount.criteria.applies-to.choices.order.label',
 			],
 			'mapped'      => false,
-			'data'        => (0 === count($discount->products) ? self::APPLIES_TO_ORDER : self::APPLIES_TO_PRODUCTS),
+			'data'        => (0 === $discount->getProducts()->count() ? self::APPLIES_TO_ORDER : self::APPLIES_TO_PRODUCTS),
 			'multiple'    => false,
 			'expanded'    => false,
 			'constraints' => new Constraints\NotBlank,
@@ -107,11 +107,11 @@ class DiscountCriteriaForm extends Form\AbstractType
 	{
 		$discount = $form->getData();
 
-		if(self::APPLIES_TO_ORDER === $form->get('appliesTo')->getData() && 0 !== count($discount->products)) {
+		if(self::APPLIES_TO_ORDER === $form->get('appliesTo')->getData() && 0 !== $discount->getProducts()->count()) {
 			$form->get('products')->addError(new Form\FormError('No products can be chosen if the
 				discount applies to a whole order. Please either deselect the products or change
 				`Applies to` to `Specific Products Only`.'));
-		} elseif(self::APPLIES_TO_PRODUCTS === $form->get('appliesTo')->getData() && 0 === count($discount->products)) {
+		} elseif(self::APPLIES_TO_PRODUCTS === $form->get('appliesTo')->getData() && 0 === $discount->getProducts()->count()) {
 			$form->get('products')->addError(new Form\FormError('Please choose at least one product the discount
 				can be applied to or change `Applies to` to `Whole Order`.'));
 		}

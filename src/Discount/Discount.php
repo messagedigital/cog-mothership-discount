@@ -26,8 +26,6 @@ class Discount
 	public $thresholds = array();
 	public $discountAmounts = array();
 
-	public $appliesToOrder = true;
-
 	private $_products;
 
 	public function __construct()
@@ -38,21 +36,15 @@ class Discount
 
 	public function addProduct(Product $product)
 	{
-		$this->getProducts->add($product);
-		$this->appliesToOrder = true;
+		$this->getProducts()->add($product);
 
 		return $this;
 	}
 
 	public function removeProduct(Product $product)
 	{
-		if(array_key_exists($product->id, $this->products)) {
-			unset($this->products[$product->id]);
-		}
-
-		if(0 === count($this->products)){
-			$this->appliesToOrder = false;
-		}
+		$products = $this->getProducts();
+		$products->remove($product);
 
 		return $this;
 	}
@@ -87,6 +79,11 @@ class Discount
 		return (!$this->start || $this->start < $curTime) && (!$this->end || $this->end > $curTime);
 	}
 
+	public function appliesToOrder()
+	{
+		return $this->getProducts()->count() !== 0;
+	}
+
     /**
      * Gets the value of products.
      *
@@ -104,7 +101,7 @@ class Discount
      *
      * @return self
      */
-    public function setProducts($products)
+    protected function setProducts($products)
     {
         $this->_products = $products;
 

@@ -26,7 +26,7 @@ class DiscountProxy extends Discount
     public function getProducts()
     {
     	if (!in_array('product', $this->_loaded)) {
-	    	$this->_products = $this->_entityLoaders->get('product')->getByDiscount($this);
+	    	$this->setProducts($this->_entityLoaders->get('product')->getByDiscount($this));
 	    	$_loaded[] = 'product';
     	}
 
