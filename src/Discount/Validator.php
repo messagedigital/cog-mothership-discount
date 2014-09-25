@@ -125,10 +125,10 @@ class Validator
 		}
 
 		// check whether order has at least one of the products the discount applies to
-		if (!$discount->appliesToOrder) {
+		if (!$discount->appliesToOrder()) {
 			$appliesToItem = false;
 
-			foreach ($discount->products as $product) {
+			foreach ($discount->getProducts() as $product) {
 				foreach ($this->_order->items->all() as $item) {
 					if ($item->productID === $product->id) {
 						$appliesToItem = true;

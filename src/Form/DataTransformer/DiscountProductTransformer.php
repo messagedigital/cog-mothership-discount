@@ -19,13 +19,13 @@ class DiscountProductTransformer implements DataTransformerInterface
 
 	public function transform($products)
 	{
-		$products = (array) $products;
+		$productArray = [];
 
-		foreach ($products as $key => $product) {
-			$products[$key] = $product->id;
+		foreach ($products as $product) {
+			$productArray[$product->id] = $product->id;
 		}
 
-		return $products;
+		return $productArray;
 	}
 
 	public function reverseTransform($products)

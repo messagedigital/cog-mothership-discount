@@ -73,11 +73,11 @@ class OrderDiscountFactory
 			$this->_order->shippingDiscount = $this->_order->shippingListPrice;
 		}
 
-		if ($this->_discount->appliesToOrder) {
+		if ($this->_discount->appliesToOrder()) {
 			$orderDiscount->items = $this->_order->items;
 		} else {
 			foreach ($this->_order->items->all() as $item) {
-				foreach ($this->_discount->products as $product) {
+				foreach ($this->_discount->getProducts() as $product) {
 					if ($item->productID === $product->id) {
 						$orderDiscount->items->append($item);
 						continue;

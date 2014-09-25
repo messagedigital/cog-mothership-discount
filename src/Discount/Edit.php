@@ -155,10 +155,10 @@ class Edit implements DB\TransactionalInterface
 			)
 		);
 
-		if (count($discount->products) !== 0) {
+		if ($discount->getProducts()->count() !== 0) {
 			$options = array();
 			$inserts = array();
-			foreach ($discount->products as $product) {
+			foreach ($discount->getProducts() as $product) {
 				$options[] = $discount->id;
 				$options[] = $product->id;
 				$inserts[] = '(?i,?i)';

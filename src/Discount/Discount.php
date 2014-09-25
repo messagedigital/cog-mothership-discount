@@ -6,6 +6,7 @@ use Message\Cog\Service\Container;
 use Message\Cog\ValueObject\Authorship;
 use Message\Mothership\Commerce\Product\Product;
 use Message\Mothership\Commerce\Order;
+use Message\Mothership\Commerce\Product\Collection as ProductCollection;
 
 class Discount
 {
@@ -25,31 +26,25 @@ class Discount
 	public $thresholds = array();
 	public $discountAmounts = array();
 
-	public $appliesToOrder = true;
-	public $products = array();
+	private $_products;
 
 	public function __construct()
 	{
 		$this->authorship = new Authorship;
+		$this->_products = new ProductCollection;
 	}
 
 	public function addProduct(Product $product)
 	{
-		$this->products[$product->id] = $product;
-		$this->appliesToOrder = true;
+		$this->getProducts()->add($product);
 
 		return $this;
 	}
 
 	public function removeProduct(Product $product)
 	{
-		if(array_key_exists($product->id, $this->products)) {
-			unset($this->products[$product->id]);
-		}
-
-		if(0 === count($this->products)){
-			$this->appliesToOrder = false;
-		}
+		$products = $this->getProducts();
+		$products->remove($product);
 
 		return $this;
 	}
@@ -83,4 +78,33 @@ class Discount
 		$curTime = new \DateTime;
 		return (!$this->start || $this->start < $curTime) && (!$this->end || $this->end > $curTime);
 	}
+
+	public function appliesToOrder()
+	{
+		return $this->getProducts()->count() !== 0;
+	}
+
+    /**
+     * Gets the value of products.
+     *
+     * @return mixed
+     */
+    public function getProducts()
+    {
+        return $this->_products;
+    }
+    
+    /**
+     * Sets the value of products.
+     *
+     * @param mixed $products the products 
+     *
+     * @return self
+     */
+    protected function setProducts($products)
+    {
+        $this->_products = $products;
+
+        return $this;
+    }
 }
