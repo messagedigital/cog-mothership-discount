@@ -4,6 +4,7 @@ namespace Message\Mothership\Discount\Bootstrap;
 
 use Message\Mothership\Discount;
 use Message\Cog\Bootstrap\ServicesInterface;
+use Message\Cog\DB\Entity\EntityLoaderCollection;
 
 class Services implements ServicesInterface
 {
@@ -12,7 +13,7 @@ class Services implements ServicesInterface
 		$this->registerStatisticsDatasets($services);
 
 		$services['discount.loader'] = $services->factory(function($c) {
-			return new Discount\Discount\Loader($c['db.query'], $c['product.loader']);
+			return new Discount\Discount\Loader($c['db.query'], $c['product.loader'], $c['discount.entity_loaders']);
 		});
 
 		$services['discount.create'] = $services->factory(function($c) {
@@ -51,6 +52,12 @@ class Services implements ServicesInterface
 				$c['translator']
 			);
 		};
+
+		$services['discount.entity_loaders'] = $services->factory(function($c) {
+			return new EntityLoaderCollection([
+					'product' => new Discount\Discount\EntityLoaders\ProductLoader($c['db.query'], $c['product.loader'])
+				]);
+		});
 
 		$services['discount.order-discount-factory'] = $services->factory(function($c) {
 			return new Discount\Discount\OrderDiscountFactory();

@@ -5,6 +5,7 @@ namespace Message\Mothership\Discount\Discount;
 use Message\Cog\DB\Query;
 use Message\Cog\DB\Result;
 use Message\Cog\ValueObject\DateTimeImmutable;
+use Message\Cog\DB\Entity\EntityLoaderCollection;
 use Message\Mothership\Commerce\Product;
 
 class Loader
@@ -16,10 +17,13 @@ class Loader
 	protected $_thresholdLoader;
 	protected $_discountAmountLoader;
 
-	public function __construct(Query $query, Product\Loader $productLoader)
+	private $_entityLoaders;
+
+	public function __construct(Query $query, Product\Loader $productLoader, EntityLoaderCollection $entityLoaders)
 	{
 		$this->_query 		  = $query;
 		$this->_productLoader = $productLoader;
+		$this->_entityLoaders = $entityLoaders;
 	}
 
 	public function includeDeleted($bool)
@@ -185,7 +189,9 @@ class Loader
 			return $alwaysReturnArray ? array() : false;
 		}
 
-		$discounts = $result->bindTo('Message\\Mothership\\Discount\\Discount\\Discount');
+		$discounts = $result->bindTo('Message\\Mothership\\Discount\\Discount\\DiscountProxy',
+			[$this->_entityLoaders]);
+
 		$return   = array();
 
 		foreach ($result as $key => $row) {
@@ -214,13 +220,13 @@ class Loader
 				);
 			}
 
-			$products = $this->_loadProducts($row->id);
-			$appliesToOrder = (0 === count($products));
+			// $products = $this->_loadProducts($row->id);
+			// $appliesToOrder = (0 === count($products));
 
 			$discounts[$key]->percentage      = ($row->percentage !== null ? (float) $row->percentage : null);
 
-			$discounts[$key]->products        = $products;
-			$discounts[$key]->appliesToOrder  = $appliesToOrder;
+			// $discounts[$key]->products        = $products;
+			// $discounts[$key]->appliesToOrder  = $appliesToOrder;
 
 			$discounts[$key]->start           = ($row->start ? new DateTimeImmutable(date('c', $row->start)) : null);
 			$discounts[$key]->end             = ($row->end ? new DateTimeImmutable(date('c', $row->end)) : null);

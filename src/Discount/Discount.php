@@ -6,6 +6,7 @@ use Message\Cog\Service\Container;
 use Message\Cog\ValueObject\Authorship;
 use Message\Mothership\Commerce\Product\Product;
 use Message\Mothership\Commerce\Order;
+use Message\Mothership\Commerce\Product\Collection as ProductCollection;
 
 class Discount
 {
@@ -26,16 +27,18 @@ class Discount
 	public $discountAmounts = array();
 
 	public $appliesToOrder = true;
-	public $products = array();
+
+	private $_products;
 
 	public function __construct()
 	{
 		$this->authorship = new Authorship;
+		$this->_products = new ProductCollection;
 	}
 
 	public function addProduct(Product $product)
 	{
-		$this->products[$product->id] = $product;
+		$this->getProducts->add($product);
 		$this->appliesToOrder = true;
 
 		return $this;
@@ -83,4 +86,28 @@ class Discount
 		$curTime = new \DateTime;
 		return (!$this->start || $this->start < $curTime) && (!$this->end || $this->end > $curTime);
 	}
+
+    /**
+     * Gets the value of products.
+     *
+     * @return mixed
+     */
+    public function getProducts()
+    {
+        return $this->_products;
+    }
+    
+    /**
+     * Sets the value of products.
+     *
+     * @param mixed $products the products 
+     *
+     * @return self
+     */
+    public function setProducts($products)
+    {
+        $this->_products = $products;
+
+        return $this;
+    }
 }
