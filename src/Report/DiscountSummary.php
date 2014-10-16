@@ -38,14 +38,6 @@ class DiscountSummary extends AbstractReport
 		return $this->_charts;
 	}
 
-	/**
-	 * Gets the query as an string
-	 *
-	 * @param  string   $date         Unix date from which to get data
-	 * @param  bool     $today        If date selected is current day
-	 *
-	 * @return string
-	 */
 	public function getQuery()
 	{
 		$queryBuilder = $this->_builderFactory->getQueryBuilder();
