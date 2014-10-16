@@ -7,6 +7,7 @@ use Message\Cog\Event\EventListener as BaseListener;
 use Message\Mothership\Commerce\Order\Events as OrderEvents;
 use Message\Mothership\Commerce\Order\Event\Event as OrderEvent;
 use Message\Mothership\ControlPanel\Event\Dashboard\DashboardEvent;
+use Message\Mothership\Report\Event as ReportEvents;
 
 /**
  * Event listener for core Mothership Discount functionality.
@@ -33,6 +34,9 @@ class EventListener extends BaseListener implements SubscriberInterface
 			'dashboard.commerce.discounts' => array(
 				'buildDashboardDiscounts',
 			),
+			ReportEvents\ReportEvent::REGISTER_REPORTS => [
+				'registerReports'
+			],
 		);
 	}
 
@@ -89,6 +93,13 @@ class EventListener extends BaseListener implements SubscriberInterface
 
 			$this->get('statistics')->get('discount.gross')
 				->counter->decrement($order->totalDiscount);
+		}
+	}
+
+	public function registerReports(ReportEvents\BuildReportCollectionEvent $event)
+	{
+		foreach ($this->get('discount.reports') as $report) {
+			$event->registerReport($report);
 		}
 	}
 }
