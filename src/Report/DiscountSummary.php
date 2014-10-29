@@ -3,21 +3,23 @@
 namespace Message\Mothership\Discount\Report;
 
 use Message\Cog\DB\QueryBuilderInterface;
-use Message\Report\ReportInterface;
-use Message\Mothership\Report\Report\AbstractReport;
 use Message\Cog\DB\QueryBuilderFactory;
+use Message\Cog\Localisation\Translator;
+
+use Message\Mothership\Report\Report\AbstractReport;
 use Message\Mothership\Report\Chart\TableChart;
+
+use Message\Report\ReportInterface;
 
 class DiscountSummary extends AbstractReport
 {
-	private $_to = [];
-	private $_from = [];
 	private $_builderFactory;
 	private $_charts;
 
-	public function __construct(QueryBuilderFactory $builderFactory)
+	public function __construct(QueryBuilderFactory $builderFactory, Translator $trans)
 	{
-		$this->name = "discount-summary-report";
+		$this->name = 'discount_summary';
+		$this->reportGroup = 'Discounts & Vouchers';
 		$this->_builderFactory = $builderFactory;
 		$this->_charts = [new TableChart];
 	}
@@ -27,15 +29,40 @@ class DiscountSummary extends AbstractReport
 		return $this->name;
 	}
 
+	public function getReportGroup()
+	{
+		return $this->reportGroup;
+	}
+
 	public function getCharts()
 	{
 		$data = $this->dataTransform($this->getQuery()->run());
+		$columns = $this->getColumns();
 
 		foreach ($this->_charts as $chart) {
+			$chart->setColumns($columns);
 			$chart->setData($data);
 		}
 
 		return $this->_charts;
+	}
+
+	public function getColumns()
+	{
+		$columns = [
+			['type' => 'number', 	'name' => "ID",			],
+			['type' => 'string',	'name' => "Code",		],
+			['type' => 'string',	'name' => "Details",	],
+			['type' => 'number',	'name' => "Created",	],
+			['type' => 'number',	'name' => "Expires",	],
+			['type' => 'string',	'name' => "Type",		],
+			['type' => 'string',	'name' => "Value",		],
+			['type' => 'number',	'name' => "Total Discount",	],
+			['type' => 'boolean',	'name' => "Free Shipping",	],
+			['type' => 'string',	'name' => "Status",		],
+		];
+
+		return json_encode($columns);
 	}
 
 	public function getQuery()
@@ -44,28 +71,21 @@ class DiscountSummary extends AbstractReport
 
 		$queryBuilder
 			->select('discount.discount_id AS "ID"')
-			->select('discount.code AS "Code"')
-			->select('discount.name AS "Name"')
-			->select('DATE_FORMAT(from_unixtime(discount.start),"%d %b %Y %h:%i") AS "Created"')
-			->select('DATE_FORMAT(from_unixtime(discount.end),"%d %b %Y %h:%i") AS "Expires"')
-			->select('IFNULL(IF(discount.percentage IS NULL, CONCAT("£",d_amount.amount), CONCAT(discount.percentage,"%")),"") AS "Value"')
-			->select('IFNULL(discount_used.amount,"") AS "Total Discount"')
-			->select('IF(free_shipping = 1,"Yes","No") AS "Free Shipping"')
+			->select('IFNULL(order_discount.code,"n/a") AS "Code"')
+			->select('order_discount.name AS "Name"')
+			->select('discount.start AS "Created"')
+			->select('discount.end AS "Expires"')
+			->select('IF(discount.percentage IS NULL, "fixed value", "percentage") AS "Type"')
+			->select('IF(discount.percentage IS NULL, CONCAT(d_amount.currency_id," ",d_amount.amount), CONCAT(discount.percentage,"%")) AS "Value"')
+			->select('SUM(order_discount.amount) AS "TotalDiscount"')
+			->select('IF(free_shipping = 1,true,false) AS "FreeShipping"')
 			->select('IF(discount.deleted_at > 0, "Deleted",IF(from_unixtime(discount.end) < NOW(), "Expired","Valid")) AS "Status"')
-			->from('discount')
+			->from('order_discount')
+			->leftJoin('discount','order_discount.code = discount.code')
 			->leftJoin('d_amount','d_amount.discount_id =  discount.discount_id','discount_amount')
-			->leftJoin('discount_used','discount_used.code = discount.code',
-				$this->_builderFactory->getQueryBuilder()
-					->select('order_id')
-					->select('code')
-					->select('SUM(amount) AS amount')
-					->from('order_discount')
-					->groupBy('code')
-				)
-			->groupBy('discount.code')
+			->groupBy('code, name')
 			->orderBY('discount.discount_id ASC')
 		;
-
 
 		return $queryBuilder->getQuery();
 	}
@@ -73,13 +93,27 @@ class DiscountSummary extends AbstractReport
 	protected function dataTransform($data)
 	{
 		$result = [];
-		$result[] = $data->columns();
 
 		foreach ($data as $row) {
-			$result[] = get_object_vars($row);
+
+			$created = $row->Created ? [ 'v' => $row->Created, 'f' => date('Y-m-d H:i', $row->Created)] : null;
+			$expires = $row->Expires ? [ 'v' => $row->Expires, 'f' => date('Y-m-d H:i', $row->Expires)] : null;
+
+			$result[] = [
+				$row->ID,
+				$row->Code,
+				$row->Name,
+				$created,
+				$expires,
+				$row->Type,
+				$row->Value,
+				[ 'v' => (float) $row->TotalDiscount, 'f' => $row->TotalDiscount],
+				(bool) $row->FreeShipping,
+				$row->Status,
+			];
 
 		}
 
-		return $result;
+		return json_encode($result);
 	}
 }
