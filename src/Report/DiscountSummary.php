@@ -5,38 +5,25 @@ namespace Message\Mothership\Discount\Report;
 use Message\Cog\DB\QueryBuilderInterface;
 use Message\Cog\DB\QueryBuilderFactory;
 use Message\Cog\Localisation\Translator;
+use Message\Cog\Routing\UrlGenerator;
 
 use Message\Mothership\Report\Report\AbstractReport;
 use Message\Mothership\Report\Chart\TableChart;
 
-use Message\Report\ReportInterface;
-
 class DiscountSummary extends AbstractReport
 {
-	private $_builderFactory;
-	private $_charts;
-
-	public function __construct(QueryBuilderFactory $builderFactory, Translator $trans)
+	public function __construct(QueryBuilderFactory $builderFactory, Translator $trans, UrlGenerator $routingGenerator)
 	{
 		$this->name = 'discount_summary';
+		$this->displayName = 'Discount Summary';
 		$this->reportGroup = 'Discounts & Vouchers';
-		$this->_builderFactory = $builderFactory;
 		$this->_charts = [new TableChart];
-	}
-
-	public function getName()
-	{
-		return $this->name;
-	}
-
-	public function getReportGroup()
-	{
-		return $this->reportGroup;
+		parent::__construct($builderFactory,$trans,$routingGenerator);
 	}
 
 	public function getCharts()
 	{
-		$data = $this->dataTransform($this->getQuery()->run());
+		$data = $this->_dataTransform($this->_getQuery()->run());
 		$columns = $this->getColumns();
 
 		foreach ($this->_charts as $chart) {
@@ -50,22 +37,25 @@ class DiscountSummary extends AbstractReport
 	public function getColumns()
 	{
 		$columns = [
-			['type' => 'number', 	'name' => "ID",			],
-			['type' => 'string',	'name' => "Code",		],
-			['type' => 'string',	'name' => "Details",	],
-			['type' => 'number',	'name' => "Created",	],
-			['type' => 'number',	'name' => "Expires",	],
-			['type' => 'string',	'name' => "Type",		],
-			['type' => 'string',	'name' => "Value",		],
-			['type' => 'number',	'name' => "Total Discount",	],
+			['type' => 'string',	'name' => "Code",			],
+			['type' => 'string',	'name' => "Details",		],
+			['type' => 'number',	'name' => "Created At",		],
+			['type' => 'number',	'name' => "Expires At",		],
+			['type' => 'string',	'name' => "Type",			],
+			['type' => 'string',	'name' => "Value",			],
 			['type' => 'boolean',	'name' => "Free Shipping",	],
-			['type' => 'string',	'name' => "Status",		],
+			['type' => 'string',	'name' => "Currency",		],
+			['type' => 'number',	'name' => "Total Income",	],
+			['type' => 'number',	'name' => "Total Shipping",	],
+			['type' => 'number',	'name' => "Total Discount Applied",	],
+			['type' => 'number',	'name' => "Total Orders",	],
+			['type' => 'string',	'name' => "Status",			],
 		];
 
 		return json_encode($columns);
 	}
 
-	public function getQuery()
+	private function _getQuery()
 	{
 		$queryBuilder = $this->_builderFactory->getQueryBuilder();
 
@@ -75,40 +65,46 @@ class DiscountSummary extends AbstractReport
 			->select('order_discount.name AS "Name"')
 			->select('discount.start AS "Created"')
 			->select('discount.end AS "Expires"')
-			->select('IF(discount.percentage IS NULL, "fixed value", "percentage") AS "Type"')
+			->select('IF(discount.percentage IS NULL, "Fixed", "Percentage") AS "Type"')
 			->select('IF(discount.percentage IS NULL, CONCAT(d_amount.currency_id," ",d_amount.amount), CONCAT(discount.percentage,"%")) AS "Value"')
-			->select('SUM(order_discount.amount) AS "TotalDiscount"')
 			->select('IF(free_shipping = 1,true,false) AS "FreeShipping"')
+			->select('order_summary.currency_id AS "Currency"')
+			->select('SUM(order_summary.product_gross) AS "TotalIncome"')
+			->select('SUM(order_shipping.gross) AS "TotalShipping"')
+			->select('SUM(order_discount.amount) AS "TotalDiscount"')
+			->select('COUNT(order_summary.order_id) AS "TotalOrders"')
 			->select('IF(discount.deleted_at > 0, "Deleted",IF(from_unixtime(discount.end) < NOW(), "Expired","Valid")) AS "Status"')
 			->from('order_discount')
 			->leftJoin('discount','order_discount.code = discount.code')
 			->leftJoin('d_amount','d_amount.discount_id =  discount.discount_id','discount_amount')
-			->groupBy('code, name')
-			->orderBY('discount.discount_id ASC')
+			->leftJoin('order_summary','order_summary.order_id =  order_discount.order_id')
+			->leftJoin('order_shipping','order_shipping.order_id =  order_discount.order_id')
+			->groupBy('code, name, currency')
+			->orderBY('discount.discount_id DESC')
 		;
 
 		return $queryBuilder->getQuery();
 	}
 
-	protected function dataTransform($data)
+	private function _dataTransform($data)
 	{
 		$result = [];
 
 		foreach ($data as $row) {
 
-			$created = $row->Created ? [ 'v' => $row->Created, 'f' => date('Y-m-d H:i', $row->Created)] : null;
-			$expires = $row->Expires ? [ 'v' => $row->Expires, 'f' => date('Y-m-d H:i', $row->Expires)] : null;
-
 			$result[] = [
-				$row->ID,
-				$row->Code,
+				($row->ID) ? '<a href ="'.$this->generateUrl('ms.cp.discount.edit', ['discountID' => (int) $row->ID]).'">'.$row->Code.'</a>' : $row->Code,
 				$row->Name,
-				$created,
-				$expires,
+				$row->Created ? [ 'v' => $row->Created, 'f' => date('Y-m-d H:i', $row->Created)] : null,
+				$row->Expires ? [ 'v' => $row->Expires, 'f' => date('Y-m-d H:i', $row->Expires)] : null,
 				$row->Type,
 				$row->Value,
-				[ 'v' => (float) $row->TotalDiscount, 'f' => $row->TotalDiscount],
 				(bool) $row->FreeShipping,
+				$row->Currency,
+				[ 'v' => (float) $row->TotalIncome, 'f' => (string) number_format($row->TotalIncome,2,'.',',')],
+				[ 'v' => (float) $row->TotalShipping, 'f' => (string) number_format($row->TotalShipping,2,'.',',')],
+				[ 'v' => (float) $row->TotalDiscount, 'f' => (string) number_format($row->TotalDiscount,2,'.',',')],
+				$row->TotalOrders,
 				$row->Status,
 			];
 
