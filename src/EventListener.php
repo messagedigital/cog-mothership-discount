@@ -34,7 +34,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 			'dashboard.commerce.discounts' => array(
 				'buildDashboardDiscounts',
 			),
-			ReportEvents\ReportEvent::REGISTER_REPORTS => [
+			ReportEvents\Events::REGISTER_REPORTS => [
 				'registerReports'
 			],
 		);

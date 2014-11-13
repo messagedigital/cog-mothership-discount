@@ -93,7 +93,7 @@ class DiscountSummary extends AbstractReport
 		foreach ($data as $row) {
 
 			$result[] = [
-				($row->ID) ? '<a href ="'.$this->generateUrl('ms.cp.discount.edit', ['discountID' => (int) $row->ID]).'">'.$row->Code.'</a>' : $row->Code,
+				$row->ID ? [ 'v' => $row->Code, 'f' => (string) '<a href ="'.$this->generateUrl('ms.cp.discount.edit', ['discountID' => $row->ID]).'">'.$row->Code.'</a>'] : $row->Code,
 				$row->Name,
 				$row->Created ? [ 'v' => $row->Created, 'f' => date('Y-m-d H:i', $row->Created)] : null,
 				$row->Expires ? [ 'v' => $row->Expires, 'f' => date('Y-m-d H:i', $row->Expires)] : null,
