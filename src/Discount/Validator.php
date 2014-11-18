@@ -143,6 +143,13 @@ class Validator
 			if (!$appliesToItem) {
 				throw new OrderValidityException('Your order does not include any of the products the discount applies to.');
 			}
+
+		}
+
+		if (!isset($discount->discountAmounts[$this->_order->currencyID]) 
+			&& !$discount->percentage 
+			&& !$discount->freeShipping) {
+			throw new OrderValidityException('Discount not available in this currency');
 		}
 
 		$this->_validateEmail($discount);
