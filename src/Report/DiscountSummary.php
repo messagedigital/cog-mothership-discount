@@ -18,7 +18,7 @@ class DiscountSummary extends AbstractReport
 		$this->displayName = 'Discount Summary';
 		$this->reportGroup = 'Discounts & Vouchers';
 		$this->_charts = [new TableChart];
-		parent::__construct($builderFactory,$trans,$routingGenerator);
+		parent::__construct($builderFactory, $trans, $routingGenerator);
 	}
 
 	public function getCharts()
@@ -37,19 +37,19 @@ class DiscountSummary extends AbstractReport
 	public function getColumns()
 	{
 		$columns = [
-			['type' => 'string',	'name' => "Code",			],
-			['type' => 'string',	'name' => "Details",		],
-			['type' => 'number',	'name' => "Created At",		],
-			['type' => 'number',	'name' => "Expires At",		],
-			['type' => 'string',	'name' => "Type",			],
-			['type' => 'string',	'name' => "Value",			],
-			['type' => 'boolean',	'name' => "Free Shipping",	],
-			['type' => 'string',	'name' => "Currency",		],
-			['type' => 'number',	'name' => "Total Income",	],
-			['type' => 'number',	'name' => "Total Shipping",	],
-			['type' => 'number',	'name' => "Total Discount Applied",	],
-			['type' => 'number',	'name' => "Total Orders",	],
-			['type' => 'string',	'name' => "Status",			],
+			['type' => 'string', 'name' => "Code",           ],
+			['type' => 'string', 'name' => "Details",        ],
+			['type' => 'number', 'name' => "Created At",     ],
+			['type' => 'number', 'name' => "Expires At",     ],
+			['type' => 'string', 'name' => "Type",           ],
+			['type' => 'string', 'name' => "Value",          ],
+			['type' => 'boolean', 'name' => "Free Shipping", ],
+			['type' => 'string', 'name' => "Currency",       ],
+			['type' => 'number', 'name' => "Total Income",   ],
+			['type' => 'number', 'name' => "Total Shipping", ],
+			['type' => 'number', 'name' => "Total Discount Applied", ],
+			['type' => 'number', 'name' => "Total Orders",   ],
+			['type' => 'string', 'name' => "Status",         ],
 		];
 
 		return json_encode($columns);
@@ -93,17 +93,41 @@ class DiscountSummary extends AbstractReport
 		foreach ($data as $row) {
 
 			$result[] = [
-				$row->ID ? [ 'v' => $row->Code, 'f' => (string) '<a href ="'.$this->generateUrl('ms.cp.discount.edit', ['discountID' => $row->ID]).'">'.$row->Code.'</a>'] : $row->Code,
+				$row->ID ?
+					[
+						'v' => $row->Code,
+						'f' => (string) '<a href ="'.$this->generateUrl('ms.cp.discount.edit', ['discountID' => $row->ID]).'">'.$row->Code.'</a>'
+					]
+					: $row->Code,
 				$row->Name,
-				$row->Created ? [ 'v' => $row->Created, 'f' => date('Y-m-d H:i', $row->Created)] : null,
-				$row->Expires ? [ 'v' => $row->Expires, 'f' => date('Y-m-d H:i', $row->Expires)] : null,
+				$row->Created ?
+					[
+						'v' => $row->Created,
+						'f' => date('Y-m-d H:i', $row->Created)
+					]
+					: null,
+				$row->Expires ?
+					[
+						'v' => $row->Expires,
+						'f' => date('Y-m-d H:i', $row->Expires)
+					]
+					: null,
 				$row->Type,
 				$row->Value,
 				(bool) $row->FreeShipping,
 				$row->Currency,
-				[ 'v' => (float) $row->TotalIncome, 'f' => (string) number_format($row->TotalIncome,2,'.',',')],
-				[ 'v' => (float) $row->TotalShipping, 'f' => (string) number_format($row->TotalShipping,2,'.',',')],
-				[ 'v' => (float) $row->TotalDiscount, 'f' => (string) number_format($row->TotalDiscount,2,'.',',')],
+				[
+					'v' => (float) $row->TotalIncome,
+					'f' => (string) number_format($row->TotalIncome,2,'.',',')
+				],
+				[
+					'v' => (float) $row->TotalShipping,
+					'f' => (string) number_format($row->TotalShipping,2,'.',',')
+				],
+				[
+					'v' => (float) $row->TotalDiscount,
+					'f' => (string) number_format($row->TotalDiscount,2,'.',',')
+				],
 				$row->TotalOrders,
 				$row->Status,
 			];
