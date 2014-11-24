@@ -146,7 +146,7 @@ class Validator
 
 		}
 
-		if (!isset($discount->discountAmounts[$this->_order->currencyID]) 
+		if (empty($discount->discountAmounts[$this->_order->currencyID])
 			&& !$discount->percentage 
 			&& !$discount->freeShipping) {
 			throw new OrderValidityException('Discount not available in this currency');
