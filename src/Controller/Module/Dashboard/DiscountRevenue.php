@@ -44,6 +44,8 @@ class DiscountRevenue extends Controller
 				'value' => 'Amount',
 			],
 			'rows' => $rows,
+			'filterPrice' =>true,
+			'currency' => $this->get('currency.company'),
 		]);
 	}
 }
