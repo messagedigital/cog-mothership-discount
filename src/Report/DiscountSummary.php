@@ -4,7 +4,6 @@ namespace Message\Mothership\Discount\Report;
 
 use Message\Cog\DB\QueryBuilderInterface;
 use Message\Cog\DB\QueryBuilderFactory;
-use Message\Cog\Localisation\Translator;
 use Message\Cog\Routing\UrlGenerator;
 
 use Message\Mothership\Report\Report\AbstractReport;
@@ -12,15 +11,27 @@ use Message\Mothership\Report\Chart\TableChart;
 
 class DiscountSummary extends AbstractReport
 {
-	public function __construct(QueryBuilderFactory $builderFactory, Translator $trans, UrlGenerator $routingGenerator)
+	/**
+	 * Constructor.
+	 *
+	 * @param QueryBuilderFactory   $builderFactory
+	 * @param UrlGenerator          $routingGenerator
+	 */
+	public function __construct(QueryBuilderFactory $builderFactory, UrlGenerator $routingGenerator)
 	{
+		parent::__construct($builderFactory, $routingGenerator);
 		$this->name = 'discount_summary';
 		$this->displayName = 'Discount Summary';
 		$this->reportGroup = 'Discounts & Vouchers';
 		$this->_charts = [new TableChart];
-		parent::__construct($builderFactory, $trans, $routingGenerator);
 	}
 
+	/**
+	 * Retrieves JSON representation of the data and columns.
+	 * Applies data to chart types set on report.
+	 *
+	 * @return Array  Returns all types of chart set on report with appropriate data.
+	 */
 	public function getCharts()
 	{
 		$data = $this->_dataTransform($this->_getQuery()->run());
@@ -34,6 +45,11 @@ class DiscountSummary extends AbstractReport
 		return $this->_charts;
 	}
 
+	/**
+	 * Set columns for use in reports.
+	 *
+	 * @return String  Returns columns in JSON format.
+	 */
 	public function getColumns()
 	{
 		$columns = [
@@ -55,6 +71,11 @@ class DiscountSummary extends AbstractReport
 		return json_encode($columns);
 	}
 
+	/**
+	 * Gets all discount data.
+	 *
+	 * @return Query
+	 */
 	private function _getQuery()
 	{
 		$queryBuilder = $this->_builderFactory->getQueryBuilder();
@@ -90,6 +111,14 @@ class DiscountSummary extends AbstractReport
 	{
 		$result = [];
 
+	/**
+	 * Takes the data and transforms it into a useable format.
+	 *
+	 * @param  $data    DB\Result  The data from the report query.
+	 * @param  $output  String     The type of output required.
+	 *
+	 * @return String|Array  Returns columns as string in JSON format or array.
+	 */
 		foreach ($data as $row) {
 
 			$result[] = [

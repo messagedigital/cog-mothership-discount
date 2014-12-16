@@ -67,7 +67,10 @@ class Services implements ServicesInterface
 	public function registerReports($services)
 	{
 		$services['discount.discount_summary'] = $services->factory(function($c) {
-			return new Discount\Report\DiscountSummary($c['db.query.builder.factory'],$c['translator'],$c['routing.generator']);
+			return new Discount\Report\DiscountSummary(
+				$c['db.query.builder.factory'],
+				$c['routing.generator']
+			);
 		});
 
 		$services['discount.reports'] = function($c) {
