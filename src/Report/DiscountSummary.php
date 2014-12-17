@@ -34,8 +34,8 @@ class DiscountSummary extends AbstractReport
 	 */
 	public function getCharts()
 	{
-		$data = $this->_dataTransform($this->_getQuery()->run());
-		$columns = $this->getColumns();
+		$data = $this->_dataTransform($this->_getQuery()->run(), "json");
+		$columns = $this->_parseColumns($this->getColumns());
 
 		foreach ($this->_charts as $chart) {
 			$chart->setColumns($columns);
@@ -48,24 +48,24 @@ class DiscountSummary extends AbstractReport
 	/**
 	 * Set columns for use in reports.
 	 *
-	 * @return String  Returns columns in JSON format.
+	 * @return array  Returns array of columns as keys with format for Google Charts as the value.
 	 */
 	public function getColumns()
 	{
-		$columns = [
-			['type' => 'string', 'name' => "Code",           ],
-			['type' => 'string', 'name' => "Details",        ],
-			['type' => 'number', 'name' => "Created At",     ],
-			['type' => 'number', 'name' => "Expires At",     ],
-			['type' => 'string', 'name' => "Type",           ],
-			['type' => 'string', 'name' => "Value",          ],
-			['type' => 'boolean', 'name' => "Free Shipping", ],
-			['type' => 'string', 'name' => "Currency",       ],
-			['type' => 'number', 'name' => "Total Income",   ],
-			['type' => 'number', 'name' => "Total Shipping", ],
-			['type' => 'number', 'name' => "Total Discount Applied", ],
-			['type' => 'number', 'name' => "Total Orders",   ],
-			['type' => 'string', 'name' => "Status",         ],
+		return [
+			'Code'                   => 'string',
+			'Details'                => 'string',
+			'Created At'             => 'number',
+			'Expires At'             => 'number',
+			'Type'                   => 'string',
+			'Value'                  => 'string',
+			'Free Shipping'          => 'boolean',
+			'Currency'               => 'string',
+			'Total Income'           => 'number',
+			'Total Shipping'         => 'number',
+			'Total Discount Applied' => 'number',
+			'Total Orders'           => 'number',
+			'Status'                 => 'string',
 		];
 
 		return json_encode($columns);
@@ -76,7 +76,7 @@ class DiscountSummary extends AbstractReport
 	 *
 	 * @return Query
 	 */
-	private function _getQuery()
+	protected function _getQuery()
 	{
 		$queryBuilder = $this->_builderFactory->getQueryBuilder();
 
@@ -107,10 +107,6 @@ class DiscountSummary extends AbstractReport
 		return $queryBuilder->getQuery();
 	}
 
-	private function _dataTransform($data)
-	{
-		$result = [];
-
 	/**
 	 * Takes the data and transforms it into a useable format.
 	 *
@@ -119,50 +115,75 @@ class DiscountSummary extends AbstractReport
 	 *
 	 * @return String|Array  Returns columns as string in JSON format or array.
 	 */
-		foreach ($data as $row) {
+	protected function _dataTransform($data, $output = null)
+	{
+		$result = [];
 
-			$result[] = [
-				$row->ID ?
-					[
-						'v' => $row->Code,
-						'f' => (string) '<a href ="'.$this->generateUrl('ms.cp.discount.edit', ['discountID' => $row->ID]).'">'.$row->Code.'</a>'
-					]
-					: $row->Code,
-				$row->Name,
-				$row->Created ?
-					[
-						'v' => $row->Created,
-						'f' => date('Y-m-d H:i', $row->Created)
-					]
-					: null,
-				$row->Expires ?
-					[
-						'v' => $row->Expires,
-						'f' => date('Y-m-d H:i', $row->Expires)
-					]
-					: null,
-				$row->Type,
-				$row->Value,
-				(bool) $row->FreeShipping,
-				$row->Currency,
-				[
-					'v' => (float) $row->TotalIncome,
-					'f' => (string) number_format($row->TotalIncome,2,'.',',')
-				],
-				[
-					'v' => (float) $row->TotalShipping,
-					'f' => (string) number_format($row->TotalShipping,2,'.',',')
-				],
-				[
-					'v' => (float) $row->TotalDiscount,
-					'f' => (string) number_format($row->TotalDiscount,2,'.',',')
-				],
-				$row->TotalOrders,
-				$row->Status,
-			];
+		if ($output === "json") {
 
+			foreach ($data as $row) {
+
+				$result[] = [
+					$row->ID ?
+						[
+							'v' => $row->Code,
+							'f' => (string) '<a href ="'.$this->generateUrl('ms.cp.discount.edit', ['discountID' => $row->ID]).'">'.$row->Code.'</a>'
+						]
+						: $row->Code,
+					$row->Name,
+					$row->Created ?
+						[
+							'v' => $row->Created,
+							'f' => date('Y-m-d H:i', $row->Created)
+						]
+						: null,
+					$row->Expires ?
+						[
+							'v' => $row->Expires,
+							'f' => date('Y-m-d H:i', $row->Expires)
+						]
+						: null,
+					$row->Type,
+					$row->Value,
+					(bool) $row->FreeShipping,
+					$row->Currency,
+					[
+						'v' => (float) $row->TotalIncome,
+						'f' => (string) number_format($row->TotalIncome,2,'.',',')
+					],
+					[
+						'v' => (float) $row->TotalShipping,
+						'f' => (string) number_format($row->TotalShipping,2,'.',',')
+					],
+					[
+						'v' => (float) $row->TotalDiscount,
+						'f' => (string) number_format($row->TotalDiscount,2,'.',',')
+					],
+					$row->TotalOrders,
+					$row->Status,
+				];
+
+			}
+			return json_encode($result);
+
+		} else {
+
+			foreach ($data as $row) {
+				$result[] = [
+					$row->Code,
+					$row->Name,
+					date('Y-m-d H:i', $row->Created),
+					date('Y-m-d H:i', $row->Expires),
+					$row->Type,
+					$row->Value,
+					$row->FreeShipping ? 'Yes' : 'No',
+					$row->Currency,
+					$row->TotalIncome,
+					$row->TotalShipping,
+					$row->TotalDiscount,
+				];
+			}
+			return $result;
 		}
-
-		return json_encode($result);
 	}
 }
