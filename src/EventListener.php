@@ -43,7 +43,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 	 */
 	public function buildDashboardIndex(DashboardEvent $event)
 	{
-		$event->addReference('Message:Mothership:Discount::Controller:Module:Dashboard:DiscountRevenue#index');
+		// $event->addReference('Message:Mothership:Discount::Controller:Module:Dashboard:DiscountRevenue#index');
 	}
 
 	/**
@@ -53,7 +53,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 	 */
 	public function buildDashboardDiscounts(DashboardEvent $event)
 	{
-		$event->addReference('Message:Mothership:Discount::Controller:Module:Dashboard:DiscountRevenue#index');
+		// $event->addReference('Message:Mothership:Discount::Controller:Module:Dashboard:DiscountRevenue#index');
 	}
 
 	/**
