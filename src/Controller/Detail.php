@@ -92,8 +92,8 @@ class Detail extends Controller
 
 			// check this with the currency set on the system!
 			if($order->currencyID !== 'GBP') {
-				$discountAmount = $orderDiscount->amount * ($order->conversionRate ?: 1);
-				$gross          = $order->totalGross * ($order->conversionRate ?: 1);
+				$discountAmount = $orderDiscount->amount * $order->conversionRate;
+				$gross          = $order->totalGross * $order->conversionRate;
 			} else {
 				$discountAmount = $orderDiscount->amount;
 				$gross          = $order->totalGross;

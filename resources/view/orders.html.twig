@@ -22,7 +22,7 @@
 					<td>{{ order.authorship.createdAt|date }}</td>
 					<td><a href="">{{ order.user.name }}</a></td>
 
-					{% set discountAmount = (order.conversionRate ? order.totalDiscount * order.conversionRate : order.totalDiscount) %}
+					{% set discountAmound = (order.conversionRate ? order.totalDiscount * order.conversionRate : order.totalDiscount) %}
 					{% set gross          = (order.conversionRate ? order.totalGross * order.conversionRate    : order.totalGross) %}
 				
 					<td>{{ discountAmount|price }}</td>
