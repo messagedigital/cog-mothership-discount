@@ -90,14 +90,8 @@ class Detail extends Controller
 		foreach ($orderDiscounts as $orderDiscount) {
 			$order = $orderDiscount->order;
 
-			// check this with the currency set on the system!
-			if($order->currencyID !== 'GBP') {
-				$discountAmount = $orderDiscount->amount * ($order->conversionRate ?: 1);
-				$gross          = $order->totalGross * ($order->conversionRate ?: 1);
-			} else {
-				$discountAmount = $orderDiscount->amount;
-				$gross          = $order->totalGross;
-			}
+			$discountAmount = $orderDiscount->amount;
+			$gross          = $order->totalGross;
 
 			$totalDiscount 	+= $discountAmount;
 			$totalGross 	+= $gross;
