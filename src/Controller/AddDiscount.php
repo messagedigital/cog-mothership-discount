@@ -28,13 +28,10 @@ class AddDiscount extends Controller
 			$orderDiscount = null;
 
 			try {
-				if ($order->discounts->codeExists($code)) {
-					throw new Discount\OrderValidityException($this->trans('ms.discount.discount.add.error.used'));
-				}
 				$orderDiscount = $discountValidator->validate($code);
 			} catch (Discount\OrderValidityException $e) {
 				$this->addFlash('error', $this->trans('ms.discount.discount.add.error.message', array(
-					'%code%' => $code,
+					'%code%'    => $code,
 					'%message%' => $e->getMessage()
 				)));
 			}
