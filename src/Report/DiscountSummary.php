@@ -133,13 +133,13 @@ class DiscountSummary extends AbstractReport
 					$row->Name,
 					$row->Created ?
 						[
-							'v' => $row->Created,
+							'v' => (int) $row->Created,
 							'f' => date('Y-m-d H:i', $row->Created)
 						]
 						: null,
 					$row->Expires ?
 						[
-							'v' => $row->Expires,
+							'v' => (int) $row->Expires,
 							'f' => date('Y-m-d H:i', $row->Expires)
 						]
 						: null,
@@ -159,7 +159,7 @@ class DiscountSummary extends AbstractReport
 						'v' => (float) $row->TotalDiscount,
 						'f' => (string) number_format($row->TotalDiscount,2,'.',',')
 					],
-					$row->TotalOrders,
+					(int) $row->TotalOrders,
 					$row->Status,
 				];
 
