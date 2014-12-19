@@ -7,8 +7,8 @@
 {% block main %}
 	<div class="dashboard">
 		<div class="modules">
-			{% for reference.reference in dashboardReferences %}
-				{{ render(controller(reference)) }}
+			{% for reference in dashboardReferences %}
+				{{ render(controller(reference.reference)) }}
 			{% endfor %}
 		</div>
 	</div>
