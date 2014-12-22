@@ -20,9 +20,9 @@ class DiscountSummary extends AbstractReport
 	public function __construct(QueryBuilderFactory $builderFactory, UrlGenerator $routingGenerator)
 	{
 		parent::__construct($builderFactory, $routingGenerator);
-		$this->name = 'discount_summary';
-		$this->displayName = 'Discount Summary';
-		$this->reportGroup = 'Discounts & Vouchers';
+		$this->_setName('discount_summary');
+		$this->_setDisplayName('Discount Summary');
+		$this->_setReportGroup('Discounts & Vouchers');
 		$this->_charts = [new TableChart];
 	}
 
