@@ -4,12 +4,14 @@ namespace Message\Mothership\Discount\Bootstrap;
 
 use Message\Mothership\Discount;
 use Message\Cog\Bootstrap\ServicesInterface;
+use Message\Mothership\Report\Report\Collection as ReportCollection;
 
 class Services implements ServicesInterface
 {
 	public function registerServices($services)
 	{
 		$this->registerStatisticsDatasets($services);
+		$this->registerReports($services);
 
 		$services['discount.loader'] = $services->factory(function($c) {
 			return new Discount\Discount\Loader($c['db.query'], $c['product.loader']);
@@ -65,5 +67,24 @@ class Services implements ServicesInterface
 
 			return $statistics;
 		});
+	}
+
+	public function registerReports($services)
+	{
+		$services['discount.discount_summary'] = $services->factory(function($c) {
+			return new Discount\Report\DiscountSummary(
+				$c['db.query.builder.factory'],
+				$c['routing.generator']
+			);
+		});
+
+		$services['discount.reports'] = function($c) {
+			$reports = new ReportCollection;
+			$reports
+				->add($c['discount.discount_summary'])
+			;
+
+			return $reports;
+		};
 	}
 }
