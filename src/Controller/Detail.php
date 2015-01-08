@@ -85,22 +85,22 @@ class Detail extends Controller
 		$discount = $this->get('discount.loader')->getByID($discountID);
 		$orderDiscounts = $this->get('order.discount.loader')->getByCode($discount->code);
 
-		$totalDiscount 	= 0;
-		$totalGross		= 0;
+		$totalDiscount 	= [];
+		$totalGross		= [];
 		foreach ($orderDiscounts as $orderDiscount) {
 			$order = $orderDiscount->order;
 
-			// check this with the currency set on the system!
-			if($order->currencyID !== 'GBP') {
-				$discountAmount = $orderDiscount->amount * $order->conversionRate;
-				$gross          = $order->totalGross * $order->conversionRate;
+			if(isset($totalDiscount[$order->currencyID])) {
+				$totalDiscount[$order->currencyID] += $orderDiscount->amount;
 			} else {
-				$discountAmount = $orderDiscount->amount;
-				$gross          = $order->totalGross;
+				$totalDiscount[$order->currencyID] = $orderDiscount->amount;
 			}
 
-			$totalDiscount 	+= $discountAmount;
-			$totalGross 	+= $gross;
+			if(isset($totalGross[$order->currencyID])) {
+				$totalGross[$order->currencyID] += $order->totalGross;
+			} else {
+				$totalGross[$order->currencyID] = $order->totalGross;
+			}
 		}
 
 		return $this->render('::orders', array(

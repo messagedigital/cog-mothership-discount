@@ -22,20 +22,26 @@
 					<td>{{ order.authorship.createdAt|date }}</td>
 					<td><a href="">{{ order.user.name }}</a></td>
 
-					{% set discountAmound = (order.conversionRate ? order.totalDiscount * order.conversionRate : order.totalDiscount) %}
-					{% set gross          = (order.conversionRate ? order.totalGross * order.conversionRate    : order.totalGross) %}
+					{% set discountAmount = order.totalDiscount %}
+					{% set gross          = order.totalGross %}
+
 				
-					<td>{{ discountAmount|price }}</td>
-					<td>{{ gross|price }}</td>
+					<td>{{ discountAmount|price(order.currencyID) }}</td>
+					<td>{{ gross|price(order.currencyID) }}</td>
 				</tr>
 			{% endfor %}
-			
-			<tr>
-				<td colspan="3"><span>Totals</span></td>
-				<td>{{ totalDiscount|price}}</td>
-				<td>{{ totalGross|price }}</td>
-			</tr>
-			
+
+			{% for currency, discount in totalDiscount %}
+			    {% set gross = totalGross[currency] %}
+				
+				<tr>
+					{% if loop.first %}
+						<td colspan="3" rowspan="{{ totalGross|length }}"><span>Totals</span></td>
+					{% endif %}
+					<td>{{ discount|price(currency) }}</td>
+					<td>{{ gross|price(currency) }}</td>
+				</tr>
+			{% endfor %}
 		</tbody>
 	</table>
 {% else %}

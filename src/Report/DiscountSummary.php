@@ -20,9 +20,9 @@ class DiscountSummary extends AbstractReport
 	public function __construct(QueryBuilderFactory $builderFactory, UrlGenerator $routingGenerator)
 	{
 		parent::__construct($builderFactory, $routingGenerator);
-		$this->name = 'discount_summary';
-		$this->displayName = 'Discount Summary';
-		$this->reportGroup = 'Discounts & Vouchers';
+		$this->_setName('discount_summary');
+		$this->_setDisplayName('Discount Summary');
+		$this->_setReportGroup('Discounts & Vouchers');
 		$this->_charts = [new TableChart];
 	}
 
@@ -133,13 +133,13 @@ class DiscountSummary extends AbstractReport
 					$row->Name,
 					$row->Created ?
 						[
-							'v' => $row->Created,
+							'v' => (int) $row->Created,
 							'f' => date('Y-m-d H:i', $row->Created)
 						]
 						: null,
 					$row->Expires ?
 						[
-							'v' => $row->Expires,
+							'v' => (int) $row->Expires,
 							'f' => date('Y-m-d H:i', $row->Expires)
 						]
 						: null,
@@ -159,7 +159,7 @@ class DiscountSummary extends AbstractReport
 						'v' => (float) $row->TotalDiscount,
 						'f' => (string) number_format($row->TotalDiscount,2,'.',',')
 					],
-					$row->TotalOrders,
+					(int) $row->TotalOrders,
 					$row->Status,
 				];
 
