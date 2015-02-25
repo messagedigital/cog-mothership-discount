@@ -1,40 +1,40 @@
 {
-	"name": "message/cog-mothership-discount",
-	"description": "Cog module for discount building blocks in Mothership",
-	"keywords": ["discount", "mothership", "offer", "campaign", "cog"],
-	"homepage": "http://message.co.uk",
-	"license": "proprietary",
-	"authors": [
-		{
-			"name" : "The Message Development Team",
-			"email": "dev@message.co.uk"
-		}
-	],
-	"support": {
-		"wiki"  : "http://server.local/wiki/projects/cog",
-		"issues": "http://github.com/messagedigital/cog-mothership-discount/issues"
-	},
-	"autoload": {
-		"psr-4": {
-			"Message\\Mothership\\Discount\\"      : "src",
-			"Message\\Mothership\\Discount\\Test\\": "tests"
-		}
-	},
-	"repositories": [
-		{
-			"type": "composer",
-			"url" : "http://packages.message.co.uk"
-		}
-	],
-	"require": {
-		"php": ">=5.4.0",
+  "name": "mothership-ec/cog-mothership-discount",
+  "description": "Cog module for discount building blocks in Mothership",
+  "keywords": [
+    "discount",
+    "mothership",
+    "offer",
+    "campaign",
+    "cog"
+  ],
+  "homepage": "http://mothership.ec",
+  "license": "GPL-3.0+",
+  "authors": [
+    {
+      "name": "The Mothership Development Team",
+      "email": "dev@mothership.ec"
+    }
+  ],
+  "support": {
+    "wiki": "http://wiki.mothership.ec/Discount_module",
+    "issues": "http://github.com/mothership-ec/cog-mothership-discount/issues"
+  },
+  "autoload": {
+    "psr-4": {
+      "Message\\Mothership\\Discount\\": "src",
+      "Message\\Mothership\\Discount\\Test\\": "tests"
+    }
+  },
+  "require": {
+    "php": ">=5.4.0",
 
-		"message/cog"                    : "~3.0",
-		"message/cog-user"               : "~1.0",
-		"message/cog-mothership-cp"      : "~2.0",
-		"message/cog-mothership-commerce": "~2.0 | ~3.0 | ~4.0"
-	},
-	"suggest": {
-                "message/cog-mothership-reports" : "Module for displaying reports"
-	}
+    "mothership-ec/cog"                     : "~4.0",
+    "mothership-ec/cog-user"                : "~2.0",
+    "mothership-ec/cog-mothership-cp"       : "~3.0",
+    "mothership-ec/cog-mothership-commerce" : "~5.0",
+    "mothership-ec/cog-mothership-reports"  : "~2.0"
+  },
+  "suggest": {
+  }
 }
