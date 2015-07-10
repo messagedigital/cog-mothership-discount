@@ -57,6 +57,22 @@ class Services implements ServicesInterface
 		$services['discount.order-discount-factory'] = $services->factory(function($c) {
 			return new Discount\Discount\OrderDiscountFactory();
 		});
+
+		// Bundles
+		$services['discount.bundle.create'] = function ($c) {
+			return new Discount\Bundle\Create(
+				$c['db.query'],
+				$c['discount.bundle.product_create'],
+				$c['discount.bundle.price_create'],
+				$c['user.current']
+			);
+		};
+
+		$services['discount.bundle.edit'] = function ($c) {
+			return new Discount\Bundle\Edit(
+				$c['db.transaction']
+			);
+		};
 	}
 
 	public function registerStatisticsDatasets($services)

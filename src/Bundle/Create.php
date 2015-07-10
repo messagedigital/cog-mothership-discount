@@ -9,13 +9,21 @@ use Message\User\UserInterface;
 class Create
 {
 	private $_query;
-	private $_queryParser;
+	private $_bundleProductCreate;
+	private $_bundlePriceCreate;
 	private $_user;
 
-	public function __construct(DB\Query $query, DB\QueryParser $queryParser, UserInterface $user)
+	public function __construct(
+		DB\Query $query,
+		BundleProductCreate $bundleProductCreate,
+		BundlePriceCreate $bundlePriceCreate,
+		UserInterface $user
+	)
 	{
 		$this->_query = $query;
-		$this->_queryParser = $queryParser;
+		$this->_bundleProductCreate = $bundleProductCreate;
+		$this->_bundlePriceCreate   = $bundlePriceCreate;
+		$this->_user = $user;
 	}
 
 	public function create(Bundle $bundle)
@@ -61,97 +69,9 @@ class Create
 
 		$bundle->setID($result->id());
 
-		$this->_saveProducts($bundle);
-		$this->_savePrices($bundle);
+		$this->_bundleProductCreate->saveProducts($bundle);
+		$this->_bundlePriceCreate->savePrices($bundle);
 
 		return $bundle;
-	}
-
-	private function _saveProducts(Bundle $bundle)
-	{
-		foreach ($bundle->getProductRows() as $row) {
-			$result = $this->_query->run("
-				INSERT INTO
-					discount_bundle_product_row
-					(
-						bundle_id,
-						product_id,
-						quantity
-					)
-				VALUES
-					(
-						:bundleID?i,
-						:productID?i,
-						:quantity?i
-					)
-			", [
-				'bundleID' => $bundle->getID(),
-				'productID' => $row->getProductID(),
-			]);
-
-			$statements = [];
-
-			foreach ($row->getOptions() as $name => $value) {
-				$statement = "(						(
-							:rowID?i,
-							:name?s,
-							:value?s
-						)";
-				$params = [
-					'rowID' => $result->id(),
-					'name' => $name,
-					'value' => $value,
-				];
-
-
-				$statements[] = $this->_queryParser->parse($statement, $params);
-			}
-
-			$statements = implode(',' . PHP_EOL, $statements);
-
-			$this->_query->run("
-				INSERT INTO
-					discount_bundle_product_option
-					(
-						product_row_id,
-						option_name,
-						option_value,
-					)
-				VALUES
-			" . $statements);
-		}
-	}
-
-	private function _savePrices(Bundle $bundle)
-	{
-		$statements = [];
-
-		foreach ($bundle->getPrices() as $currency => $price) {
-			$statement = '(
-				bundleID?i,
-				currency?s,
-				price?f
-			)';
-			$params = [
-				'bundleID' => $bundle->getID(),
-				'currency' => $currency,
-				'price'    => $price,
-			];
-
-			$statements[] = $this->_queryParser->parse($statement, $params);
-		}
-
-		$statements = implode(',' . PHP_EOL, $statements);
-
-		$this->_query->run("
-				INSERT INTO
-					discount_bundle_price
-					(
-						bundle_id,
-						currency_id,
-						price
-					)
-				VALUES
-			" . $statements);
 	}
 }

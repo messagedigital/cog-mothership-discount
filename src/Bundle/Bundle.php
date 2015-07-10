@@ -3,7 +3,7 @@
 namespace Message\Mothership\Discount\Bundle;
 
 use Message\Mothership\Commerce\Product;
-use Message\Cog\Filesystem\File;
+use Message\Mothership\FileManager\File\File;
 use Message\Cog\ValueObject\Authorship;
 
 /**
