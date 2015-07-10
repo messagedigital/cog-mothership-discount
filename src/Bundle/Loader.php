@@ -1,14 +1,17 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: thomas
- * Date: 10/07/15
- * Time: 11:50
- */
 
 namespace Message\Mothership\Discount\Bundle;
 
+use Message\Cog\DB\QueryBuilderFactory;
 
-class Loader {
+class Loader
+{
+	private $_queryBuilderFactory;
+	private $_priceLoader;
 
+	public function __construct(QueryBuilderFactory $queryBuilderFactory, PriceLoader $priceLoader)
+	{
+		$this->_queryBuilderFactory = $queryBuilderFactory;
+		$this->_priceLoader         = $priceLoader;
+	}
 }

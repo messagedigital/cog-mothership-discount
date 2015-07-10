@@ -1,14 +1,30 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: thomas
- * Date: 10/07/15
- * Time: 11:50
- */
 
 namespace Message\Mothership\Discount\Bundle;
 
+use Message\Cog\DB\Transaction;
+use Message\Cog\DB\TransactionalInterface;
 
-class Edit {
+class Edit implements TransactionalInterface
+{
+	private $_transaction;
+	private $_transactionOverride = false;
 
+	public function __construct(Transaction $transaction)
+	{
+		$this->_transaction = $transaction;
+	}
+
+	public function setTransaction(Transaction $transaction)
+	{
+		$this->_transaction = $transaction;
+		$this->_transactionOverride = true;
+	}
+
+	private function _commitTransaction()
+	{
+		if (false === $this->_transactionOverride) {
+			$this->_transaction->commit();
+		}
+	}
 }
