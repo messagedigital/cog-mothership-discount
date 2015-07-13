@@ -8,9 +8,24 @@ use Message\User\UserInterface;
 
 class Create
 {
+	/**
+	 * @var DB\Query
+	 */
 	private $_query;
+
+	/**
+	 * @var BundleProductCreate
+	 */
 	private $_bundleProductCreate;
+
+	/**
+	 * @var BundlePriceCreate
+	 */
 	private $_bundlePriceCreate;
+
+	/**
+	 * @var UserInterface
+	 */
 	private $_user;
 
 	public function __construct(
@@ -69,8 +84,8 @@ class Create
 
 		$bundle->setID($result->id());
 
-		$this->_bundleProductCreate->saveProducts($bundle);
-		$this->_bundlePriceCreate->savePrices($bundle);
+		$this->_bundleProductCreate->save($bundle);
+		$this->_bundlePriceCreate->save($bundle);
 
 		return $bundle;
 	}

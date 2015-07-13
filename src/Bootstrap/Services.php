@@ -73,6 +73,21 @@ class Services implements ServicesInterface
 				$c['db.transaction']
 			);
 		};
+
+		$services['discount.bundle.form.bundle'] = function ($c) {
+			return new Discount\Form\BundleForm(
+				$c['translator'],
+				$c['discount.bundle.form.bundle_product'],
+				$c['cfg']->currency->supportedCurrencies
+			);
+		};
+
+		$services['discount.bundle.form.bundle_product'] = function ($c) {
+			return new Discount\Form\BundleProductForm(
+				$c['product.loader'],
+				$c['product.option.loader']
+			);
+		};
 	}
 
 	public function registerStatisticsDatasets($services)

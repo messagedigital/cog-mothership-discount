@@ -47,5 +47,7 @@ class Routes implements RoutesInterface
 
 		$router['ms.cp.discount']->add('ms.cp.discount.view.orders', 'view/{discountID}/orders', 'Message:Mothership:Discount::Controller:Detail#orders');
 
+		// Bundles
+		$router['ms.cp.discount']->add('ms.cp.discount.bundle.create', 'bundle/create', 'Message:Mothership:Discount::Controller:Bundle#create');
 	}
 }

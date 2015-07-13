@@ -1,0 +1,18 @@
+{% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
+{% block main %}
+{{ form_start(form) }}
+	{{ form_row(form['name']) }}
+	{{ form_row(form['start']) }}
+	{{ form_row(form['end']) }}
+	{% for currency in currencies %}
+		{{ form_row(form['price_' ~ currency]) }}
+	{% endfor %}
+	<section class="group" data-collapse data-identifier-field="{{ identifierField }}">
+		<h1 class="title" data-group-label></h1>
+		<div class="content">
+			{{ form_widget(form['product'].vars.prototype) }}
+			<a href="#" data-group-remove class="button small remove">{{ 'ms.cms.repeatable_group.remove'|trans({'%name%': singularName}) }}</a>
+		</div>
+	</section>
+{{ form_end(form) }}
+{% endblock %}
