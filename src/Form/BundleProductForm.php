@@ -10,6 +10,11 @@ use Symfony\Component\Validator\Constraints;
 
 class BundleProductForm extends Form\AbstractType
 {
+	const PRODUCT = 'product';
+	const OPTION_NAME = 'product_option_name';
+	const OPTION_VALUE = 'product_option_value';
+	const QUANTITY = 'quantity';
+
 	private $_productLoader;
 	private $_optionLoader;
 
@@ -26,7 +31,7 @@ class BundleProductForm extends Form\AbstractType
 
 	public function buildForm(Form\FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('product', 'choice', [
+		$builder->add(self::PRODUCT, 'choice', [
 			'expanded' => false,
 			'multiple' => false,
 			'choices' => $this->_getProductChoices(),
@@ -37,7 +42,7 @@ class BundleProductForm extends Form\AbstractType
 			'contextual_help' => 'ms.discount.bundle.products.product.help'
 		]);
 
-		$builder->add('product_option_name', 'choice', [
+		$builder->add(self::OPTION_NAME, 'choice', [
 			'expanded' => false,
 			'multiple' => false,
 			'choices' => $this->_getOptionNames(),
@@ -45,7 +50,7 @@ class BundleProductForm extends Form\AbstractType
 			'contextual_help' => 'ms.discount.bundle.products.option_name.help',
 		]);
 
-		$builder->add('product_option_value', 'choice', [
+		$builder->add(self::OPTION_VALUE, 'choice', [
 			'expanded' => false,
 			'multiple' => false,
 			'choices' => $this->_getOptionValues(),
@@ -53,9 +58,10 @@ class BundleProductForm extends Form\AbstractType
 			'contextual_help' => 'ms.discount.bundle.products.option_value.help',
 		]);
 
-		$builder->add('quantity', 'number', [
+		$builder->add(self::QUANTITY, 'number', [
 			'label' => 'ms.discount.bundle.products.quantity.label',
 			'contextual_help' => 'ms.discount.bundle.products.quantity.help',
+			'data' => 1,
 			'constraints' => [
 				new Constraints\NotBlank
 			]

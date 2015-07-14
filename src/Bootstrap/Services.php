@@ -74,8 +74,17 @@ class Services implements ServicesInterface
 			);
 		};
 
+		$services['discount.bundle_factory'] = function($c) {
+			return new Discount\Bundle\BundleFactory(
+				$c['product.loader'],
+				$c['file_manager.file.loader'],
+				$c['cfg']->currency->supportedCurrencies
+			);
+		};
+
 		$services['discount.bundle.form.bundle'] = function ($c) {
 			return new Discount\Form\BundleForm(
+				$c['file_manager.file.loader'],
 				$c['translator'],
 				$c['discount.bundle.form.bundle_product'],
 				$c['cfg']->currency->supportedCurrencies

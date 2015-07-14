@@ -15,6 +15,8 @@ class ProductRow
 		$this->_validateWholeNumber($productID);
 		$this->_validateWholeNumber($quantity);
 
+		ksort($options);
+
 		$this->_productID = (int) $productID;
 		$this->_options   = $options;
 		$this->_quantity  = (int) $quantity;

@@ -1,0 +1,31 @@
+{% macro getRepeatablePrototype(form) %}
+	{% filter escape %}
+	<section class="group" data-collapse>
+		<h2 class="title">Product</h2>
+		<div class="content">
+			{{ form_widget(form['product'].vars.prototype) }}
+			<a href="#" data-group-remove
+			   class="button small remove">{{ 'ms.cms.repeatable_group.remove'|trans({'%name%': singularName}) }}</a>
+		</div>
+	</section>
+	{% endfilter %}
+{% endmacro %}
+
+{{ form_start(form) }}
+	{{ form_row(form['name']) }}
+	{{ form_row(form['start']) }}
+	{{ form_row(form['end']) }}
+	{% for currency in currencies %}
+		{{ form_row(form['price_' ~ currency]) }}
+	{% endfor %}
+	{{ form_row(form['image']) }}
+	{{ form_row(form['allow_codes']) }}
+	<section class="repeatable-group">
+		<a href="#" data-group-add data-prototype="{{ _self.getRepeatablePrototype(form) }}"
+		   data-group-index="{{ part.count }}" class="button small add">
+			Add product
+		</a>
+	</section>
+	{% do form['product'].setRendered %}
+	<button type="submit" class="button small save" id="save-content">{{ 'ms.cms.content.button.save'|trans }}</button>
+{{ form_end(form) }}

@@ -74,6 +74,12 @@ ms.discount:
     product:
       label: Products
       help: Add multiple products
+    image:
+      label: Image
+      help: Select an preview image that will be associated with this bundle
+    allow_codes:
+      label: Can work with discount codes
+      help: Check this box if you want the bundle to be allowed to work in conjunction with discount codes
     products:
       product:
         label: Product
@@ -87,3 +93,5 @@ ms.discount:
       quantity:
         label: Quantity
         help: The quantity of this item that needs to be purchased for the bundle to be valid
+    error:
+      build: Could not create bundle: %message%

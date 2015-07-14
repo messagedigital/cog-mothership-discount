@@ -25,11 +25,6 @@ class Bundle
 	private $_name;
 
 	/**
-	 * @var string
-	 */
-	private $_displayName;
-
-	/**
 	 * @var Authorship
 	 */
 	private $_authorship;
@@ -65,25 +60,10 @@ class Bundle
 	protected $_productRows = [];
 
 	/**
-	 * Set the name and display name upon instanciation, as well as set an instance of Authorship (to be edited by
-	 * calling `getAuthorship()`)
-	 *
-	 * @param $name
-	 * @param $displayName
+	 * Aet an instance of Authorship (to be edited by calling `getAuthorship()`)
 	 */
-	public function __construct($name, $displayName)
+	public function __construct()
 	{
-		if (!is_string($name)) {
-			throw new \InvalidArgumentException('Bundle name must be a string, ' . gettype($name) . ' given');
-		}
-
-		if (!is_string($displayName)) {
-			throw new \InvalidArgumentException('Bundle display name must be a string, ' . gettype($displayName) . ' given');
-		}
-
-		$this->_name = $name;
-		$this->_displayName = $displayName;
-
 		$this->_authorship = new Authorship;
 	}
 
@@ -112,6 +92,15 @@ class Bundle
 		return $this->_id;
 	}
 
+	public function setName($name)
+	{
+		if (!is_string($name)) {
+			throw new \InvalidArgumentException('Bundle name must be a string, ' . gettype($name) . ' given');
+		}
+
+		$this->_name = $name;
+	}
+
 	/**
 	 * Get the name identification of the bundle
 	 *
@@ -120,16 +109,6 @@ class Bundle
 	public function getName()
 	{
 		return $this->_name;
-	}
-
-	/**
-	 * Get the name as it will appear in the admin panel and front end for the bundle
-	 *
-	 * @return string
-	 */
-	public function getDisplayName()
-	{
-		return $this->_displayName;
 	}
 
 	/**
@@ -172,14 +151,17 @@ class Bundle
 	 */
 	public function addProduct(Product\Product $product, array $options = [], $quantity = 1)
 	{
-		ksort($options);
+		$this->addProductRow(new ProductRow($product->id, $options, $quantity));
+	}
 
-		$key = md5(serialize($product->id, $options));
+	public function addProductRow(ProductRow $row)
+	{
+		$key = md5(serialize([$row->getProductID(), $row->getOptions()]));
 
 		if (array_key_exists($key, $this->_productRows)) {
-			$this->_productRows[$key]->increaseQuantity($quantity);
+			$this->_productRows[$key]->increaseQuantity($row->getQuantity());
 		} else {
-			$this->_productRows[$key] = new ProductRow($product->id, $options, $quantity);
+			$this->_productRows[$key] = $row;
 		}
 	}
 

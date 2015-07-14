@@ -55,7 +55,6 @@ class Create
 				discount_bundle
 				(
 					`name`,
-					display_name,
 					allow_codes,
 					start,
 					`end`,
@@ -65,7 +64,6 @@ class Create
 			VALUES
 				(
 					:name?s,
-					:displayName?s,
 					:allowCodes?b,
 					:start?dn,
 					:end?dn,
