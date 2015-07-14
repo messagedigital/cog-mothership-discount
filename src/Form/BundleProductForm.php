@@ -56,6 +56,9 @@ class BundleProductForm extends Form\AbstractType
 		$builder->add('quantity', 'number', [
 			'label' => 'ms.discount.bundle.products.quantity.label',
 			'contextual_help' => 'ms.discount.bundle.products.quantity.help',
+			'constraints' => [
+				new Constraints\NotBlank
+			]
 		]);
 	}
 

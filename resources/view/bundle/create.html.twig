@@ -1,32 +1,43 @@
 {% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
 
+{% block sidebar %}
+	{{ render(controller('Message:Mothership:Discount::Controller:Sidebar#index')) }}
+{% endblock %}
+
 {% macro getRepeatablePrototype(form) %}
 	{% filter escape %}
-	<div class="content">
-		{{ form_widget(form['product'].vars.prototype) }}
-		<a href="#" data-group-remove class="button small remove">{{ 'ms.cms.repeatable_group.remove'|trans({'%name%': singularName}) }}</a>
-	</div>
+		<section class="group" data-collapse>
+			<h2 class="title">Product</h2>
+			<div class="content">
+				{{ form_widget(form['product'].vars.prototype) }}
+				<a href="#" data-group-remove
+				   class="button small remove">{{ 'ms.cms.repeatable_group.remove'|trans({'%name%': singularName}) }}</a>
+			</div>
+		</section>
 	{% endfilter %}
 {% endmacro %}
 
 {% block main %}
-{{ form_start(form) }}
-	{{ form_row(form['name']) }}
-	{{ form_row(form['start']) }}
-	{{ form_row(form['end']) }}
-	{% for currency in currencies %}
-		{{ form_row(form['price_' ~ currency]) }}
-	{% endfor %}
-	<section class="group" data-collapse data-identifier-field="{{ identifierField }}">
-		<h1 class="title" data-group-label></h1>
+	<hgroup class="title">
+		<h1>Create bundle</h1>
+	</hgroup>
 
-		<a href="#" data-group-add data-prototype="{{
-			_self.getRepeatablePrototype(form) }}"
-		   data-group-index="{{ part.count }}" class="button small add">
-			Add product
-		</a>
-	</section>
-	<button type="submit" class="button small save" id="save-content">{{ 'ms.cms.content.button.save'|trans }}</button>
-
-	{{ form_end(form) }}
+	<div class="container-content">
+	{{ form_start(form) }}
+		{{ form_row(form['name']) }}
+		{{ form_row(form['start']) }}
+		{{ form_row(form['end']) }}
+		{% for currency in currencies %}
+			{{ form_row(form['price_' ~ currency]) }}
+		{% endfor %}
+		<section class="repeatable-group">
+			<a href="#" data-group-add data-prototype="{{ _self.getRepeatablePrototype(form) }}"
+			   data-group-index="{{ part.count }}" class="button small add">
+				Add product
+			</a>
+		</section>
+		{% do form['product'].setRendered %}
+		<button type="submit" class="button small save" id="save-content">{{ 'ms.cms.content.button.save'|trans }}</button>
+		{{ form_end(form) }}
+	</div>
 {% endblock %}
