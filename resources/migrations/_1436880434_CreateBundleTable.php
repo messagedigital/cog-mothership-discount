@@ -74,11 +74,23 @@ class _1436880434_CreateBundleTable extends Migration
 	public function down()
 	{
 		$this->run("
-			DROP TABLE discount_bundle;
-			DROP TABLE discount_bundle_price;
-			DROP TABLE discount_bundle_image;
-			DROP TABLE discount_bundle_product_row;
-			DROP TABLE discount_bundle_product_option;
+			DROP TABLE IF EXISTS discount_bundle;
+		");
+
+		$this->run("
+			DROP TABLE IF EXISTS discount_bundle_price;
+		");
+
+		$this->run("
+			DROP TABLE IF EXISTS discount_bundle_image;
+		");
+
+		$this->run("
+			DROP TABLE IF EXISTS discount_bundle_product_row;
+		");
+
+		$this->run("
+			DROP TABLE IF EXISTS discount_bundle_product_option;
 		");
 	}
 }

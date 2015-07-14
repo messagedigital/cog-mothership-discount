@@ -32,16 +32,18 @@ class Create
 		DB\Query $query,
 		BundleProductCreate $bundleProductCreate,
 		BundlePriceCreate $bundlePriceCreate,
+		BundleImageCreate $bundleImageCreate,
 		UserInterface $user
 	)
 	{
 		$this->_query = $query;
 		$this->_bundleProductCreate = $bundleProductCreate;
 		$this->_bundlePriceCreate   = $bundlePriceCreate;
+		$this->_bundleImageCreate   = $bundleImageCreate;
 		$this->_user = $user;
 	}
 
-	public function create(Bundle $bundle)
+	public function save(Bundle $bundle)
 	{
 		if (!$bundle->getAuthorship()->createdAt()) {
 			$bundle->getAuthorship()->create(
@@ -59,7 +61,7 @@ class Create
 					start,
 					`end`,
 					created_at,
-					created_by,
+					created_by
 				)
 			VALUES
 				(
@@ -72,7 +74,6 @@ class Create
 				)
 		", [
 			'name'        => $bundle->getName(),
-			'displayName' => $bundle->getDisplayName(),
 			'allowCodes'  => $bundle->allowCodes(),
 			'start'       => $bundle->getStart(),
 			'end'         => $bundle->getEnd(),
@@ -84,6 +85,7 @@ class Create
 
 		$this->_bundleProductCreate->save($bundle);
 		$this->_bundlePriceCreate->save($bundle);
+		$this->_bundleImageCreate->save($bundle);
 
 		return $bundle;
 	}

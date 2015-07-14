@@ -39,9 +39,9 @@ class BundlePriceCreate
 
 		foreach ($bundle->getPrices() as $currency => $price) {
 			$statement = '(
-				bundleID?i,
-				currency?s,
-				price?f
+				:bundleID?i,
+				:currency?s,
+				:price?f
 			)';
 			$params = [
 				'bundleID' => $bundle->getID(),
@@ -59,7 +59,7 @@ class BundlePriceCreate
 					discount_bundle_price
 					(
 						bundle_id,
-						currency_id,
+						currency,
 						price
 					)
 				VALUES

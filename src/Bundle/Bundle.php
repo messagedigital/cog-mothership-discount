@@ -40,14 +40,14 @@ class Bundle
 	private $_end;
 
 	/**
-	 * @var File
-	 */
-	private $_image;
-
-	/**
 	 * @var bool
 	 */
 	private $_allowCodes = false;
+
+	/**
+	 * @var File
+	 */
+	protected $_image;
 
 	/**
 	 * @var array
@@ -139,6 +139,11 @@ class Bundle
 	public function getImage()
 	{
 		return $this->_image;
+	}
+
+	public function removeImage()
+	{
+		$this->_image = null;
 	}
 
 	/**

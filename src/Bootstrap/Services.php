@@ -59,19 +59,38 @@ class Services implements ServicesInterface
 		});
 
 		// Bundles
-		$services['discount.bundle.create'] = function ($c) {
+		$services['discount.bundle_create'] = function ($c) {
 			return new Discount\Bundle\Create(
 				$c['db.query'],
 				$c['discount.bundle.product_create'],
 				$c['discount.bundle.price_create'],
+				$c['discount.bundle.image_create'],
 				$c['user.current']
 			);
 		};
 
-		$services['discount.bundle.edit'] = function ($c) {
+		$services['discount.bundle_edit'] = function ($c) {
 			return new Discount\Bundle\Edit(
 				$c['db.transaction']
 			);
+		};
+
+		$services['discount.bundle.product_create'] = function ($c) {
+			return new Discount\Bundle\BundleProductCreate(
+				$c['db.query'],
+				$c['db.query.parser']
+			);
+		};
+
+		$services['discount.bundle.price_create'] = function ($c) {
+			return new Discount\Bundle\BundlePriceCreate(
+				$c['db.query'],
+				$c['db.query.parser']
+			);
+		};
+
+		$services['discount.bundle.image_create'] = function ($c) {
+			return new Discount\Bundle\BundleImageCreate($c['db.query']);
 		};
 
 		$services['discount.bundle_factory'] = function($c) {
