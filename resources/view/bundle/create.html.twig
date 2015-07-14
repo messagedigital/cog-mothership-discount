@@ -1,4 +1,14 @@
 {% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
+
+{% macro getRepeatablePrototype(form) %}
+	{% filter escape %}
+	<div class="content">
+		{{ form_widget(form['product'].vars.prototype) }}
+		<a href="#" data-group-remove class="button small remove">{{ 'ms.cms.repeatable_group.remove'|trans({'%name%': singularName}) }}</a>
+	</div>
+	{% endfilter %}
+{% endmacro %}
+
 {% block main %}
 {{ form_start(form) }}
 	{{ form_row(form['name']) }}
@@ -9,10 +19,14 @@
 	{% endfor %}
 	<section class="group" data-collapse data-identifier-field="{{ identifierField }}">
 		<h1 class="title" data-group-label></h1>
-		<div class="content">
-			{{ form_widget(form['product'].vars.prototype) }}
-			<a href="#" data-group-remove class="button small remove">{{ 'ms.cms.repeatable_group.remove'|trans({'%name%': singularName}) }}</a>
-		</div>
+
+		<a href="#" data-group-add data-prototype="{{
+			_self.getRepeatablePrototype(form) }}"
+		   data-group-index="{{ part.count }}" class="button small add">
+			Add product
+		</a>
 	</section>
-{{ form_end(form) }}
+	<button type="submit" class="button small save" id="save-content">{{ 'ms.cms.content.button.save'|trans }}</button>
+
+	{{ form_end(form) }}
 {% endblock %}
