@@ -54,10 +54,13 @@ class ProductRowLoader implements EntityLoaderInterface
 		$result = $this->_queryBuilderFactory
 			->getQueryBuilder()
 			->select($this->_columns)
-			->from(self::PRODUCT_TABLE)
-			->leftJoin(self::OPTION_TABLE, 'p.product_row_id = o.product_row_id')
-			->where('p.bundle_id = ?i', $bundle->getID())
+			->from('p', self::PRODUCT_TABLE)
+			->leftJoin('o', 'p.product_row_id = o.product_row_id', self::OPTION_TABLE)
+			->where('p.bundle_id = ?i', [$bundle->getID()])
+			->getQuery()
+			->run()
 		;
+
 
 		$productRowData = [];
 		$productRows = [];
@@ -67,12 +70,12 @@ class ProductRowLoader implements EntityLoaderInterface
 			if (!array_key_exists($row->id, $productRowData)) {
 				$productRowData[$row->id] = [
 					'product_id' => $row->product_id,
-					'options' => [$row->option_name => $row->option_value],
+					'options' => $this->_getRowOptionsArray($row->option_name, $row->option_value),
 					'quantity' => $row->quantity
 				];
 			}
 
-			$productRowData[$row->id]['options'] = $productRowData[$row->id]['options'] + [$row->option_name => $row->option_value];
+			$productRowData[$row->id]['options'] = $productRowData[$row->id]['options'] + $this->_getRowOptionsArray($row->option_name, $row->option_value);
 		}
 
 		foreach ($productRowData as $data) {
@@ -84,5 +87,14 @@ class ProductRowLoader implements EntityLoaderInterface
 		}
 
 		return $productRows;
+	}
+
+	private function _getRowOptionsArray($name, $value)
+	{
+		if ($name && $value && (!is_scalar($name) || !is_scalar($value))) {
+			throw new \LogicException('Name and value must be scalar');
+		}
+
+		return ($name && $value) ? [$name => $value] : [];
 	}
 }

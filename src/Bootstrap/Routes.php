@@ -51,6 +51,13 @@ class Routes implements RoutesInterface
 		$router['ms.cp.discount']->add('ms.cp.discount.bundle.create.action', 'bundle/create', 'Message:Mothership:Discount::Controller:Bundle#createAction')
 			->setMethod('POST')
 		;
+
 		$router['ms.cp.discount']->add('ms.cp.discount.bundle.create', 'bundle/create', 'Message:Mothership:Discount::Controller:Bundle#create');
+
+		$router['ms.cp.discount']->add('ms.cp.discount.bundle.edit.action', 'bundle/{bundleID}/edit', 'Message:Mothership:Discount::Controller:Bundle#editAction')
+			->setMethod('POST')
+		;
+
+		$router['ms.cp.discount']->add('ms.cp.discount.bundle.edit', 'bundle/{bundleID}/edit', 'Message:Mothership:Discount::Controller:Bundle#edit');
 	}
 }

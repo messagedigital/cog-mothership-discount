@@ -105,6 +105,7 @@ class Services implements ServicesInterface
 			return new Discount\Form\BundleForm(
 				$c['file_manager.file.loader'],
 				$c['translator'],
+			$c['discount.bundle_factory'],
 				$c['discount.bundle.form.bundle_product'],
 				$c['cfg']->currency->supportedCurrencies
 			);

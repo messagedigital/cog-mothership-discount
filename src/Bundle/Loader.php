@@ -161,7 +161,7 @@ class Loader
 			->getQueryBuilder()
 			->select($this->_columns)
 			->from('b', self::TABLE_NAME)
-			->leftJoin('bi', self::IMAGE_TABLE_NAME)
+			->leftJoin('bi', 'b.bundle_id = bi.bundle_id', self::IMAGE_TABLE_NAME)
 		;
 
 		if (false === $this->_includeDeleted) {

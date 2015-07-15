@@ -51,7 +51,7 @@ class PriceLoader implements EntityLoaderInterface
 		$result = $this->_queryBuilderFactory->getQueryBuilder()
 			->select($this->_columns)
 			->from(self::TABLE_NAME)
-			->where('bundle_id = ?i', $bundle->getID())
+			->where('bundle_id = ?i', [$bundle->getID()])
 			->getQuery()
 			->run();
 		;

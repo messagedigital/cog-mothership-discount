@@ -7,7 +7,6 @@ use Message\Mothership\Discount\Bundle\Exception\BundleBuildException;
 
 class Bundle extends Controller
 {
-
 	public function create()
 	{
 		$form = $this->createForm($this->get('discount.bundle.form.bundle'));
@@ -22,11 +21,10 @@ class Bundle extends Controller
 	{
 		$form = $this->createForm($this->get('discount.bundle.form.bundle'));
 		$form->handleRequest();
-		$data = $form->getData();
 
 		if ($form->isValid()) {
 			try {
-				$bundle = $this->get('discount.bundle_factory')->build($data);
+				$bundle = $form->getData();
 				$this->get('discount.bundle_create')->save($bundle);
 			} catch (BundleBuildException $e) {
 				$this->addFlash('error', $this->trans('ms.discount.bundle.error.build', [
@@ -38,5 +36,17 @@ class Bundle extends Controller
 		}
 
 		return $this->redirectToReferer();
+	}
+
+	public function edit($bundleID)
+	{
+		$bundle = $this->get('discount.bundle_loader')->getByID($bundleID);
+
+		$form = $this->createForm($this->get('discount.bundle.form.bundle'), $bundle);
+
+		return $this->render('Message:Mothership:Discount::bundle:create', [
+			'form' => $form,
+			'currencies' => $this->get('cfg')->currency->supportedCurrencies,
+		]);
 	}
 }

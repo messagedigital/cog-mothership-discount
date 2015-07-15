@@ -30,6 +30,8 @@ class BundleProxy extends Bundle
 	public function __construct(EntityLoaderCollection $loaders)
 	{
 		$this->_loaders = $loaders;
+
+		parent::__construct();
 	}
 
 	/**
@@ -53,7 +55,7 @@ class BundleProxy extends Bundle
 	 */
 	public function getProductRows()
 	{
-		if (null === parent::getProductRows()) {
+		if (!parent::getProductRows()) {
 			$productRows = $this->_loaders->get('product_row')->getProductRows($this);
 
 			foreach ($productRows as $productRow) {
@@ -69,7 +71,7 @@ class BundleProxy extends Bundle
 	 */
 	public function getPrice($currencyID)
 	{
-		if (null === parent::getPrices()) {
+		if (!parent::getPrices()) {
 			$this->_loadPrices();
 		}
 
@@ -81,7 +83,7 @@ class BundleProxy extends Bundle
 	 */
 	public function getPrices()
 	{
-		if (null === parent::getPrices()) {
+		if (!parent::getPrices()) {
 			$this->_loadPrices();
 		}
 
@@ -120,7 +122,7 @@ class BundleProxy extends Bundle
 		$prices = $this->_loaders->get('price')->getPrices($this);
 
 		foreach ($prices as $currencyID => $price) {
-			$this->getPrice($price, $currencyID);
+			$this->setPrice($price, $currencyID);
 		}
 	}
 }

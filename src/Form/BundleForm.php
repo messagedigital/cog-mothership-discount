@@ -2,6 +2,7 @@
 
 namespace Message\Mothership\Discount\Form;
 
+use Message\Mothership\Discount\Bundle\BundleFactory;
 use Message\Mothership\FileManager\File;
 use Message\Cog\Localisation\Translator;
 use Symfony\Component\Form;
@@ -22,10 +23,12 @@ class BundleForm extends Form\AbstractType
 	private $_currencies;
 	private $_productForm;
 	private $_translator;
+	private $_factory;
 
 	public function __construct(
 		File\FileLoader $fileLoader,
 		Translator $translator,
+		BundleFactory $factory,
 		BundleProductForm $productForm,
 		array $currencies
 	)
@@ -36,6 +39,7 @@ class BundleForm extends Form\AbstractType
 
 		$this->_fileLoader = $fileLoader;
 		$this->_translator = $translator;
+		$this->_factory = $factory;
 		$this->_productForm = $productForm;
 		$this->_currencies = $currencies;
 	}
@@ -98,8 +102,16 @@ class BundleForm extends Form\AbstractType
 			'allow_add' => true,
 			'allow_delete' => true,
 		]);
+
+		$builder->addModelTransformer(new DataTransformer\BundleTransformer($this->_factory));
 	}
 
+	public function setDefaultOptions(OptionsResolverInterface $resolver)
+	{
+		$resolver->setDefaults([
+			'data_class' => null, // For some reason it freaks out expecting a BundleProxy if this isn't set
+		]);
+	}
 
 	private function _getImageChoices()
 	{
