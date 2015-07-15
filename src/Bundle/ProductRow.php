@@ -2,8 +2,6 @@
 
 namespace Message\Mothership\Discount\Bundle;
 
-use Message\Mothership\Commerce\Product\Product;
-
 class ProductRow
 {
 	private $_productID;

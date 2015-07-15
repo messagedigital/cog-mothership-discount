@@ -47,17 +47,17 @@ class Bundle
 	/**
 	 * @var File
 	 */
-	protected $_image;
+	private $_image;
 
 	/**
 	 * @var array
 	 */
-	protected $_prices = [];
+	private $_productRows = [];
 
 	/**
 	 * @var array
 	 */
-	protected $_productRows = [];
+	private $_prices = [];
 
 	/**
 	 * Aet an instance of Authorship (to be edited by calling `getAuthorship()`)

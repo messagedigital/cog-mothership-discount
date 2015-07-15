@@ -116,6 +116,40 @@ class Services implements ServicesInterface
 				$c['product.option.loader']
 			);
 		};
+
+		$services['discount.bundle_loader'] = function($c) {
+			return new Discount\Bundle\Loader(
+				$c['db.query.builder.factory'],
+				$c['user.loader'],
+				$c['discount.bundle.entity_collection']
+			);
+		};
+
+		$services['discount.bundle.entity_collection'] = function ($c) {
+			return new \Message\Cog\DB\Entity\EntityLoaderCollection([
+				'file' => $c['discount.bundle.file_loader'],
+				'product_row' => $c['discount.bundle.product_row_loader'],
+				'price' => $c['discount.bundle.price_loader']
+			]);
+		};
+
+		$services['discount.bundle.file_loader'] = function ($c) {
+			return new Discount\Bundle\FileLoader(
+				$c['file_manager.file.loader']
+			);
+		};
+
+		$services['discount.bundle.product_row_loader'] = function ($c) {
+			return new Discount\Bundle\ProductRowLoader(
+				$c['db.query.builder.factory']
+			);
+		};
+
+		$services['discount.bundle.price_loader'] = function ($c) {
+			return new Discount\Bundle\PriceLoader(
+				$c['db.query.builder.factory']
+			);
+		};
 	}
 
 	public function registerStatisticsDatasets($services)
