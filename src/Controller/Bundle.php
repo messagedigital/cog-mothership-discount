@@ -47,6 +47,7 @@ class Bundle extends Controller
 		return $this->render('Message:Mothership:Discount::bundle:create', [
 			'form' => $form,
 			'currencies' => $this->get('cfg')->currency->supportedCurrencies,
+			'bundle' => $bundle
 		]);
 	}
 }

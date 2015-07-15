@@ -20,6 +20,20 @@
 	{% endfor %}
 	{{ form_row(form['image']) }}
 	{{ form_row(form['allow_codes']) }}
+	{% if bundle %}
+		{% set inc = 0 %}
+		{% for product in bundle.getProductRows() %}
+			<section class="group" data-collapse>
+				<h2 class="title">Product</h2>
+				<div class="content">
+					{{ form_widget(form['product'][inc]) }}
+					<a href="#" data-group-remove
+					   class="button small remove">{{ 'ms.cms.repeatable_group.remove'|trans({'%name%': singularName}) }}</a>
+				</div>
+			</section>
+			{% set inc = inc + 1 %}
+		{% endfor %}
+	{% endif %}
 	<section class="repeatable-group">
 		<a href="#" data-group-add data-prototype="{{ _self.getRepeatablePrototype(form) }}"
 		   data-group-index="{{ part.count }}" class="button small add">
