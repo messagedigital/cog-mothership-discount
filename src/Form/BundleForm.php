@@ -11,6 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class BundleForm extends Form\AbstractType
 {
+	const ID = 'id';
 	const NAME = 'name';
 	const START = 'start';
 	const END = 'end';
@@ -51,6 +52,8 @@ class BundleForm extends Form\AbstractType
 
 	public function buildForm(Form\FormBuilderInterface $builder, array $options)
 	{
+		$builder->add(self::ID, 'hidden');
+
 		$builder->add(self::NAME, 'text', [
 			'label' => 'ms.discount.bundle.name.label',
 			'contextual_help' => 'ms.discount.bundle.name.help',

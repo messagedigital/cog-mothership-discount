@@ -41,6 +41,10 @@ class BundleFactory
 
 		$bundle = new Bundle;
 
+		if (!empty($data[Form\BundleForm::ID])) {
+			$bundle->setID($data[Form\BundleForm::ID]);
+		}
+
 		$bundle->setName($data[Form\BundleForm::NAME]);
 
 		if (!empty($data[Form\BundleForm::START])) {

@@ -2,15 +2,20 @@
 
 namespace Message\Mothership\Discount\Bundle;
 
-use Message\Cog\DB\Query;
+use Message\Cog\DB;
 
-class BundleImageCreate
+class BundleImageCreate implements DB\TransactionalInterface
 {
 	private $_query;
 
-	public function __construct(Query $query)
+	public function __construct(DB\QueryableInterface $query)
 	{
 		$this->_query = $query;
+	}
+
+	public function setTransaction(DB\Transaction $transaction)
+	{
+		$this->_query = $transaction;
 	}
 
 	public function save(Bundle $bundle, $delete = true)

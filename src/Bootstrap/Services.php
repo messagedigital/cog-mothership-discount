@@ -71,27 +71,34 @@ class Services implements ServicesInterface
 
 		$services['discount.bundle_edit'] = function ($c) {
 			return new Discount\Bundle\Edit(
-				$c['db.transaction']
+				$c['db.transaction'],
+				$c['discount.bundle.product_create'],
+				$c['discount.bundle.price_create'],
+				$c['discount.bundle.image_create'],
+				$c['user.current']
 			);
 		};
 
-		$services['discount.bundle.product_create'] = function ($c) {
+		// Not a singleton as query can be replaced with transaction
+		$services['discount.bundle.product_create'] = $services->factory(function ($c) {
 			return new Discount\Bundle\BundleProductCreate(
 				$c['db.query'],
 				$c['db.query.parser']
 			);
-		};
+		});
 
-		$services['discount.bundle.price_create'] = function ($c) {
+		// Not a singleton as query can be replaced with transaction
+		$services['discount.bundle.price_create'] = $services->factory(function ($c) {
 			return new Discount\Bundle\BundlePriceCreate(
 				$c['db.query'],
 				$c['db.query.parser']
 			);
-		};
+		});
 
-		$services['discount.bundle.image_create'] = function ($c) {
+		// Not a singleton as query can be replaced with transaction
+		$services['discount.bundle.image_create'] = $services->factory(function ($c) {
 			return new Discount\Bundle\BundleImageCreate($c['db.query']);
-		};
+		});
 
 		$services['discount.bundle_factory'] = function($c) {
 			return new Discount\Bundle\BundleFactory(

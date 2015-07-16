@@ -93,5 +93,9 @@ ms.discount:
       quantity:
         label: Quantity
         help: The quantity of this item that needs to be purchased for the bundle to be valid
+    create:
+      success: Bundle saved successfully!
+    edit:
+      success: Bundle updated successfully!
     error:
       build: Could not create bundle: %message%

@@ -57,6 +57,7 @@ class ProductRowLoader implements EntityLoaderInterface
 			->from('p', self::PRODUCT_TABLE)
 			->leftJoin('o', 'p.product_row_id = o.product_row_id', self::OPTION_TABLE)
 			->where('p.bundle_id = ?i', [$bundle->getID()])
+			->orderBy('p.product_row_id ASC')
 			->getQuery()
 			->run()
 		;

@@ -12,6 +12,7 @@
 {% endmacro %}
 
 {{ form_start(form) }}
+	{{ form_widget(form['id']) }}
 	{{ form_row(form['name']) }}
 	{{ form_row(form['start']) }}
 	{{ form_row(form['end']) }}
@@ -20,6 +21,7 @@
 	{% endfor %}
 	{{ form_row(form['image']) }}
 	{{ form_row(form['allow_codes']) }}
+
 	{% if bundle %}
 		{% set inc = 0 %}
 		{% for product in bundle.getProductRows() %}

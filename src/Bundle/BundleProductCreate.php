@@ -4,10 +4,10 @@ namespace Message\Mothership\Discount\Bundle;
 
 use Message\Cog\DB;
 
-class BundleProductCreate
+class BundleProductCreate implements DB\TransactionalInterface
 {
 	/**
-	 * @var DB\Query
+	 * @var DB\QueryableInterface
 	 */
 	private $_query;
 
@@ -16,10 +16,15 @@ class BundleProductCreate
 	 */
 	private $_queryParser;
 
-	public function __construct(DB\Query $query, DB\QueryParser $queryParser)
+	public function __construct(DB\QueryableInterface $query, DB\QueryParser $queryParser)
 	{
 		$this->_query = $query;
 		$this->_queryParser = $queryParser;
+	}
+
+	public function setTransaction(DB\Transaction $transaction)
+	{
+		$this->_query = $transaction;
 	}
 
 	public function save(Bundle $bundle, $delete = true)

@@ -27,6 +27,7 @@ class BundleTransformer implements DataTransformerInterface
 		}
 
 		$data = [
+			BundleForm::ID    => $bundle->getID(),
 			BundleForm::NAME  => $bundle->getName(),
 			BundleForm::START => $bundle->getStart(),
 			BundleForm::END   => $bundle->getEnd(),
