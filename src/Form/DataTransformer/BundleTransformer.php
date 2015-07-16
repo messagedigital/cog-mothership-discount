@@ -22,17 +22,21 @@ class BundleTransformer implements DataTransformerInterface
 			return null;
 		}
 
+		if (is_array($bundle)) {
+			return $bundle;
+		}
+
 		if (!$bundle instanceof Bundle\Bundle) {
 			throw new \InvalidArgumentException('Form data must be created from a bundle');
 		}
 
 		$data = [
-			BundleForm::ID    => $bundle->getID(),
-			BundleForm::NAME  => $bundle->getName(),
-			BundleForm::START => $bundle->getStart(),
-			BundleForm::END   => $bundle->getEnd(),
-			BundleForm::IMAGE => $bundle->getImage()->id,
-			BundleForm::CODES => $bundle->allowCodes(),
+			BundleForm::ID      => $bundle->getID(),
+			BundleForm::NAME    => $bundle->getName(),
+			BundleForm::START   => $bundle->getStart(),
+			BundleForm::END     => $bundle->getEnd(),
+			BundleForm::IMAGE   => $bundle->getImage()->id,
+			BundleForm::CODES   => $bundle->allowCodes(),
 			BundleForm::PRODUCT => [],
 		];
 
@@ -53,7 +57,6 @@ class BundleTransformer implements DataTransformerInterface
 
 			$data[BundleForm::PRODUCT][] = $productData;
 		}
-
 		return $data;
 	}
 
@@ -62,6 +65,8 @@ class BundleTransformer implements DataTransformerInterface
 		try {
 			return $this->_factory->build($data);
 		} catch (Bundle\Exception\BundleBuildException $e) {
+			$data['error'] = $e->getMessage();
+
 			return $data;
 		}
 	}

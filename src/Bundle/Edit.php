@@ -65,7 +65,6 @@ class Edit implements TransactionalInterface
 			'bundleID' => $bundle->getID(),
 		]);
 
-		$this->_productCreate->setTransaction($this->_transaction);
 		$this->_productCreate->save($bundle);
 
 		$this->_priceCreate->setTransaction($this->_transaction);
