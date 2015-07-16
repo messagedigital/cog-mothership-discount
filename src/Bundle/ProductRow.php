@@ -4,6 +4,7 @@ namespace Message\Mothership\Discount\Bundle;
 
 class ProductRow
 {
+	private $_id;
 	private $_productID;
 	private $_options;
 	private $_quantity;
@@ -18,6 +19,16 @@ class ProductRow
 		$this->_productID = (int) $productID;
 		$this->_options   = $options;
 		$this->_quantity  = (int) $quantity;
+	}
+
+	public function setID($id)
+	{
+		$this->_id = $id;
+	}
+
+	public function getID()
+	{
+		return $this->_id;
 	}
 
 	public function getProductID()

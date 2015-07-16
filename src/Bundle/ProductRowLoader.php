@@ -79,12 +79,16 @@ class ProductRowLoader implements EntityLoaderInterface
 			$productRowData[$row->id]['options'] = $productRowData[$row->id]['options'] + $this->_getRowOptionsArray($row->option_name, $row->option_value);
 		}
 
-		foreach ($productRowData as $data) {
-			$productRows[] = new ProductRow(
+		foreach ($productRowData as $id => $data) {
+			$productRow = new ProductRow(
 				$data['product_id'],
 				$data['options'],
 				$data['quantity']
 			);
+
+			$productRow->setID($id);
+
+			$productRows[] = $productRow;
 		}
 
 		return $productRows;
