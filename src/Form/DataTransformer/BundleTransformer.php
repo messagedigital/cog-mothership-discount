@@ -57,6 +57,7 @@ class BundleTransformer implements DataTransformerInterface
 
 			$data[BundleForm::PRODUCT][] = $productData;
 		}
+
 		return $data;
 	}
 

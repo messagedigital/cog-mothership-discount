@@ -11,6 +11,17 @@
 	{% endfilter %}
 {% endmacro %}
 
+{% macro renderProductField(form, key) %}
+		<section class="group" data-collapse>
+			<h2 class="title">Product #{{ key + 1 }}</h2>
+			<div class="content">
+				{{ form_widget(form['product'][key]) }}
+				<a href="#" data-group-remove
+				   class="button small remove">{{ 'ms.cms.repeatable_group.remove'|trans({'%name%': singularName}) }}</a>
+			</div>
+		</section>
+{% endmacro %}
+
 {{ form_start(form) }}
 	{{ form_widget(form['id']) }}
 	{{ form_row(form['name']) }}
@@ -22,23 +33,21 @@
 	{{ form_row(form['image']) }}
 	{{ form_row(form['allow_codes']) }}
 
-	{% if bundle %}
-		{% set inc = 0 %}
+	{% if bundle is iterable %}
+		{% for key, product in bundle.product %}
+			{{ _self.renderProductField(form, key) }}
+		{% endfor %}
+		{% set key = key + 1 %}
+	{% elseif bundle %}
+		{% set key = 0 %}
 		{% for product in bundle.getProductRows() %}
-			<section class="group" data-collapse>
-				<h2 class="title">Product</h2>
-				<div class="content">
-					{{ form_widget(form['product'][inc]) }}
-					<a href="#" data-group-remove
-					   class="button small remove">{{ 'ms.cms.repeatable_group.remove'|trans({'%name%': singularName}) }}</a>
-				</div>
-			</section>
-			{% set inc = inc + 1 %}
+			{{ _self.renderProductField(form, key) }}
+			{% set key = key + 1 %}
 		{% endfor %}
 	{% endif %}
 	<section class="repeatable-group">
 		<a href="#" data-group-add data-prototype="{{ _self.getRepeatablePrototype(form) }}"
-		   data-group-index="{{ part.count }}" class="button small add">
+		   data-group-index="{{ key }}" class="button small add">
 			Add product
 		</a>
 	</section>

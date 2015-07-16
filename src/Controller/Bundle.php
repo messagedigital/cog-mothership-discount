@@ -3,7 +3,7 @@
 namespace Message\Mothership\Discount\Controller;
 
 use Message\Cog\Controller\Controller;
-use Message\Mothership\Discount\Bundle\Exception\BundleBuildException;
+use Message\Mothership\Discount\Form\BundleForm;
 
 class Bundle extends Controller
 {
@@ -11,7 +11,7 @@ class Bundle extends Controller
 
 	public function create()
 	{
-		$data = $this->get('http.session')->get(self::INVALID_BUNDLE_SESSION) ?: null;
+		$data = $this->_getInvalidBundleData();
 		$this->get('http.session')->remove(self::INVALID_BUNDLE_SESSION);
 
 		$form = $this->createForm($this->get('discount.bundle.form.bundle'), $data);
@@ -50,7 +50,7 @@ class Bundle extends Controller
 
 	public function edit($bundleID)
 	{
-		$bundle = $this->get('discount.bundle_loader')->getByID($bundleID);
+		$bundle = $this->_getInvalidBundleData($bundleID) ?: $this->get('discount.bundle_loader')->getByID($bundleID);
 
 		$form = $this->createForm($this->get('discount.bundle.form.bundle'), $bundle);
 
@@ -61,7 +61,7 @@ class Bundle extends Controller
 		]);
 	}
 
-	public function editAction($bundleID)
+	public function editAction()
 	{
 		$form = $this->createForm($this->get('discount.bundle.form.bundle'));
 
@@ -84,6 +84,23 @@ class Bundle extends Controller
 		return $this->_redirectInvalid($bundle);
 	}
 
+	private function _getInvalidBundleData($bundleID = null)
+	{
+		$data = $this->get('http.session')->get(self::INVALID_BUNDLE_SESSION) ?: null;
+
+		if (null === $data) {
+			return null;
+		}
+
+		if ($bundleID && (!array_key_exists(BundleForm::ID, $data) || $data[BundleForm::ID] != $bundleID)) {
+			return null;
+		}
+
+		$this->get('http.session')->remove(self::INVALID_BUNDLE_SESSION);
+
+		return $data;
+	}
+
 	/**
 	 * If the `Form\DataTransformer\BundleTransformer` catches a `BundleBuildException` when trying to transform the
 	 * data, it will add another value to the data array with a key of `error`, which will be the message from the
@@ -102,6 +119,8 @@ class Bundle extends Controller
 		$this->addFlash('error', $this->trans('ms.discount.bundle.error.build', [
 			'%message%' => $data['error'],
 		]));
+
+		unset($data['error']);
 
 		return $this->_redirectInvalid($data);
 	}

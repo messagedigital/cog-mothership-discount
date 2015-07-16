@@ -98,4 +98,4 @@ ms.discount:
     edit:
       success: Bundle updated successfully!
     error:
-      build: Could not create bundle: %message%
+      build: Could not save bundle: %message%

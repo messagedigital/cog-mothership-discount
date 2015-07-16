@@ -99,11 +99,11 @@ class BundleForm extends Form\AbstractType
 		]);
 
 		$builder->add(self::PRODUCT, 'collection', [
-			'type' => $this->_productForm,
-			'label' => 'ms.discount.bundle.product.label',
+			'type'            => $this->_productForm,
+			'label'           => 'ms.discount.bundle.product.label',
 			'contextual_help' => 'ms.discount.bundle.product.help',
-			'allow_add' => true,
-			'allow_delete' => true,
+			'allow_add'       => true,
+			'allow_delete'    => true,
 		]);
 
 		$builder->addModelTransformer(new DataTransformer\BundleTransformer($this->_factory));
