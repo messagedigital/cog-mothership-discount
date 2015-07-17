@@ -163,6 +163,7 @@ class Services implements ServicesInterface
 			);
 		};
 
+		// Extended services
 		$services->extend('field.collection', function($fields, $c) {
 			$fields->add(new Discount\Field\Bundle($c['discount.bundle_loader']));
 

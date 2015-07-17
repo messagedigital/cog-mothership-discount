@@ -52,6 +52,17 @@ class ProductSelector extends Controller
 			}
 
 			if ($allItems) {
+				$bundleNotSet = true;
+				$inc = 0;
+				while ($bundleNotSet) {
+					$metadataTag = 'bundle_' . $inc;
+					if ($this->get('basket.order')->metadata->exists($metadataTag)) {
+						++$inc;
+					} else {
+						$this->get('basket.order')->metadata->set($metadataTag, $bundleID);
+						$bundleNotSet = false;
+					}
+				}
 				$this->addFlash('success', 'Bundle successfully added to basket');
 			} else {
 				$this->addFlash('error', 'Only ' . $itemCount . ' items added to basket');
