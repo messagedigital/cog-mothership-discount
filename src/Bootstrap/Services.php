@@ -125,6 +125,10 @@ class Services implements ServicesInterface
 			);
 		};
 
+		$services['discount.bundle.form.product_selector'] = function($c) {
+			return new Discount\Form\BundleProductSelector\ProductSelectorGroupForm;
+		};
+
 		$services['discount.bundle_loader'] = function($c) {
 			return new Discount\Bundle\Loader(
 				$c['db.query.builder.factory'],

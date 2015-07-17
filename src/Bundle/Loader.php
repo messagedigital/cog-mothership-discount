@@ -98,6 +98,13 @@ class Loader
 		return $this->_load();
 	}
 
+	public function getAll()
+	{
+		$this->_buildQuery();
+
+		return $this->_load();
+	}
+
 	private function _load($returnAsArray = true)
 	{
 		if (null === $this->_queryBuilder) {

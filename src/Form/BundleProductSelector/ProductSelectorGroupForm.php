@@ -11,13 +11,6 @@ class ProductSelectorGroupForm extends Form\AbstractType
 {
 	const PRODUCT_ROW = 'product_row_';
 
-	private $_productSelector;
-
-	public function __construct(ProductSelectorForm $productSelector)
-	{
-		$this->_productSelector = $productSelector;
-	}
-
 	public function getName()
 	{
 		return 'bundle_product_selector_group';
@@ -26,6 +19,10 @@ class ProductSelectorGroupForm extends Form\AbstractType
 	public function buildForm(Form\FormBuilderInterface $builder, array $options)
 	{
 		$this->_validateOptions($options);
+
+		$builder->add('bundle_id', 'hidden', [
+			'data' => $options['bundle']->getID(),
+		]);
 
 		foreach ($options['bundle']->getProductRows() as $productRow) {
 
@@ -38,11 +35,14 @@ class ProductSelectorGroupForm extends Form\AbstractType
 			}
 
 			for ($i = 0; $i < $productRow->getQuantity(); ++$i) {
-				$builder->add(self::PRODUCT_ROW . $productRow->getID() . '_' . $i, $this->_productSelector, [
+				$builder->add(self::PRODUCT_ROW . $productRow->getID() . '_' . $i, new ProductSelectorForm, [
 					'units'        => $options['units'][$productRow->getID()],
 					'unit_options' => $productRow->getOptions(),
 					'out_of_stock' => $options['out_of_stock'],
 					'product'      => $options['products'][$productRow->getProductID()],
+					'constraints'  => [
+						new Constraints\NotBlank,
+					]
 				]);
 			}
 		}
@@ -51,10 +51,10 @@ class ProductSelectorGroupForm extends Form\AbstractType
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults([
-			'bundle' => null,
-			'units'  => [],
+			'bundle'       => null,
+			'units'        => [],
 			'out_of_stock' => [],
-			'products' => [],
+			'products'     => [],
 		]);
 	}
 

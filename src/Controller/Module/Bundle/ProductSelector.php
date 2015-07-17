@@ -3,11 +3,14 @@
 namespace Message\Mothership\Discount\Controller\Module\Bundle;
 
 use Message\Mothership\Discount\Bundle;
+use Message\Mothership\Discount\Form\BundleProductSelector\ProductSelectorGroupForm as SelectorForm;
 use Message\Mothership\Commerce\Product\Product;
 use Message\Cog\Controller\Controller;
 
 class ProductSelector extends Controller
 {
+	private $_units;
+	private $_outOfStock;
 
 	public function index(Bundle\Bundle $bundle)
 	{
@@ -16,10 +19,36 @@ class ProductSelector extends Controller
 		$outOfStock = [];
 
 		foreach ($bundle->getProductRows() as $productRow) {
-			list($units[$productRow->getID()], $outOfStock[$productRow->getID()]) =
-				$this->_getUnits($products[$productRow->getProductID()], $productRow->getOptions());
+			$units[$productRow->getID()] = $this->_getUnits($products[$productRow->getProductID()], $productRow->getOptions());
 		}
 
+		$form = $this->createForm($this->get('discount.bundle.form.product_selector'), null, [
+			'bundle'       => $bundle,
+			'products'     => $products,
+			'units'        => $units,
+			'out_of_stock' => $outOfStock,
+		]);
+
+		$formFields = $this->_getFormFields($bundle);
+
+		return $this->render('Message:Mothership:Discount::bundle:product-selector', [
+			'form' => $form,
+			'bundle' => $bundle,
+			'form_fields' => $formFields,
+		]);
+	}
+
+	private function _getFormFields(Bundle\Bundle $bundle)
+	{
+		$formFields = [];
+
+		foreach ($bundle->getProductRows() as $productRow) {
+			for ($i = 0; $i < $productRow->getQuantity(); ++$i) {
+				$formFields[] = SelectorForm::PRODUCT_ROW . $productRow->getID() . '_' . $i;
+			}
+		}
+
+		return $formFields;
 	}
 
 	private function _getProducts(Bundle\Bundle $bundle)
@@ -58,6 +87,10 @@ class ProductSelector extends Controller
 			$units[$unit->id] = $unit;
 		}
 
-		return [$units, $outOfStock];
+		$outOfStock = $outOfStock + $this->_outOfStock;
+
+		$this->_outOfStock = array_unique($outOfStock);
+
+		return $units;
 	}
 }
