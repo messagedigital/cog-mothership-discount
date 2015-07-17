@@ -162,6 +162,12 @@ class Services implements ServicesInterface
 				$c['db.query.builder.factory']
 			);
 		};
+
+		$services->extend('field.collection', function($fields, $c) {
+			$fields->add(new Discount\Field\Bundle($c['discount.bundle_loader']));
+
+			return $fields;
+		});
 	}
 
 	public function registerStatisticsDatasets($services)
