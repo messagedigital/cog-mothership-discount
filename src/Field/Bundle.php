@@ -4,6 +4,7 @@ namespace Message\Mothership\Discount\Field;
 
 use Message\Cog\Field\Field;
 use Message\Mothership\Discount\Bundle as BundleNamespace;
+use Symfony\Component\Form\FormBuilder;
 
 class Bundle extends Field
 {
@@ -21,10 +22,15 @@ class Bundle extends Field
 
 	public function getFieldType()
 	{
-		return 'discount_bundle';
+		return 'bundle';
 	}
 
-	public function getFormField()
+	public function getFormField(FormBuilder $form)
+	{
+		$form->add($this->getName(), 'choice', $this->getFieldOptions());
+	}
+
+	public function getFormType()
 	{
 		return 'choice';
 	}
@@ -50,7 +56,7 @@ class Bundle extends Field
 		parent::setValue((int) $value);
 	}
 
-	public function getValue()
+	public function getBundle()
 	{
 		if ($this->_bundle instanceof BundleNamespace\Bundle && $this->_bundle->getID() === $this->_value) {
 			return $this->_bundle;

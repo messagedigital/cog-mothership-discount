@@ -1,7 +1,10 @@
 {{ form_start(form) }}
-	{{ form_widget(form['bundle_id']) }}
-	{% for field in form_fields %}
-		{{ form_row(form[field]) }}
+	{% for key, field in form_fields %}
+		{{ form_label(form[field]['unit_id']) }}
+		{% if unit_options[key] %}
+			<span>{{ unit_options[key] }}</span>
+		{% endif %}
+		{{ form_widget(form[field]['unit_id']) }}
 	{% endfor %}
 	<button type="submit">{{ 'ms.discount.bundle.product_selector.button'|trans }}</button>
 {{ form_end(form) }}

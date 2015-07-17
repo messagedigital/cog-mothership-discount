@@ -5,14 +5,63 @@ namespace Message\Mothership\Discount\Controller\Module\Bundle;
 use Message\Mothership\Discount\Bundle;
 use Message\Mothership\Discount\Form\BundleProductSelector\ProductSelectorGroupForm as SelectorForm;
 use Message\Mothership\Commerce\Product\Product;
+use Message\Mothership\Commerce\Order;
 use Message\Cog\Controller\Controller;
 
 class ProductSelector extends Controller
 {
-	private $_units;
-	private $_outOfStock;
+	private $_outOfStock = [];
 
 	public function index(Bundle\Bundle $bundle)
+	{
+		return $this->render('Message:Mothership:Discount::bundle:product-selector', [
+			'form'         => $this->_getForm($bundle),
+			'form_fields'  => $this->_getFormFields($bundle),
+			'unit_options' => $this->_getUnitOptionStrings($bundle),
+		]);
+	}
+
+	public function addBundle($bundleID)
+	{
+		$bundle = $this->get('discount.bundle_loader')->getByID($bundleID);
+
+		if (!$bundle) {
+			throw new \LogicException('Cannot find bundle with ID `' . $bundleID . '`', 404);
+		}
+
+		$form = $this->_getForm($bundle);
+		$form->handleRequest();
+
+		if ($form->isValid()) {
+			$data = $form->getData();
+
+			$allItems = true;
+			$itemCount = 0;
+			foreach ($data as $key => $value) {
+				if (!array_key_exists('unit_id', $value)) {
+					throw new \LogicException('Each row of data expects unit ID to be set in an array against a key of `unit_id`');
+				}
+
+				$unit = $this->get('product.unit.loader')->getByID($value['unit_id']);
+				if (!$this->get('basket')->addUnit($unit)) {
+					$this->addFlash('error', 'Could not add ' . ($unit->product->displayName ?: $unit->product->name) . ' to basket');
+					$allItems = false;
+				} else {
+					++$itemCount;
+				}
+			}
+
+			if ($allItems) {
+				$this->addFlash('success', 'Bundle successfully added to basket');
+			} else {
+				$this->addFlash('error', 'Only ' . $itemCount . ' items added to basket');
+			}
+		}
+
+		return $this->redirectToReferer();
+	}
+
+	private function _getForm(Bundle\Bundle $bundle)
 	{
 		$products = $this->_getProducts($bundle);
 		$units = [];
@@ -27,15 +76,27 @@ class ProductSelector extends Controller
 			'products'     => $products,
 			'units'        => $units,
 			'out_of_stock' => $outOfStock,
+			'action'       => $this->generateUrl('ms.product.basket.add_bundle', ['bundleID' => $bundle->getID()]),
 		]);
 
-		$formFields = $this->_getFormFields($bundle);
+		return $form;
+	}
 
-		return $this->render('Message:Mothership:Discount::bundle:product-selector', [
-			'form' => $form,
-			'bundle' => $bundle,
-			'form_fields' => $formFields,
-		]);
+	private function _getUnitOptionStrings($bundle)
+	{
+		$unitOptions = [];
+
+		foreach ($bundle->getProductRows() as $productRow) {
+			for ($i = 0; $i < $productRow->getQuantity(); ++$i) {
+				if (count($productRow->getOptions()) > 0) {
+					$unitOptions[] = implode(', ', array_filter($productRow->getOptions()));
+				} else {
+					$unitOptions[] = null;
+				}
+			}
+		}
+
+		return $unitOptions;
 	}
 
 	private function _getFormFields(Bundle\Bundle $bundle)

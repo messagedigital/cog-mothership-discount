@@ -20,8 +20,8 @@ class ProductSelectorForm extends Form\AbstractType
 
 		$choices = $this->_getChoices($options);
 
-		$this->add('unit_id', 'unit_choice', [
-			'label' => 'ms.commerce.product.selector.unit.label',
+		$builder->add('unit_id', 'unit_choice', [
+			'label' => $options['product']->displayName ?: $options['product']->name,
 			'choices' => $choices,
 			'oos' => $options['out_of_stock'],
 			'empty_value' => 'ms.commerce.product.selector.unit.label',

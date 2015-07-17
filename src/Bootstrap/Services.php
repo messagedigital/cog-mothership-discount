@@ -112,7 +112,7 @@ class Services implements ServicesInterface
 			return new Discount\Form\BundleForm(
 				$c['file_manager.file.loader'],
 				$c['translator'],
-			$c['discount.bundle_factory'],
+				$c['discount.bundle_factory'],
 				$c['discount.bundle.form.bundle_product'],
 				$c['cfg']->currency->supportedCurrencies
 			);
@@ -139,9 +139,9 @@ class Services implements ServicesInterface
 
 		$services['discount.bundle.entity_collection'] = function ($c) {
 			return new \Message\Cog\DB\Entity\EntityLoaderCollection([
-				'file' => $c['discount.bundle.file_loader'],
+				'file'        => $c['discount.bundle.file_loader'],
 				'product_row' => $c['discount.bundle.product_row_loader'],
-				'price' => $c['discount.bundle.price_loader']
+				'price'       => $c['discount.bundle.price_loader']
 			]);
 		};
 

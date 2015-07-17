@@ -20,10 +20,6 @@ class ProductSelectorGroupForm extends Form\AbstractType
 	{
 		$this->_validateOptions($options);
 
-		$builder->add('bundle_id', 'hidden', [
-			'data' => $options['bundle']->getID(),
-		]);
-
 		foreach ($options['bundle']->getProductRows() as $productRow) {
 
 			if (empty($options['units'][$productRow->getID()])) {
@@ -36,6 +32,7 @@ class ProductSelectorGroupForm extends Form\AbstractType
 
 			for ($i = 0; $i < $productRow->getQuantity(); ++$i) {
 				$builder->add(self::PRODUCT_ROW . $productRow->getID() . '_' . $i, new ProductSelectorForm, [
+					'label'        => false,
 					'units'        => $options['units'][$productRow->getID()],
 					'unit_options' => $productRow->getOptions(),
 					'out_of_stock' => $options['out_of_stock'],
