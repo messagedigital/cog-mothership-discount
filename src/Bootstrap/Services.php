@@ -108,9 +108,10 @@ class Services implements ServicesInterface
 			);
 		};
 
-		$services['discount.bundle_validator'] = function($c) {
-			return new Discount\Bundle\Validator;
-		};
+		// Not a singleton as it needs to keep track of which units belong to which bundle within a specific order
+		$services['discount.bundle_validator'] = $services->factory(function($c) {
+			return new Discount\Bundle\Validator($c['translator']);
+		});
 
 		$services['discount.bundle.form.bundle'] = function ($c) {
 			return new Discount\Form\BundleForm(

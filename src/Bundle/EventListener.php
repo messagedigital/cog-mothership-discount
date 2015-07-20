@@ -38,16 +38,33 @@ class EventListener extends BaseListener implements SubscriberInterface
 			return false;
 		}
 
-		$bundles = $this->get('discount.bundle_loader')->getByID($bundleIDs);
+		$bundles   = $this->get('discount.bundle_loader')->getByID($bundleIDs);
+		$validator = $this->get('discount.bundle_validator');
 
-		foreach ($bundles as $bundle) {
-			if (false === $this->get('discount.bundle_validator')->isValid($bundle, $event->getOrder())) {
-				$this->_removeDiscount($bundle, $event->getOrder());
-			} else {
-				$discountFactory = $this->get('discount.bundle.order_discount_factory');
-				$discountFactory->setBundle($bundle);
-				$discountFactory->setOrder($event->getOrder());
-				$discountFactory->createDiscount();
+		foreach ($bundleIDs as $metadataKey => $bundleID) {
+			$bundle = $bundles[$bundleID];
+			$discountFactory = $this->get('discount.bundle.order_discount_factory');
+			$discount = $discountFactory->getOrderDiscount($event->getOrder(), $bundle);
+
+			// Temporarily set ID to keep track of bundles that have had their discounts applied
+			$discount->id = $metadataKey;
+
+			// Validator will throw an exception if the bundle is not valid for the order. Remove the discount if it
+			// has already been set and show a flash message.
+			try {
+				$validator->validate($bundle, $event->getOrder());
+				if (!$event->getOrder()->discounts->exists($metadataKey)) {
+					$event->getOrder()->discounts->append($discount);
+				}
+			} catch (Exception\BundleValidationException $e) {
+				if ($event->getOrder()->discounts->exists($metadataKey)) {
+					$this->get('http.session')->getFlashBag()->add(
+						'warning',
+						$e->getMessage()
+					);
+
+					$event->getOrder()->discounts->remove($metadataKey);
+				}
 			}
 		}
 	}
@@ -58,7 +75,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 
 		foreach ($order->metadata->all() as $name => $value) {
 			if (preg_match('/^bundle_[0-9]+$', $name)) {
-				$bundleIDs[] = (int) $value;
+				$bundleIDs[$name] = (int) $value;
 			}
 		}
 
