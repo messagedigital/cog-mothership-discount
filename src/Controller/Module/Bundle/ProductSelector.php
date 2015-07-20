@@ -52,21 +52,29 @@ class ProductSelector extends Controller
 			}
 
 			if ($allItems) {
-				$bundleNotSet = true;
-				$inc = 0;
-				while ($bundleNotSet) {
-					$metadataTag = 'bundle_' . $inc;
-					if ($this->get('basket.order')->metadata->exists($metadataTag)) {
-						++$inc;
-					} else {
-						$this->get('basket.order')->metadata->set($metadataTag, $bundleID);
-						$bundleNotSet = false;
-					}
-				}
 				$this->addFlash('success', 'Bundle successfully added to basket');
 			} else {
 				$this->addFlash('error', 'Only ' . $itemCount . ' items added to basket');
 			}
+
+			// Add bundle to order even if not all items were added, rely on validation to determine whether a
+			// discount should be applied
+			$bundleNotSet = true;
+			$inc = 0;
+			while ($bundleNotSet) {
+				$metadataTag = 'bundle_' . $inc;
+				if ($this->get('basket.order')->metadata->exists($metadataTag)) {
+					++$inc;
+				} else {
+					$this->get('basket.order')->metadata->set($metadataTag, $bundleID);
+					$bundleNotSet = false;
+				}
+			}
+			$event = new Order\Event\Event($this->get('basket.order'));
+			$this->get('event.dispatcher')->dispatch(
+				Bundle\Events::ADD_BUNDLE,
+				$event
+			);
 		}
 
 		return $this->redirectToReferer();

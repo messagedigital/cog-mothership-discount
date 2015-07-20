@@ -108,6 +108,10 @@ class Services implements ServicesInterface
 			);
 		};
 
+		$services['discount.bundle_validator'] = function($c) {
+			return new Discount\Bundle\Validator;
+		};
+
 		$services['discount.bundle.form.bundle'] = function ($c) {
 			return new Discount\Form\BundleForm(
 				$c['file_manager.file.loader'],
