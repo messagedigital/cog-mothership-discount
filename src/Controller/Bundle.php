@@ -84,6 +84,14 @@ class Bundle extends Controller
 		return $this->_redirectInvalid($bundle);
 	}
 
+	public function listing()
+	{
+		return $this->render('Message:Mothership:Discount::bundle:listing', [
+			'bundles' => $this->get('discount.bundle_loader')->getAll(),
+			'currency' => $this->get('currency'),
+		]);
+	}
+
 	private function _getInvalidBundleData($bundleID = null)
 	{
 		$data = $this->get('http.session')->get(self::INVALID_BUNDLE_SESSION) ?: null;

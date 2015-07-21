@@ -1,0 +1,73 @@
+{% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
+
+{% block javascripts %}
+	{{ parent() }}
+	{% javascripts
+	'@Message:Mothership:Discount::resources/assets/js/bundle-listing.js'
+
+	output='/assets/js/ms_bundle_listing.js'
+	filter='?jsmin'
+
+	%}
+	<script src="{{ asset_url }}"></script>
+	{% endjavascripts %}
+{% endblock %}
+
+{% block sidebar %}
+	{{ render(controller('Message:Mothership:Discount::Controller:Sidebar#index')) }}
+{% endblock %}
+
+{% block main %}
+	<div class="container-content">
+		<table class="table-filter bundles">
+			<colgroup>
+				<col width="100">
+				<col width="50">
+				<col>
+				<col>
+				<col>
+				<col>
+				<col>
+				<col width="100">
+			</colgroup>
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th class="disable">Photo</th>
+					<th>Name</th>
+					<th>Start date</th>
+					<th>End date</th>
+					<th>Works with discount codes</th>
+					<th>Price ({{ currency }})</th>
+					<th class="disable"></th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<th>ID</th>
+					<th class="disable">Photo</th>
+					<th>Name</th>
+					<th>Valid from</th>
+					<th>Valid until</th>
+					<th>Works with discount codes</th>
+					<th>Price ({{ currency }})</th>
+					<th class="a-center"><a href="#" class="clear-filters">Clear filters</a></th>
+				</tr>
+			</tfoot>
+			<tbody>
+				{% for bundle in bundles %}
+					<tr>
+						<td><a href="{{ url('ms.cp.discount.bundle.edit', {'bundleID' : bundle.id}) }}">{{ bundle.id }}</a></td>
+						<td>{{ getResizedImage(bundle.getImage(), 50, 50) }}</td>
+						<td>{{ bundle.name }}</td>
+						<td>{{ bundle.start ? bundle.start | date('d M Y') : ''}}</td>
+						<td>{{ bundle.end ? bundle.end | date('d M Y') : '' }}</td>
+						<td>{{ bundle.allowCodes ? 'Yes' : 'No' }}</td>
+						<td>{{ bundle.getPrice(currency) | price(currency) }}</td>
+						<td><a href="{{ url('ms.cp.discount.bundle.edit', {'bundleID' : bundle.id}) }}" class="button small">Edit</a></td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% endblock %}
