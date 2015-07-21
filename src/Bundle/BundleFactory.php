@@ -6,6 +6,14 @@ use Message\Mothership\Discount\Form;
 use Message\Mothership\FileManager\File;
 use Message\Mothership\Commerce\Product\Loader as BaseProductLoader;
 
+/**
+ * Class BundleFactory
+ * @package Message\Mothership\Discount\Bundle
+ *
+ * @author  Thomas Marchant <thomas@mothership.ec>
+ *
+ * This class takes submitted form data and converts it into a Bundle instance, assuming it is valid.
+ */
 class BundleFactory
 {
 	/**
@@ -13,21 +21,42 @@ class BundleFactory
 	 */
 	private $_productLoader;
 
+	/**
+	 * @var File\FileLoader
+	 */
 	private $_fileLoader;
 
+	/**
+	 * @var array
+	 */
 	private $_currencies;
 
+	/**
+	 * @var array
+	 */
 	private $_requiredFields = [
 		Form\BundleForm::NAME,
 		Form\BundleForm::PRODUCT,
 	];
 
+	/**
+	 * @var array
+	 */
 	private $_requiredProductFields = [
 		Form\BundleProductForm::PRODUCT,
 		Form\BundleProductForm::QUANTITY,
 	];
 
-	public function __construct(BaseProductLoader $productLoader, File\FileLoader $fileLoader, array $currencies)
+	/**
+	 * @param BaseProductLoader $productLoader
+	 * @param File\FileLoader $fileLoader
+	 * @param array $currencies
+	 */
+	public function __construct(
+		BaseProductLoader $productLoader,
+		File\FileLoader $fileLoader,
+		array $currencies
+	)
 	{
 		$this->_productLoader = $productLoader;
 		$this->_fileLoader = $fileLoader;
@@ -35,6 +64,13 @@ class BundleFactory
 		$this->_buildRequiredFields($currencies);
 	}
 
+	/**
+	 * Create an instance of Bundle from data taken from a submitted Form\BundleForm instance
+	 *
+	 * @param array $data
+	 *
+	 * @return Bundle
+	 */
 	public function build(array $data)
 	{
 		$this->_validateData($data);
@@ -64,11 +100,17 @@ class BundleFactory
 		return $bundle;
 	}
 
+	/**
+	 * Loop through products and create instances of ProductRow, and add them to the bundle
+	 *
+	 * @param Bundle $bundle
+	 *
+	 * @param array $data
+	 */
 	private function _addProducts(Bundle $bundle, array $data)
 	{
 		foreach ($data[Form\BundleForm::PRODUCT] as $product) {
 			$this->_validateProductData($product);
-
 
 			$options = (!empty($product[Form\BundleProductForm::OPTION_NAME]) && !empty($product[Form\BundleProductForm::OPTION_VALUE])) ?
 				[$product[Form\BundleProductForm::OPTION_NAME] => $product[Form\BundleProductForm::OPTION_VALUE]] :
@@ -84,6 +126,13 @@ class BundleFactory
 		}
 	}
 
+	/**
+	 * Loop through currencies and add the appropriate price to the bundle
+	 *
+	 * @param Bundle $bundle
+	 *
+	 * @param array $data
+	 */
 	private function _addPrices(Bundle $bundle, array $data)
 	{
 		foreach ($this->_currencies as $currency) {
@@ -91,6 +140,14 @@ class BundleFactory
 		}
 	}
 
+	/**
+	 * Load file with ID matching that submitted, and assign it to the bundle.
+	 *
+	 * @param Bundle $bundle
+	 * @param array $data
+	 * @throws Exception\BundleBuildException    Throws exception if no file exists with submitted file ID
+	 * @throws Exception\BundleBuildException    Throws exception if the file loaded is not an image
+	 */
 	private function _addImage(Bundle $bundle, array $data)
 	{
 		if (!empty($data[Form\BundleForm::IMAGE])) {
@@ -109,6 +166,16 @@ class BundleFactory
 		}
 	}
 
+	/**
+	 * Validate submitted product data to ensure that products can be properly loaded to appear on the front end
+	 *
+	 * @param array $data
+	 * @throws Exception\BundleBuildException     Throws exception if data for a required field is missing
+	 * @throws Exception\BundleBuildException     Throws exception if either an option name or an option value is set
+	 *                                            without the other being set
+	 * @throws Exception\BundleBuildException     Throws exception if the product loaded has no units matching the
+	 *                                            options submitted
+	 */
 	private function _validateProductData(array $data)
 	{
 		foreach ($this->_requiredProductFields as $required) {
@@ -151,16 +218,24 @@ class BundleFactory
 		}
 	}
 
+	/**
+	 * Validate the form data submitted
+	 *
+	 * @param array $data
+	 * @throws \LogicException                     Throws exception if product data is not an array
+	 * @throws Exception\BundleBuildException      Throws exception if data for a required field is missing
+	 * @throws Exception\BundleBuildException      Throws exception if no products have been set
+	 */
 	private function _validateData(array $data)
 	{
 		foreach ($this->_requiredFields as $required) {
 			if (!array_key_exists($required, $data)) {
-				throw new Exception\BundleBuildException('Data is missing `' . $required . '` field');
+				throw new Exception\BundleBuildException('Data is missing for `' . $required . '` field');
 			}
 		}
 
 		if (!is_array($data[Form\BundleForm::PRODUCT])) {
-			throw new Exception\BundleBuildException('Product data must be an array');
+			throw new \LogicException('Product data must be an array');
 		}
 
 		if (count($data[Form\BundleForm::PRODUCT]) <= 0) {
@@ -168,6 +243,12 @@ class BundleFactory
 		}
 	}
 
+	/**
+	 * Build the list of required fields. Specifically, loop through registered currencies and add each price field
+	 * to the list.
+	 *
+	 * @throws \LogicException    Throws exception if one of the registered currencies is not a string
+	 */
 	private function _buildRequiredFields()
 	{
 		foreach ($this->_currencies as $currency) {

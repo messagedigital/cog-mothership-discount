@@ -9,9 +9,14 @@ use Message\Cog\ValueObject\Collection as BaseCollection;
  * @package Message\Mothership\Discount\Bundle
  *
  * @author  Thomas Marchant <thomas@mothership.ec>
+ *
+ * Basic collection class for bundles
  */
 class Collection extends BaseCollection
 {
+	/**
+	 * {@inheritDoc}
+	 */
 	protected function _configure()
 	{
 		$this->addValidator(function ($item) {

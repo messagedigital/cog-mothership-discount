@@ -6,6 +6,14 @@ use Message\Cog\ValueObject\DateTimeImmutable;
 use Message\Cog\DB;
 use Message\User\UserInterface;
 
+/**
+ * Class Create
+ * @package Message\Mothership\Discount\Bundle
+ *
+ * @author  Thomas Marchant <thomas@mothership.ec>
+ *
+ * Class for saving newly created bundles to the database
+ */
 class Create
 {
 	/**
@@ -24,10 +32,22 @@ class Create
 	private $_bundlePriceCreate;
 
 	/**
+	 * @var BundleImageCreate
+	 */
+	private $_bundleImageCreate;
+
+	/**
 	 * @var UserInterface
 	 */
 	private $_user;
 
+	/**
+	 * @param DB\Query $query
+	 * @param BundleProductCreate $bundleProductCreate
+	 * @param BundlePriceCreate $bundlePriceCreate
+	 * @param BundleImageCreate $bundleImageCreate
+	 * @param UserInterface $user
+	 */
 	public function __construct(
 		DB\Query $query,
 		BundleProductCreate $bundleProductCreate,
@@ -36,13 +56,20 @@ class Create
 		UserInterface $user
 	)
 	{
-		$this->_query = $query;
+		$this->_query               = $query;
 		$this->_bundleProductCreate = $bundleProductCreate;
 		$this->_bundlePriceCreate   = $bundlePriceCreate;
 		$this->_bundleImageCreate   = $bundleImageCreate;
-		$this->_user = $user;
+		$this->_user                = $user;
 	}
 
+	/**
+	 * Save bundle to the database
+	 *
+	 * @param Bundle $bundle
+	 *
+	 * @return Bundle           Return Bundle with ID and authorship details updated.
+	 */
 	public function save(Bundle $bundle)
 	{
 		if (!$bundle->getAuthorship()->createdAt()) {

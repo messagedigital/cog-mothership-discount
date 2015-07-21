@@ -8,13 +8,32 @@ use Message\Cog\DB\QueryBuilderFactory;
 use Message\Cog\DB\QueryBuilder;
 use Message\Cog\DB\Entity\EntityLoaderCollection;
 
+/**
+ * Class Loader
+ * @package Message\Mothership\Discount\Bundle
+ *
+ * @author  Thomas Marchant <thomas@mothership.ec>
+ *
+ * Class for loading Bundles from the database
+ */
 class Loader
 {
 	const TABLE_NAME = 'discount_bundle';
 	const IMAGE_TABLE_NAME = 'discount_bundle_image';
 
+	/**
+	 * @var QueryBuilderFactory
+	 */
 	private $_queryBuilderFactory;
+
+	/**
+	 * @var UserLoader
+	 */
 	private $_userLoader;
+
+	/**
+	 * @var EntityLoaderCollection
+	 */
 	private $_loaders;
 
 	/**
@@ -22,6 +41,9 @@ class Loader
 	 */
 	private $_queryBuilder;
 
+	/**
+	 * @var array
+	 */
 	private $_columns = [
 		'b.bundle_id AS id',
 		'b.name',
@@ -37,16 +59,34 @@ class Loader
 		'bi.file_id AS imageID'
 	];
 
-
+	/**
+	 * @var bool
+	 */
 	private $_includeDeleted = false;
 
-	public function __construct(QueryBuilderFactory $queryBuilderFactory, UserLoader $userLoader, EntityLoaderCollection $loaders)
+	/**
+	 * @param QueryBuilderFactory $queryBuilderFactory
+	 * @param UserLoader $userLoader
+	 * @param EntityLoaderCollection $loaders
+	 */
+	public function __construct(
+		QueryBuilderFactory $queryBuilderFactory,
+		UserLoader $userLoader,
+		EntityLoaderCollection $loaders
+	)
 	{
 		$this->_queryBuilderFactory = $queryBuilderFactory;
 		$this->_userLoader          = $userLoader;
 		$this->_loaders             = $loaders;
 	}
 
+	/**
+	 * Load Bundle by an ID or an array of IDs
+	 *
+	 * @param $id
+	 *
+	 * @return array|BundleProxy
+	 */
 	public function getByID($id)
 	{
 		if (is_array($id)) {
@@ -66,6 +106,13 @@ class Loader
 		return $this->_load(false);
 	}
 
+	/**
+	 * Load a set of bundles by an array of IDs
+	 *
+	 * @param array $ids
+	 *
+	 * @return array
+	 */
 	public function getByIDs(array $ids)
 	{
 		foreach ($ids as $id) {
@@ -83,6 +130,13 @@ class Loader
 		return $this->_load();
 	}
 
+	/**
+	 * Load a bundle by its name
+	 *
+	 * @param $name
+	 *
+	 * @return BundleProxy
+	 */
 	public function getByName($name)
 	{
 		if (!is_string($name)) {
@@ -95,9 +149,14 @@ class Loader
 			->where('b.name = ?s', [$name])
 		;
 
-		return $this->_load();
+		return $this->_load(false);
 	}
 
+	/**
+	 * Load all bundles
+	 *
+	 * @return array
+	 */
 	public function getAll()
 	{
 		$this->_buildQuery();
@@ -105,6 +164,13 @@ class Loader
 		return $this->_load();
 	}
 
+	/**
+	 * Run query and use result data to build an instance of BundleProxy
+	 *
+	 * @param bool $returnAsArray      Will return an array of Bundles if set to true, will return the first value
+	 *                                 of the array if false
+	 * @return array | BundleProxy
+	 */
 	private function _load($returnAsArray = true)
 	{
 		if (null === $this->_queryBuilder) {
@@ -162,6 +228,9 @@ class Loader
 		return $returnAsArray ? $bundles : array_shift($bundles);
 	}
 
+	/**
+	 * Build query without where statement
+	 */
 	private function _buildQuery()
 	{
 		$queryBuilder = $this->_queryBuilderFactory

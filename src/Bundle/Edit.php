@@ -6,20 +6,53 @@ use Message\Cog\DB\Transaction;
 use Message\Cog\DB\TransactionalInterface;
 use Message\User\UserInterface;
 
+/**
+ * Class Edit
+ * @package Message\Mothership\Discount\Bundle
+ *
+ * @author  Thomas Marchant <thomas@mothership.ec>
+ *
+ * Class for updating a recently edited bundle
+ */
 class Edit implements TransactionalInterface
 {
+	/**
+	 * @var Transaction
+	 */
 	private $_transaction;
 
-	private $productCreate;
+	/**
+	 * @var BundleProductCreate
+	 */
+	private $_productCreate;
 
-	private $priceCreate;
+	/**
+	 * @var BundlePriceCreate
+	 */
+	private $_priceCreate;
 
-	private $imageCreate;
+	/**
+	 * @var BundleImageCreate
+	 */
+	private $_imageCreate;
 
+	/**
+	 * @var UserInterface
+	 */
 	private $_user;
 
+	/**
+	 * @var bool
+	 */
 	private $_transactionOverride = false;
 
+	/**
+	 * @param Transaction $transaction
+	 * @param BundleProductCreate $productCreate
+	 * @param BundlePriceCreate $priceCreate
+	 * @param BundleImageCreate $imageCreate
+	 * @param UserInterface $user
+	 */
 	public function __construct(
 		Transaction $transaction,
 		BundleProductCreate $productCreate,
@@ -28,19 +61,27 @@ class Edit implements TransactionalInterface
 		UserInterface $user
 	)
 	{
-		$this->_transaction = $transaction;
+		$this->_transaction   = $transaction;
 		$this->_productCreate = $productCreate;
-		$this->_priceCreate = $priceCreate;
-		$this->_imageCreate = $imageCreate;
-		$this->_user = $user;
+		$this->_priceCreate   = $priceCreate;
+		$this->_imageCreate   = $imageCreate;
+		$this->_user          = $user;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public function setTransaction(Transaction $transaction)
 	{
 		$this->_transaction = $transaction;
 		$this->_transactionOverride = true;
 	}
 
+	/**
+	 * Save changes to the bundle to the database
+	 *
+	 * @param Bundle $bundle
+	 */
 	public function save(Bundle $bundle)
 	{
 		$this->_transaction->add("
@@ -76,6 +117,9 @@ class Edit implements TransactionalInterface
 		$this->_commitTransaction();
 	}
 
+	/**
+	 * Commit the transaction if it hasn't been overridden
+	 */
 	private function _commitTransaction()
 	{
 		if (false === $this->_transactionOverride) {

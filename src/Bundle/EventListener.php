@@ -11,8 +11,17 @@ use Message\Mothership\Commerce\Order\Event\Event as OrderEvent;
 use Message\Cog\Event\SubscriberInterface;
 use Message\Cog\Event\EventListener as BaseListener;
 
+/**
+ * Class EventListener
+ * @package Message\Mothership\Discount\Bundle
+ *
+ * @author  Thomas Marchant <thomas@mothership.ec>
+ */
 class EventListener extends BaseListener implements SubscriberInterface
 {
+	/**
+	 * {@inheritDoc}
+	 */
 	static public function getSubscribedEvents()
 	{
 		return [
@@ -31,6 +40,19 @@ class EventListener extends BaseListener implements SubscriberInterface
 		];
 	}
 
+	/**
+	 * Loop through bundles assigned to order and check that they are still valid. Add discount entities to the order
+	 * if the bundles are valid and the discount has not already been added to the order, and remove them if they
+	 * are invalid and have been set against the order.
+	 *
+	 * This method uses the metadata key for the bundle (i.e. 'bundle_[number]') as the ID for the discount entity.
+	 * The ID is not saved to the database so this only exists on the basket. This makes it easier to keep track of
+	 * which bundle is which.
+	 *
+	 * @param OrderEvent $event
+	 *
+	 * @return bool
+	 */
 	public function validateBundle(OrderEvent $event)
 	{
 		$bundleIDs = $this->_getBundleIDs($event->getOrder());
@@ -69,6 +91,13 @@ class EventListener extends BaseListener implements SubscriberInterface
 		}
 	}
 
+	/**
+	 * Loop through metadata and find bundle IDs
+	 *
+	 * @param Order\Order $order
+	 *
+	 * @return array
+	 */
 	private function _getBundleIDs(Order\Order $order)
 	{
 		$bundleIDs = [];

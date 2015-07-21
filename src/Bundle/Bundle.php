@@ -92,6 +92,11 @@ class Bundle
 		return $this->_id;
 	}
 
+	/**
+	 * Set the name of the bundle
+	 *
+	 * @param $name
+	 */
 	public function setName($name)
 	{
 		if (!is_string($name)) {
@@ -102,7 +107,7 @@ class Bundle
 	}
 
 	/**
-	 * Get the name identification of the bundle
+	 * Get the name of the bundle
 	 *
 	 * @return string
 	 */
@@ -159,6 +164,11 @@ class Bundle
 		$this->addProductRow(new ProductRow($product->id, $options, $quantity));
 	}
 
+	/**
+	 * Add a row of product information to the bundle, determining a requirement for the bundle to be deemed as valid
+	 *
+	 * @param ProductRow $row
+	 */
 	public function addProductRow(ProductRow $row)
 	{
 		$key = md5(serialize([$row->getProductID(), $row->getOptions()]));

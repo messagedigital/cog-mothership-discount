@@ -4,14 +4,26 @@ namespace Message\Mothership\Discount\Bundle;
 
 use Message\Mothership\Commerce\Order;
 
+/**
+ * Class OrderDiscountFactory
+ * @package Message\Mothership\Discount\Bundle
+ *
+ * @author  Thomas Marchant <thomas@mothership.ec>
+ */
 class OrderDiscountFactory
 {
 	use Helpers\ItemCounterTrait {
 		getCounts as private _getCounts;
 	}
 
+	/**
+	 * @var Validator
+	 */
 	private $_validator;
 
+	/**
+	 * @param Validator $validator
+	 */
 	public function __construct(Validator $validator)
 	{
 		$this->_validator = $validator;
