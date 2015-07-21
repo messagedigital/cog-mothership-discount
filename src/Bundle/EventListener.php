@@ -54,17 +54,16 @@ class EventListener extends BaseListener implements SubscriberInterface
 			// has already been set and show a flash message.
 			try {
 				$validator->validate($bundle, $event->getOrder());
-				if (!$event->getOrder()->discounts->exists($metadataKey)) {
-					$event->getOrder()->discounts->append($discount);
+				if (!$this->get('basket.order')->discounts->exists($metadataKey)) {
+					$this->get('basket')->addEntity('discounts', $discount);
 				}
 			} catch (Exception\BundleValidationException $e) {
-				if ($event->getOrder()->discounts->exists($metadataKey)) {
+				if ($this->get('basket.order')->discounts->exists($metadataKey)) {
 					$this->get('http.session')->getFlashBag()->add(
 						'warning',
 						$e->getMessage()
 					);
-
-					$event->getOrder()->discounts->remove($metadataKey);
+					$this->get('basket')->removeEntity('discounts', $discount);
 				}
 			}
 		}

@@ -43,12 +43,7 @@ class ProductSelector extends Controller
 				}
 
 				$unit = $this->get('product.unit.loader')->getByID($value['unit_id']);
-				if (!$this->get('basket')->addUnit($unit)) {
-					$this->addFlash('error', 'Could not add ' . ($unit->product->displayName ?: $unit->product->name) . ' to basket');
-					$allItems = false;
-				} else {
-					++$itemCount;
-				}
+				$this->get('basket')->addUnit($unit);
 			}
 
 			if ($allItems) {
@@ -63,14 +58,14 @@ class ProductSelector extends Controller
 			$inc = 0;
 			while ($bundleNotSet) {
 				$metadataTag = 'bundle_' . $inc;
-				if ($this->get('basket.order')->metadata->exists($metadataTag)) {
+				if ($this->get('basket')->getOrder()->metadata->exists($metadataTag)) {
 					++$inc;
 				} else {
-					$this->get('basket.order')->metadata->set($metadataTag, $bundleID);
+					$this->get('basket')->getOrder()->metadata->set($metadataTag, $bundleID);
 					$bundleNotSet = false;
 				}
 			}
-			$event = new Order\Event\Event($this->get('basket.order'));
+			$event = new Order\Event\Event($this->get('basket')->getOrder());
 			$this->get('event.dispatcher')->dispatch(
 				Bundle\Events::ADD_BUNDLE,
 				$event
