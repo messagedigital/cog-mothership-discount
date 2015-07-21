@@ -7,7 +7,7 @@ use Message\Mothership\Commerce\Order;
 class OrderDiscountFactory
 {
 	use Helpers\ItemCounterTrait {
-		getCounts as private _getCounts();
+		getCounts as private _getCounts;
 	}
 
 	private $_validator;
@@ -46,6 +46,7 @@ class OrderDiscountFactory
 
 				// If the item fits the requirements of the product row, increment the current count
 				if ($this->_validator->itemIsApplicable($item, $row)) {
+
 					$currentCounts[$row->getID()]++;
 
 					$total += $item->getUnit()->getPrice('retail', $order->currencyID);;
@@ -55,7 +56,7 @@ class OrderDiscountFactory
 			}
 		}
 
-		$discount = $total - $bundle->getPrice($order->currencyID);
+		$discount = ($total - $bundle->getPrice($order->currencyID));
 
 		if ($discount < 0) {
 			$discount = 0;

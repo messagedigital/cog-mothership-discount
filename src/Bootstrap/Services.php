@@ -113,6 +113,10 @@ class Services implements ServicesInterface
 			return new Discount\Bundle\Validator($c['translator']);
 		});
 
+		$services['discount.bundle.order_discount_factory'] = $services->factory(function($c) {
+			return new Discount\Bundle\OrderDiscountFactory($c['discount.bundle_validator']);
+		});
+
 		$services['discount.bundle.form.bundle'] = function ($c) {
 			return new Discount\Form\BundleForm(
 				$c['file_manager.file.loader'],

@@ -8,7 +8,7 @@ use Message\Cog\Localisation\Translator;
 class Validator
 {
 	use Helpers\ItemCounterTrait {
-		getCounts as private _getCounts();
+		getCounts as private _getCounts;
 	}
 
 	private $_translator;
@@ -74,7 +74,7 @@ class Validator
 			return false;
 		}
 
-		if ((int) $item->getProduct()->id !== $row->getID()) {
+		if ((int) $item->getProduct()->id !== $row->getProductID()) {
 			return false;
 		}
 

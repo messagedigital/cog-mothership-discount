@@ -25,6 +25,9 @@ class EventListener extends BaseListener implements SubscriberInterface
 			OrderEvents::CREATE_VALIDATE => [
 				['validateBundle']
 			],
+			OrderEvents::CREATE_VALIDATE => [
+				['validateBundle']
+			],
 		];
 	}
 
@@ -33,8 +36,6 @@ class EventListener extends BaseListener implements SubscriberInterface
 		$bundleIDs = $this->_getBundleIDs($event->getOrder());
 
 		if (count($bundleIDs) <= 0) {
-			$this->_removeBundleDiscounts($event->getOrder());
-
 			return false;
 		}
 
@@ -44,7 +45,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 		foreach ($bundleIDs as $metadataKey => $bundleID) {
 			$bundle = $bundles[$bundleID];
 			$discountFactory = $this->get('discount.bundle.order_discount_factory');
-			$discount = $discountFactory->getOrderDiscount($event->getOrder(), $bundle);
+			$discount = $discountFactory->createOrderDiscount($event->getOrder(), $bundle);
 
 			// Temporarily set ID to keep track of bundles that have had their discounts applied
 			$discount->id = $metadataKey;
@@ -74,7 +75,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 		$bundleIDs = [];
 
 		foreach ($order->metadata->all() as $name => $value) {
-			if (preg_match('/^bundle_[0-9]+$', $name)) {
+			if (preg_match('/^bundle_[0-9]+$/', $name)) {
 				$bundleIDs[$name] = (int) $value;
 			}
 		}
