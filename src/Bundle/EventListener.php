@@ -26,7 +26,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 	{
 		return [
 			BundleEvents::ADD_BUNDLE => [
-				['validateBundle']
+				['addBundle']
 			],
 			OrderEvents::ASSEMBLER_UPDATE => [
 				['validateBundle']
@@ -51,7 +51,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 	 *
 	 * @param OrderEvent $event
 	 *
-	 * @return bool
+	 * @return bool | string
 	 */
 	public function validateBundle(OrderEvent $event)
 	{
@@ -63,6 +63,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 
 		$bundles   = $this->get('discount.bundle_loader')->getByID($bundleIDs);
 		$validator = $this->get('discount.bundle_validator');
+
 
 		foreach ($bundleIDs as $metadataKey => $bundleID) {
 			$bundle = $bundles[$bundleID];
@@ -86,8 +87,26 @@ class EventListener extends BaseListener implements SubscriberInterface
 						$e->getMessage()
 					);
 					$this->get('basket')->removeEntity('discounts', $discount);
+
+					return false;
 				}
+
+				return $e->getMessage();
 			}
+		}
+
+		return true;
+	}
+
+	public function addBundle(OrderEvent $event)
+	{
+		$validate = $this->validateBundle($event);
+
+		if (is_string($validate)) {
+			$this->get('http.session')->getFlashBag()->add(
+				'warning',
+				$validate
+			);
 		}
 	}
 

@@ -93,6 +93,9 @@ ms.discount:
       quantity:
         label: Quantity
         help: The quantity of this item that needs to be purchased for the bundle to be valid
+      remove: Remove product
+      add: Add product
+    save: Save bundle
     create:
       success: Bundle saved successfully!
     edit:
