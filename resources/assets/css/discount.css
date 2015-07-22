@@ -1,0 +1,28 @@
+/* Bundles */ 
+
+.field input, .field textarea, .field select {
+  width: 50%;
+}
+
+input[type=date] {
+  width: 50%;
+  margin-right: 0;
+  margin-bottom: 25px;
+}
+
+.add-on {
+  max-width: 50%;
+  width: auto;
+}
+
+.add-on div {
+	width: 80%;
+}
+
+.add-on input {
+	width: 100%;
+}
+
+.field.inline input[type="checkbox"] {
+	margin-top: 4px;
+}

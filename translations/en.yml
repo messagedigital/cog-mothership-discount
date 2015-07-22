@@ -59,6 +59,7 @@ ms.discount:
         used: This discount has already been used on this order.
         invalid: Please enter a valid discount code.
   bundle:
+    label: Bundle details
     name:
       label: Name
       help: The bundle name as it will appear on the site
@@ -95,6 +96,7 @@ ms.discount:
         help: The quantity of this item that needs to be purchased for the bundle to be valid
       remove: Remove product
       add: Add product
+      label: Products
     save: Save bundle
     create:
       success: Bundle saved successfully!
