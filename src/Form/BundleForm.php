@@ -9,6 +9,14 @@ use Symfony\Component\Form;
 use Symfony\Component\Validator\Constraints;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+/**
+ * Class BundleForm
+ * @package Message\Mothership\Discount\Form
+ *
+ * @author  Thomas Marchant <thomas@mothership.ec>
+ *
+ * Form for creating and editing bundles
+ */
 class BundleForm extends Form\AbstractType
 {
 	const ID = 'id';
@@ -20,12 +28,40 @@ class BundleForm extends Form\AbstractType
 	const CODES = 'allow_codes';
 	const IMAGE = 'image';
 
+	/**
+	 * @var File\FileLoader
+	 */
 	private $_fileLoader;
+
+	/**
+	 * @var array
+	 */
 	private $_currencies;
+
+	/**
+	 * @var BundleProductForm
+	 */
 	private $_productForm;
+
+	/**
+	 * @var Translator
+	 */
 	private $_translator;
+
+	/**
+	 * @var BundleFactory
+	 */
 	private $_factory;
 
+	/**
+	 * @param File\FileLoader $fileLoader
+	 * @param Translator $translator
+	 * @param BundleFactory $factory
+	 * @param BundleProductForm $productForm
+	 * @param array $currencies
+	 *
+	 * @throws \LogicException                      Throws exception if currency array is empty
+	 */
 	public function __construct(
 		File\FileLoader $fileLoader,
 		Translator $translator,
@@ -45,11 +81,17 @@ class BundleForm extends Form\AbstractType
 		$this->_currencies = $currencies;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public function getName()
 	{
 		return 'discount_bundle';
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public function buildForm(Form\FormBuilderInterface $builder, array $options)
 	{
 		$builder->add(self::ID, 'hidden');
@@ -109,13 +151,21 @@ class BundleForm extends Form\AbstractType
 		$builder->addModelTransformer(new DataTransformer\BundleTransformer($this->_factory));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults([
-			'data_class' => null, // For some reason it freaks out expecting a BundleProxy if this isn't set
+			'data_class' => null, // @todo For some reason it freaks out expecting a BundleProxy if this isn't set
 		]);
 	}
 
+	/**
+	 * Load all image files and create an array of choices
+	 *
+	 * @return array
+	 */
 	private function _getImageChoices()
 	{
 		$images = (array) $this->_fileLoader->getByType(File\Type::IMAGE);

@@ -9,6 +9,8 @@ use Message\Mothership\Commerce\Order;
  * @package Message\Mothership\Discount\Bundle
  *
  * @author  Thomas Marchant <thomas@mothership.ec>
+ *
+ * Class for creating a discount order entity from a bundle
  */
 class OrderDiscountFactory
 {
@@ -29,6 +31,14 @@ class OrderDiscountFactory
 		$this->_validator = $validator;
 	}
 
+	/**
+	 * Create a discount order entity to apply to the
+	 *
+	 * @param Order\Order $order
+	 * @param Bundle $bundle
+	 *
+	 * @return Order\Entity\Discount\Discount
+	 */
 	public function createOrderDiscount(Order\Order $order, Bundle $bundle)
 	{
 		$discount = new Order\Entity\Discount\Discount;
@@ -42,6 +52,15 @@ class OrderDiscountFactory
 		return $discount;
 	}
 
+	/**
+	 * Calculate the accumulated value of all items in the bundle, and return the difference between that and
+	 * the value of the bundle
+	 *
+	 * @param Order\Order $order
+	 * @param Bundle $bundle
+	 *
+	 * @return int
+	 */
 	private function _calculateAmount(Order\Order $order, Bundle $bundle)
 	{
 		$total = 0;
@@ -65,6 +84,12 @@ class OrderDiscountFactory
 
 					break;
 				}
+			}
+		}
+
+		foreach ($expectedCounts as $key => $value) {
+			if ($currentCounts[$key] != $value) {
+				throw new \LogicException('Number of items does not match that of bundle, so should have failed validation');
 			}
 		}
 

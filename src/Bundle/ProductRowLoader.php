@@ -94,6 +94,14 @@ class ProductRowLoader implements EntityLoaderInterface
 		return $productRows;
 	}
 
+	/**
+	 * Convert name and value into key/value pair
+	 *
+	 * @param $name
+	 * @param $value
+	 *
+	 * @return array
+	 */
 	private function _getRowOptionsArray($name, $value)
 	{
 		if ($name && $value && (!is_scalar($name) || !is_scalar($value))) {

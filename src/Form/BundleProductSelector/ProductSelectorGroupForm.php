@@ -7,15 +7,29 @@ use Symfony\Component\Form;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints;
 
+/**
+ * Class ProductSelectorGroupForm
+ * @package Message\Mothership\Discount\Form\BundleProductSelector
+ *
+ * @author  Thomas Marchant <thomas@mothership.ec>
+ *
+ * Form of product selectors for bundle
+ */
 class ProductSelectorGroupForm extends Form\AbstractType
 {
 	const PRODUCT_ROW = 'product_row_';
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public function getName()
 	{
 		return 'bundle_product_selector_group';
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public function buildForm(Form\FormBuilderInterface $builder, array $options)
 	{
 		$this->_validateOptions($options);
@@ -45,6 +59,9 @@ class ProductSelectorGroupForm extends Form\AbstractType
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults([
@@ -55,6 +72,13 @@ class ProductSelectorGroupForm extends Form\AbstractType
 		]);
 	}
 
+	/**
+	 * Validate form options
+	 *
+	 * @param array $options
+	 * @throws \LogicException                Throws exception if options are not valid
+	 * @throws \InvalidArgumentException      Throws exception if bundle optin is not an instance of Bundle
+	 */
 	private function _validateOptions(array $options)
 	{
 		if (empty($options['bundle'])) {

@@ -7,13 +7,27 @@ use Symfony\Component\Form;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints;
 
+/**
+ * Class ProductSelectorForm
+ * @package Message\Mothership\Discount\Form\BundleProductSelector
+ *
+ * @author  Thomas Marchant <thomas@mothership.ec>
+ *
+ * Product selector form for an individual item as part of a bundle
+ */
 class ProductSelectorForm extends Form\AbstractType
 {
+	/**
+	 * {@inheritDoc}
+	 */
 	public function getName()
 	{
 		return 'bundle_product_selector';
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public function buildForm(Form\FormBuilderInterface $builder, array $options)
 	{
 		$this->_validateOptions($options);
@@ -21,15 +35,18 @@ class ProductSelectorForm extends Form\AbstractType
 		$choices = $this->_getChoices($options);
 
 		$builder->add('unit_id', 'unit_choice', [
-			'label' => $options['product']->displayName ?: $options['product']->name,
-			'choices' => $choices,
-			'oos' => $options['out_of_stock'],
-			'empty_value' => 'ms.commerce.product.selector.unit.label',
+			'label'        => $options['product']->displayName ?: $options['product']->name,
+			'choices'      => $choices,
+			'oos'          => $options['out_of_stock'],
+			'empty_value'  => 'ms.commerce.product.selector.unit.label',
 			'show_pricing' => !empty($options['show_variable_pricing']) && $options['product']->hasVariablePricing(),
 		]);
 
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults([
@@ -41,6 +58,13 @@ class ProductSelectorForm extends Form\AbstractType
 		]);
 	}
 
+	/**
+	 * Get an array of available units defined by their options
+	 *
+	 * @param array $options
+	 *
+	 * @return array
+	 */
 	private function _getChoices(array $options)
 	{
 		$choices = [];
@@ -53,6 +77,12 @@ class ProductSelectorForm extends Form\AbstractType
 		return $choices;
 	}
 
+	/**
+	 * Validate form options
+	 *
+	 * @param array $options
+	 * @throws \LogicException      Throws exception if options are not valid
+	 */
 	private function _validateOptions(array $options)
 	{
 		if (empty($options['product'])) {

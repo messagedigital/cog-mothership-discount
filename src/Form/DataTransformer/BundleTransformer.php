@@ -7,15 +7,32 @@ use Message\Mothership\Discount\Form\BundleProductForm;
 use Message\Mothership\Discount\Bundle;
 use Symfony\Component\Form\DataTransformerInterface;
 
+/**
+ * Class BundleTransformer
+ * @package Message\Mothership\Discount\Form\DataTransformer
+ *
+ * @author  Thomas Marchant <thomas@mothership.ec>
+ */
 class BundleTransformer implements DataTransformerInterface
 {
+	/**
+	 * @var Bundle\BundleFactory
+	 */
 	private $_factory;
 
+	/**
+	 * @param Bundle\BundleFactory $factory
+	 */
 	public function __construct(Bundle\BundleFactory $factory)
 	{
 		$this->_factory = $factory;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @return array | null
+	 */
 	public function transform($bundle)
 	{
 		if (null === $bundle) {
@@ -61,6 +78,14 @@ class BundleTransformer implements DataTransformerInterface
 		return $data;
 	}
 
+	/**
+	 * If a bundle cannot be build from the form data, the data will be returned as normal but with a new value 'error'
+	 * for the error message.
+	 *
+	 * {@inheritDoc}
+	 *
+	 * @return Bundle\Bundle | array
+	 */
 	public function reverseTransform($data)
 	{
 		try {

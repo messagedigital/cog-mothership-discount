@@ -5,21 +5,49 @@ namespace Message\Mothership\Discount\Bundle;
 use Message\Mothership\Commerce\Order;
 use Message\Cog\Localisation\Translator;
 
+/**
+ * Class Validator
+ * @package Message\Mothership\Discount\Bundle
+ *
+ * @author  Thomas Marchant <thomas@mothership.ec>
+ */
 class Validator
 {
 	use Helpers\ItemCounterTrait {
 		getCounts as private _getCounts;
 	}
 
+	/**
+	 * @var Translator
+	 */
 	private $_translator;
 
+	/**
+	 * @var array
+	 */
 	private $_alreadyInBundle = [];
 
+	/**
+	 * @param Translator $translator
+	 */
 	public function __construct(Translator $translator)
 	{
 		$this->_translator = $translator;
 	}
 
+	/**
+	 * Validate a bundle against an order, and trigger an exception if the bundle is not valid.
+	 * Bundles will be marked as invalid if:
+	 *   - The order has a discount code assigned to it and the bundle is set to not work in conjunction with
+	 *     discount codes
+	 *   - An order does not have the minimum number of items needed for the bundle
+	 *
+	 * @param Bundle $bundle
+	 * @param Order\Order $order
+	 * @throws \LogicException        Throws exception if product row ID not set in count arrays
+	 *
+	 * @return bool
+	 */
 	public function validate(Bundle $bundle, Order\Order $order)
 	{
 		list($expectedCounts, $currentCounts) = $this->_getCounts($bundle);
@@ -68,6 +96,14 @@ class Validator
 		return true;
 	}
 
+	/**
+	 * Check if an item matches the criteria set by the product row
+	 *
+	 * @param Order\Entity\Item\Item $item
+	 * @param ProductRow $row
+	 *
+	 * @return bool
+	 */
 	public function itemIsApplicable(Order\Entity\Item\Item $item, ProductRow $row)
 	{
 		if (in_array($item->id, $this->_alreadyInBundle, true)) {
@@ -93,6 +129,13 @@ class Validator
 		return true;
 	}
 
+	/**
+	 * Translate a string and throw an exception with that string as the message.
+	 *
+	 * @param $message
+	 * @param array $params
+	 * @throws Exception\BundleValidationException     Will always throw a validation exception
+	 */
 	private function _error($message, $params = [])
 	{
 		throw new Exception\BundleValidationException(

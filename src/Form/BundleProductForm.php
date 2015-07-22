@@ -8,6 +8,12 @@ use Symfony\Component\Form;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints;
 
+/**
+ * Class BundleProductForm
+ * @package Message\Mothership\Discount\Form
+ *
+ * @author  Thomas Marchant <thomas@mothership.ec>
+ */
 class BundleProductForm extends Form\AbstractType
 {
 	const PRODUCT = 'product';
@@ -15,20 +21,37 @@ class BundleProductForm extends Form\AbstractType
 	const OPTION_VALUE = 'product_option_value';
 	const QUANTITY = 'quantity';
 
+	/**
+	 * @var ProductLoader
+	 */
 	private $_productLoader;
+
+	/**
+	 * @var OptionLoader
+	 */
 	private $_optionLoader;
 
+	/**
+	 * @param ProductLoader $productLoader
+	 * @param OptionLoader $optionLoader
+	 */
 	public function __construct(ProductLoader $productLoader, OptionLoader $optionLoader)
 	{
 		$this->_productLoader = $productLoader;
 		$this->_optionLoader  = $optionLoader;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public function getName()
 	{
 		return 'discount_bundle_product';
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public function buildForm(Form\FormBuilderInterface $builder, array $options)
 	{
 		$builder->add(self::PRODUCT, 'choice', [
@@ -67,11 +90,11 @@ class BundleProductForm extends Form\AbstractType
 		]);
 	}
 
-	public function setDefaultOptions(OptionsResolverInterface $resolver)
-	{
-
-	}
-
+	/**
+	 * Get an array of choices for unit option names
+	 *
+	 * @return array
+	 */
 	private function _getOptionNames()
 	{
 		$optionNames = $this->_optionLoader->getAllOptionNames();
@@ -79,6 +102,11 @@ class BundleProductForm extends Form\AbstractType
 		return array_combine($optionNames, $optionNames);
 	}
 
+	/**
+	 * Get an array of choices for unit option values
+	 *
+	 * @return array
+	 */
 	private function _getOptionValues()
 	{
 		$optionValues = $this->_optionLoader->getAllOptionValues();
@@ -86,6 +114,11 @@ class BundleProductForm extends Form\AbstractType
 		return array_combine($optionValues, $optionValues);
 	}
 
+	/**
+	 * Get an array of choices for product names
+	 *
+	 * @return array
+	 */
 	private function _getProductChoices()
 	{
 		$products = $this->_productLoader->getAll();
