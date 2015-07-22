@@ -22,17 +22,21 @@
 	</section>
 {% endmacro %}
 
-{{ form_start(form) }}
-	{{ form_widget(form['id']) }}
-	{{ form_row(form['name']) }}
-	{{ form_row(form['start']) }}
-	{{ form_row(form['end']) }}
-	{% for currency in currencies %}
-		{{ form_row(form['price_' ~ currency]) }}
-	{% endfor %}
-	{{ form_row(form['image']) }}
-	{{ form_row(form['allow_codes']) }}
-
+	<section class="group">
+		<h2 class="title">Bundle</h2>
+			<div class="content">
+				{{ form_start(form) }}
+					{{ form_widget(form['id']) }}
+					{{ form_row(form['name']) }}
+					{{ form_row(form['start']) }}
+					{{ form_row(form['end']) }}
+					{% for currency in currencies %}
+						{{ form_row(form['price_' ~ currency]) }}
+					{% endfor %}
+					{{ form_row(form['image']) }}
+					{{ form_row(form['allow_codes']) }}
+			</div>
+	</section>
 	{# If bundle could not be saved upon form submission, form data will be an array, so do the following: #}
 	{% if bundle is iterable %}
 		{% for key, product in bundle.product %}
@@ -47,12 +51,17 @@
 			{% set key = key + 1 %}
 		{% endfor %}
 	{% endif %}
-	<section class="repeatable-group">
-		<a href="#" data-group-add data-prototype="{{ _self.getRepeatablePrototype(form) }}"
-		   data-group-index="{{ key }}" class="button small add">
-			Add product
-		</a>
-	</section>
+	<section class="group">
+		<h2 class="title">Products in Bundle</h2>
+		<div class="content">
+			<section class="repeatable-group">
+				<a href="#" data-group-add data-prototype="{{ _self.getRepeatablePrototype(form) }}"
+				   data-group-index="{{ key }}" class="button small add">
+					Add product
+				</a>
+			</section>
+		</div>
+	</section>	
 	{% do form['product'].setRendered %}
 	<button type="submit" class="button small save" id="save-content">{{ 'ms.cms.content.button.save'|trans }}</button>
 {{ form_end(form) }}
