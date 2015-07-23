@@ -103,6 +103,10 @@ ms.discount:
       success: Bundle saved successfully!
     edit:
       success: Bundle updated successfully!
+    delete:
+      success: Bundle deleted successfully, <a href="%url%">click here</a> to undo
+    restore:
+      success: Bundle restored successfully!
     error:
       build: Could not save bundle: %message%
     listing:

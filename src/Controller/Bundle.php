@@ -86,10 +86,35 @@ class Bundle extends Controller
 
 	public function listing()
 	{
+		$bundles = $this->get('discount.bundle_loader')->getAll();
+
 		return $this->render('Message:Mothership:Discount::bundle:listing', [
-			'bundles' => $this->get('discount.bundle_loader')->getAll(),
+			'bundles' => $bundles,
 			'currency' => $this->get('currency'),
 		]);
+	}
+
+	public function delete($bundleID)
+	{
+		$bundle = $this->get('discount.bundle_loader')->getByID($bundleID);
+
+		$this->get('discount.bundle_delete')->delete($bundle);
+		$this->addFlash('success', $this->trans('ms.discount.bundle.delete.success', [
+			'%url%' => $this->generateUrl('ms.cp.discount.bundle.restore', ['bundleID' => $bundleID])
+		]));
+
+		return $this->redirectToReferer();
+	}
+
+	public function restore($bundleID)
+	{
+		$bundle = $this->get('discount.bundle_loader')->includeDeleted()->getByID($bundleID);
+
+		$this->get('discount.bundle_delete')->restore($bundle);
+		$this->addFlash('success', $this->trans('ms.discount.bundle.restore.success'));
+
+		return $this->redirectToReferer();
+
 	}
 
 	private function _getInvalidBundleData($bundleID = null)

@@ -79,6 +79,13 @@ class Services implements ServicesInterface
 			);
 		};
 
+		$services['discount.bundle_delete'] = function ($c) {
+			return new Discount\Bundle\Delete(
+				$c['db.query'],
+				$c['user.current']
+			);
+		};
+
 		// Not a singleton as query can be replaced with transaction
 		$services['discount.bundle.product_create'] = $services->factory(function ($c) {
 			return new Discount\Bundle\BundleProductCreate(
@@ -139,14 +146,14 @@ class Services implements ServicesInterface
 			return new Discount\Form\BundleProductSelector\ProductSelectorGroupForm;
 		};
 
-		$services['discount.bundle_loader'] = function($c) {
+		$services['discount.bundle_loader'] = $services->factory(function($c) {
 			return new Discount\Bundle\Loader(
 				$c['db.query.builder.factory'],
 				$c['user.loader'],
 				$c['discount.bundle.entity_collection'],
 				$c['currency.default']
 			);
-		};
+		});
 
 		$services['discount.bundle.entity_collection'] = function ($c) {
 			return new \Message\Cog\DB\Entity\EntityLoaderCollection([

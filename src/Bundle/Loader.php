@@ -172,6 +172,18 @@ class Loader
 	}
 
 	/**
+	 * @param bool $includeDeleted
+	 *
+	 * @return Loader
+	 */
+	public function includeDeleted($includeDeleted = true)
+	{
+		$this->_includeDeleted = (bool) $includeDeleted;
+
+		return $this;
+	}
+
+	/**
 	 * Run query and use result data to build an instance of BundleProxy
 	 *
 	 * @param bool $returnAsArray      Will return an array of Bundles if set to true, will return the first value

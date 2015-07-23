@@ -20,6 +20,7 @@ $(function() {
 			{ type: "text" },
 			{ type: "text" },
 			{ type: "text" },
+			null,
 			null
 		]
 	});
