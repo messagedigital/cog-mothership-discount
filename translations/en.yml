@@ -117,3 +117,4 @@ ms.discount:
       time: %name% cannot be purchased as this offer is not currently valid
     product_selector:
       button: Add to basket
+      out_of_date: This offer is not currently valid

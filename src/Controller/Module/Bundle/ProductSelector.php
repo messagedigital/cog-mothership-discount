@@ -18,6 +18,7 @@ class ProductSelector extends Controller
 			'form'         => $this->_getForm($bundle),
 			'form_fields'  => $this->_getFormFields($bundle),
 			'unit_options' => $this->_getUnitOptionStrings($bundle),
+			'bundle'       => $bundle,
 		]);
 	}
 
