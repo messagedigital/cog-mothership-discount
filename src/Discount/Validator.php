@@ -5,6 +5,7 @@ namespace Message\Mothership\Discount\Discount;
 use Message\Cog\Service\Container;
 use Message\Cog\ValueObject\Authorship;
 use Message\Cog\DB\Query;
+use Message\Mothership\Discount\Bundle;
 use Message\Mothership\Commerce\Product\Product;
 use Message\Mothership\Commerce\Order\Order;
 use Message\Cog\Localisation\Translator;
@@ -93,6 +94,7 @@ class Validator
 			throw new \Exception('Order must be set before discount code can be validated');
 		}
 
+		$this->_validateNoRestrictedBundles();
 		$this->_validateMaxNumberDiscounts($adding);
 
 		if ($adding) {
@@ -202,7 +204,7 @@ class Validator
 
 	protected function _validateMaxNumberDiscounts($adding)
 	{
-		$numDiscounts = count($this->getOrder()->discounts);
+		$numDiscounts = $this->_getDiscountCodeCount();
 		$invalid = ($adding) ? $numDiscounts >= $this->_getMaxDiscounts() : $numDiscounts > $this->_getMaxDiscounts();
 
 		if ($invalid) {
@@ -224,6 +226,17 @@ class Validator
 		return $this;
 	}
 
+	private function _validateNoRestrictedBundles()
+	{
+		foreach ($this->getOrder()->discounts as $discount) {
+			if ($discount->getType() === Bundle\OrderDiscountFactory::NO_CODES) {
+				throw new OrderValidityException($this->_trans->trans('ms.discount.discount.add.error.bundle_no_codes', [
+					'%bundleName%' => $discount->name,
+				]));
+			}
+		}
+	}
+
 	/**
 	 * @todo Make able to set in config
 	 */
@@ -232,4 +245,16 @@ class Validator
 		return 1;
 	}
 
+	private function _getDiscountCodeCount()
+	{
+		$codeCount = 0;
+
+		foreach ($this->getOrder()->discounts as $discount) {
+			if ($discount->getType() === OrderDiscountFactory::TYPE) {
+				++$codeCount;
+			}
+		}
+
+		return $codeCount;
+	}
 }

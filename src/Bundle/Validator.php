@@ -4,6 +4,7 @@ namespace Message\Mothership\Discount\Bundle;
 
 use Message\Mothership\Commerce\Order;
 use Message\Cog\Localisation\Translator;
+use Message\Mothership\Discount\Discount;
 
 /**
  * Class Validator
@@ -54,7 +55,7 @@ class Validator
 
 		if (false === $bundle->allowCodes()) {
 			foreach ($order->discounts as $discount) {
-				if (null !== $discount->code) {
+				if ($discount->getType() === Discount\OrderDiscountFactory::TYPE) {
 					$this->_error('ms.discount.bundle.validation.codes', [
 						'%name%' => $bundle->getName(),
 						'%code%' => $discount->code,
@@ -80,7 +81,7 @@ class Validator
 				// If the item fits the requirements of the product row, increment the current count
 				if ($this->itemIsApplicable($item, $row)) {
 					$currentCounts[$row->getID()]++;
-					$item->id = uniqid();
+					$item->id = $item->id ?: uniqid();
 					$this->_alreadyInBundle[] = $item->id;
 					break;
 				}
@@ -106,7 +107,7 @@ class Validator
 	 */
 	public function itemIsApplicable(Order\Entity\Item\Item $item, ProductRow $row)
 	{
-		if (in_array($item->id, $this->_alreadyInBundle, true)) {
+		if (in_array($item->id, $this->_alreadyInBundle)) {
 			return false;
 		}
 

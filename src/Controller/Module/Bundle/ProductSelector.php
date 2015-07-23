@@ -36,26 +36,38 @@ class ProductSelector extends Controller
 			$data = $form->getData();
 
 			$allItems = true;
-			$itemCount = 0;
+			$units     = [];
+
 			foreach ($data as $key => $value) {
 				if (!array_key_exists('unit_id', $value)) {
 					throw new \LogicException('Each row of data expects unit ID to be set in an array against a key of `unit_id`');
 				}
 
 				$unit = $this->get('product.unit.loader')->getByID($value['unit_id']);
-				$this->get('basket')->addUnit($unit);
+
+				if (!$unit) {
+					$allItems = false;
+					break;
+				}
+
+				$units[] = $unit;
 			}
 
 			if ($allItems) {
+				foreach ($units as $unit) {
+					$this->get('basket')->addUnit($unit);
+				}
+
 				$this->addFlash('success', 'Bundle successfully added to basket');
 			} else {
-				$this->addFlash('error', 'Only ' . $itemCount . ' items added to basket');
+				$this->addFlash('error', 'Could not add items to basket, they may be out of stock');
 			}
 
 			// Add bundle to order even if not all items were added, rely on validation to determine whether a
 			// discount should be applied
 			$bundleNotSet = true;
 			$inc = 0;
+
 			while ($bundleNotSet) {
 				$metadataTag = 'bundle_' . $inc;
 				if ($this->get('basket')->getOrder()->metadata->exists($metadataTag)) {
@@ -65,6 +77,7 @@ class ProductSelector extends Controller
 					$bundleNotSet = false;
 				}
 			}
+
 			$event = new Order\Event\Event($this->get('basket')->getOrder());
 			$this->get('event.dispatcher')->dispatch(
 				Bundle\Events::ADD_BUNDLE,

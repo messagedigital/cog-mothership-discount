@@ -58,6 +58,7 @@ ms.discount:
         max: You may only use up to %max% discount%plural%
         used: This discount has already been used on this order.
         invalid: Please enter a valid discount code.
+        bundle_no_codes: Bundle '%bundleName%' is not valid with discount codes
   bundle:
     label: Bundle details
     name:
@@ -107,3 +108,5 @@ ms.discount:
     validation:
       codes: %name% cannot be purchased in conjunction with a discount code (%code%), bundle discount removed
       items: Items in basket do not contain enough items for '%name%' bundle, discount removed
+    product_selector:
+      button: Add to basket

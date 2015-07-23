@@ -18,17 +18,22 @@ class OrderDiscountFactory
 		getCounts as private _getCounts;
 	}
 
+	const CODES_ALLOWED = 'bundle_codes_allowed';
+	const NO_CODES      = 'bundle_no_codes';
+
 	/**
 	 * @var Validator
 	 */
 	private $_validator;
+
+	private $_alreadyInBundle = [];
 
 	/**
 	 * @param Validator $validator
 	 */
 	public function __construct(Validator $validator)
 	{
-		$this->_validator = $validator;
+		$this->_validator = clone $validator;
 	}
 
 	/**
@@ -42,11 +47,13 @@ class OrderDiscountFactory
 	public function createOrderDiscount(Order\Order $order, Bundle $bundle)
 	{
 		$discount = new Order\Entity\Discount\Discount;
+		$type = $bundle->allowCodes() ? self::CODES_ALLOWED : self::NO_CODES;
+		$discount->setType($type);
 		$discount->order = $order;
 
 		$discount->amount = $this->_calculateAmount($order, $bundle);
 		$discount->name = $bundle->getName();
-		$discount->description = $bundle->getName() . ' (Bundle ' . $bundle->getID() . ')';
+		$discount->description = 'Bundle ' . $bundle->getID() .': ' . $bundle->getName();
 		$discount->order = $order;
 
 		return $discount;
@@ -79,6 +86,7 @@ class OrderDiscountFactory
 				if ($this->_validator->itemIsApplicable($item, $row)) {
 
 					$currentCounts[$row->getID()]++;
+					$this->_alreadyInBundle[] = $item->id;
 
 					$total += $item->getUnit()->getPrice('retail', $order->currencyID);;
 
@@ -89,15 +97,11 @@ class OrderDiscountFactory
 
 		foreach ($expectedCounts as $key => $value) {
 			if ($currentCounts[$key] != $value) {
-				throw new \LogicException('Number of items does not match that of bundle, so should have failed validation');
+				throw new \LogicException('Number of items does not match that of bundle, so should have failed validat');
 			}
 		}
 
 		$discount = ($total - $bundle->getPrice($order->currencyID));
-
-		if ($discount < 0) {
-			$discount = 0;
-		}
 
 		return $discount;
 	}

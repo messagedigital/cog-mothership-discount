@@ -26,16 +26,16 @@ class EventListener extends BaseListener implements SubscriberInterface
 	{
 		return [
 			BundleEvents::ADD_BUNDLE => [
-				['addBundle']
+				['validateBundle', 400]
 			],
 			OrderEvents::ASSEMBLER_UPDATE => [
-				['validateBundle']
+				['validateBundle', 400]
 			],
 			OrderEvents::CREATE_VALIDATE => [
-				['validateBundle']
+				['validateBundle', 400]
 			],
 			OrderEvents::CREATE_VALIDATE => [
-				['validateBundle']
+				['validateBundle', 400]
 			],
 		];
 	}

@@ -13,6 +13,8 @@ use Message\Mothership\Commerce\Order;
  */
 class OrderDiscountFactory
 {
+	const TYPE = 'code';
+
 	/**
 	 * @var Order\Order the order to create the Order\Entity\Discount\Discount from
 	 */
@@ -52,6 +54,7 @@ class OrderDiscountFactory
 		}
 
 		$orderDiscount = new Order\Entity\Discount\Discount;
+		$orderDiscount->setType(self::TYPE);
 		$orderDiscount->discount	= $this->_discount;
 		$orderDiscount->code 		= $this->_discount->code;
 		$orderDiscount->name 		= $this->_discount->name;
