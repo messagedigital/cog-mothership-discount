@@ -40,7 +40,7 @@ class Bundle extends Controller
 			$this->addFlash('success', $this->trans('ms.discount.bundle.create.success'));
 
 			return $this->redirectToRoute('ms.cp.discount.bundle.edit', [
-				'bundleID' => $bundle->id,
+				'bundleID' => $bundle->getID(),
 			]);
 
 		}

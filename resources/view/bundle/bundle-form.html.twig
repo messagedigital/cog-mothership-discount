@@ -21,11 +21,10 @@
 		</div>
 	</section>
 {% endmacro %}
-
+{{ form_start(form) }}
 	<section class="group">
 		<h2 class="title">{{ 'ms.discount.bundle.label' | trans }}</h2>
 			<div class="content">
-				{{ form_start(form) }}
 					{{ form_widget(form['id']) }}
 					{{ form_row(form['name']) }}
 					{{ form_row(form['start']) }}
