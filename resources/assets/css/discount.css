@@ -26,3 +26,8 @@ input[type=date] {
 .field.inline input[type="checkbox"] {
 	margin-top: 4px;
 }
+
+table.bundles form:after {
+	content: '';
+	margin: 0;
+}

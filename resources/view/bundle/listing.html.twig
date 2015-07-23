@@ -1,5 +1,17 @@
 {% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
 
+{% block stylesheets %}
+	{{ parent() }}
+	{% stylesheets
+		'@Message:Mothership:Discount::resources/assets/css/discount.css'
+
+		output='/assets/css/ms_discount.css'
+		filter='csscogulerewrite,?cssmin'
+	%}
+		<link rel="stylesheet" href="{{ asset_url }}">
+	{% endstylesheets %}
+{% endblock %}
+
 {% block javascripts %}
 	{{ parent() }}
 	{% javascripts
