@@ -108,5 +108,6 @@ ms.discount:
     validation:
       codes: %name% cannot be purchased in conjunction with a discount code (%code%), bundle discount removed
       items: Items in basket do not contain enough items for '%name%' bundle, discount removed
+      time: %name% cannot be purchased as this offer is not currently valid
     product_selector:
       button: Add to basket

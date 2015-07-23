@@ -51,6 +51,12 @@ class Validator
 	 */
 	public function validate(Bundle $bundle, Order\Order $order)
 	{
+		if (!$bundle->inTimeRange()) {
+			$this->_error('ms.discount.bundle.validation.time', [
+				'%name%' => $bundle->getName(),
+			]);
+		}
+
 		list($expectedCounts, $currentCounts) = $this->_getCounts($bundle);
 
 		if (false === $bundle->allowCodes()) {
