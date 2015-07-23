@@ -68,15 +68,16 @@ class EventListener extends BaseListener implements SubscriberInterface
 		foreach ($bundleIDs as $metadataKey => $bundleID) {
 			$bundle = $bundles[$bundleID];
 			$discountFactory = $this->get('discount.bundle.order_discount_factory');
-			$discount = $discountFactory->createOrderDiscount($event->getOrder(), $bundle);
-
-			// Temporarily set ID to keep track of bundles that have had their discounts applied
-			$discount->id = $metadataKey;
 
 			// Validator will throw an exception if the bundle is not valid for the order. Remove the discount if it
 			// has already been set and show a flash message.
 			try {
 				$validator->validate($bundle, $event->getOrder());
+				$discount = $discountFactory->createOrderDiscount($event->getOrder(), $bundle);
+
+				// Temporarily set ID to keep track of bundles that have had their discounts applied
+				$discount->id = $metadataKey;
+
 				if (!$this->get('basket.order')->discounts->exists($metadataKey)) {
 					$this->get('basket')->addEntity('discounts', $discount);
 				}
@@ -86,7 +87,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 						'warning',
 						$e->getMessage()
 					);
-					$this->get('basket')->removeEntity('discounts', $discount);
+					$this->get('basket')->removeEntity('discounts', $this->get('basket.order')->discounts->get($metadataKey));
 
 					return false;
 				}
