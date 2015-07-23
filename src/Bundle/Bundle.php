@@ -253,6 +253,9 @@ class Bundle
 		return $this->_prices[$currencyID];
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getPrices()
 	{
 		return $this->_prices;

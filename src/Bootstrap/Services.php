@@ -112,7 +112,7 @@ class Services implements ServicesInterface
 				$c['product.loader'],
 				$c['file_manager.file.loader'],
 				$c['cfg']->currency->supportedCurrencies,
-				$c['currency.default']
+				$c['currency']
 			);
 		};
 
@@ -151,7 +151,7 @@ class Services implements ServicesInterface
 				$c['db.query.builder.factory'],
 				$c['user.loader'],
 				$c['discount.bundle.entity_collection'],
-				$c['currency.default']
+				$c['currency']
 			);
 		});
 

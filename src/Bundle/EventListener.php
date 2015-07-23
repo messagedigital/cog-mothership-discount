@@ -8,6 +8,9 @@ use Message\Mothership\Commerce\Order;
 use Message\Mothership\Commerce\Order\Events as OrderEvents;
 use Message\Mothership\Commerce\Order\Event\Event as OrderEvent;
 
+use Message\Mothership\Commerce\Events;
+use Message\Mothership\Commerce\Event\CurrencyChangeEvent;
+
 use Message\Cog\Event\SubscriberInterface;
 use Message\Cog\Event\EventListener as BaseListener;
 
@@ -25,17 +28,20 @@ class EventListener extends BaseListener implements SubscriberInterface
 	static public function getSubscribedEvents()
 	{
 		return [
+			Events::CURRENCY_CHANGE => [
+				['removeBundles', 500],
+			],
 			BundleEvents::ADD_BUNDLE => [
-				['validateBundle', 400]
+				['validateBundle', 400],
 			],
 			OrderEvents::ASSEMBLER_UPDATE => [
-				['validateBundle', 400]
+				['validateBundle', 400],
 			],
 			OrderEvents::CREATE_VALIDATE => [
-				['validateBundle', 400]
+				['validateBundle', 400],
 			],
 			OrderEvents::CREATE_VALIDATE => [
-				['validateBundle', 400]
+				['validateBundle', 400],
 			],
 		];
 	}
@@ -63,7 +69,6 @@ class EventListener extends BaseListener implements SubscriberInterface
 
 		$bundles   = $this->get('discount.bundle_loader')->getByID($bundleIDs);
 		$validator = $this->get('discount.bundle_validator');
-
 
 		foreach ($bundleIDs as $metadataKey => $bundleID) {
 			$bundle = $bundles[$bundleID];
@@ -99,16 +104,19 @@ class EventListener extends BaseListener implements SubscriberInterface
 		return true;
 	}
 
-	public function addBundle(OrderEvent $event)
+	public function removeBundles(CurrencyChangeEvent $event)
 	{
-		$validate = $this->validateBundle($event);
+		$order = $this->get('basket.order');
+		$bundleIDs = $this->_getBundleIDs($order);
 
-		if (is_string($validate)) {
-			$this->get('http.session')->getFlashBag()->add(
-				'warning',
-				$validate
-			);
+		foreach ($bundleIDs as $metadataKey => $bundleID) {
+			if ($order->discounts->exists($metadataKey)) {
+				$this->get('basket')->removeEntity('discounts', $order->discounts->get($metadataKey));
+			}
 		}
+
+		$event = new OrderEvent($this->get('basket.order'));
+		$this->validateBundle($event);
 	}
 
 	/**
