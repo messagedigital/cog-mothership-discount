@@ -89,7 +89,7 @@ class Edit implements TransactionalInterface
 				discount_bundle
 			SET
 				`name` = :name?s,
-				allow_codes = :allowCodes?b,
+				allow_codes = :allowsCodes?b,
 				start = :start?dn,
 				`end` = :end?dn,
 				updated_at = :updatedAt?d,
@@ -98,7 +98,7 @@ class Edit implements TransactionalInterface
 				bundle_id = :bundleID?i
 		", [
 			'name' => $bundle->getName(),
-			'allowCodes' => $bundle->allowCodes(),
+			'allowsCodes' => $bundle->allowsCodes(),
 			'start' => $bundle->getStart(),
 			'end' => $bundle->getEnd(),
 			'updatedAt' => new \DateTime,

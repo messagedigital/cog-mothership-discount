@@ -52,7 +52,7 @@ class BundleTransformer implements DataTransformerInterface
 			BundleForm::NAME    => $bundle->getName(),
 			BundleForm::START   => $bundle->getStart(),
 			BundleForm::END     => $bundle->getEnd(),
-			BundleForm::CODES   => $bundle->allowCodes(),
+			BundleForm::CODES   => $bundle->allowsCodes(),
 			BundleForm::PRODUCT => [],
 		];
 

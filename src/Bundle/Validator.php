@@ -59,7 +59,7 @@ class Validator
 
 		list($expectedCounts, $currentCounts) = $this->_getCounts($bundle);
 
-		if (false === $bundle->allowCodes()) {
+		if (false === $bundle->allowsCodes()) {
 			foreach ($order->discounts as $discount) {
 				if ($discount->getType() === Discount\OrderDiscountFactory::TYPE) {
 					$this->_error('ms.discount.bundle.validation.codes', [

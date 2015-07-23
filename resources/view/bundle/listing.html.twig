@@ -80,7 +80,7 @@
 						<td><a href="{{ url('ms.cp.discount.bundle.edit', {'bundleID' : bundle.id}) }}">{{ bundle.name }}</a></td>
 						<td>{{ bundle.start ? bundle.start | date('d M Y') : ''}}</td>
 						<td>{{ bundle.end ? bundle.end | date('d M Y') : '' }}</td>
-						<td>{{ bundle.allowCodes ? 'Yes' : 'No' }}</td>
+						<td>{{ bundle.allowsCodes ? 'Yes' : 'No' }}</td>
 						<td>{{ bundle.getPrice(currency) | price(currency) }}</td>
 						<td><a href="{{ url('ms.cp.discount.bundle.edit', {'bundleID' : bundle.id}) }}" class="button small">Edit</a></td>
 						<td>

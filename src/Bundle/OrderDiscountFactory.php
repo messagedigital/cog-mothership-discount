@@ -47,7 +47,7 @@ class OrderDiscountFactory
 	public function createOrderDiscount(Order\Order $order, Bundle $bundle)
 	{
 		$discount = new Order\Entity\Discount\Discount;
-		$type = $bundle->allowCodes() ? self::CODES_ALLOWED : self::NO_CODES;
+		$type = $bundle->allowsCodes() ? self::CODES_ALLOWED : self::NO_CODES;
 		$discount->setType($type);
 		$discount->order = $order;
 

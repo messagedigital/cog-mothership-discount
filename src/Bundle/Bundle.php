@@ -276,7 +276,7 @@ class Bundle
 	 *
 	 * @return bool
 	 */
-	public function allowCodes()
+	public function allowsCodes()
 	{
 		return $this->_allowCodes;
 	}

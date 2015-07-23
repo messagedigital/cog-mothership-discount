@@ -93,7 +93,7 @@ class Create
 			VALUES
 				(
 					:name?s,
-					:allowCodes?b,
+					:allowsCodes?b,
 					:start?dn,
 					:end?dn,
 					:createdAt?d,
@@ -101,7 +101,7 @@ class Create
 				)
 		", [
 			'name'        => $bundle->getName(),
-			'allowCodes'  => $bundle->allowCodes(),
+			'allowsCodes' => $bundle->allowsCodes(),
 			'start'       => $bundle->getStart(),
 			'end'         => $bundle->getEnd(),
 			'createdAt'   => new \DateTime,
