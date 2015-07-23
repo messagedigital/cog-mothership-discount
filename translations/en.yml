@@ -105,6 +105,8 @@ ms.discount:
       success: Bundle updated successfully!
     error:
       build: Could not save bundle: %message%
+    listing:
+      empty: There are no bundles set up
     validation:
       codes: %name% cannot be purchased in conjunction with a discount code (%code%), bundle discount removed
       items: Items in basket do not contain enough items for '%name%' bundle, discount removed

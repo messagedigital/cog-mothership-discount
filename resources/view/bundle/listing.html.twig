@@ -18,7 +18,11 @@
 {% endblock %}
 
 {% block main %}
+	<hgroup class="title">
+		<h1>Bundles</h1>
+	</hgroup>
 	<div class="container-content">
+	{% if bundles | length > 0 %}
 		<table class="table-filter bundles">
 			<colgroup>
 				<col width="100">
@@ -59,7 +63,7 @@
 					<tr>
 						<td><a href="{{ url('ms.cp.discount.bundle.edit', {'bundleID' : bundle.id}) }}">{{ bundle.id }}</a></td>
 						<td>{{ getResizedImage(bundle.getImage(), 50, 50) }}</td>
-						<td>{{ bundle.name }}</td>
+						<td><a href="{{ url('ms.cp.discount.bundle.edit', {'bundleID' : bundle.id}) }}">{{ bundle.name }}</a></td>
 						<td>{{ bundle.start ? bundle.start | date('d M Y') : ''}}</td>
 						<td>{{ bundle.end ? bundle.end | date('d M Y') : '' }}</td>
 						<td>{{ bundle.allowCodes ? 'Yes' : 'No' }}</td>
@@ -69,5 +73,8 @@
 				{% endfor %}
 			</tbody>
 		</table>
+	{% else %}
+		<p>{{ 'ms.discount.bundle.listing.empty' | trans }}</p>
+	{% endif %}
 	</div>
 {% endblock %}

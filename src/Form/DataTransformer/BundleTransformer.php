@@ -52,10 +52,13 @@ class BundleTransformer implements DataTransformerInterface
 			BundleForm::NAME    => $bundle->getName(),
 			BundleForm::START   => $bundle->getStart(),
 			BundleForm::END     => $bundle->getEnd(),
-			BundleForm::IMAGE   => $bundle->getImage()->id,
 			BundleForm::CODES   => $bundle->allowCodes(),
 			BundleForm::PRODUCT => [],
 		];
+
+		if ($bundle->getImage()) {
+			$data[BundleForm::IMAGE] = $bundle->getImage()->id;
+		}
 
 		foreach ($bundle->getPrices() as $currency => $price) {
 			$data[BundleForm::PRICE_PREFIX . strtoupper($currency)] = $price;
