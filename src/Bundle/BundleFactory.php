@@ -32,6 +32,11 @@ class BundleFactory
 	private $_currencies;
 
 	/**
+	 * @var
+	 */
+	private $_defaultCurrency;
+
+	/**
 	 * @var array
 	 */
 	private $_requiredFields = [
@@ -51,16 +56,19 @@ class BundleFactory
 	 * @param BaseProductLoader $productLoader
 	 * @param File\FileLoader $fileLoader
 	 * @param array $currencies
+	 * @param string $defaultCurrency
 	 */
 	public function __construct(
 		BaseProductLoader $productLoader,
 		File\FileLoader $fileLoader,
-		array $currencies
+		array $currencies,
+		$defaultCurrency
 	)
 	{
 		$this->_productLoader = $productLoader;
 		$this->_fileLoader = $fileLoader;
 		$this->_currencies = $currencies;
+		$this->_defaultCurrency = $defaultCurrency;
 		$this->_buildRequiredFields($currencies);
 	}
 
@@ -75,7 +83,7 @@ class BundleFactory
 	{
 		$this->_validateData($data);
 
-		$bundle = new Bundle;
+		$bundle = new Bundle($this->_defaultCurrency);
 
 		if (!empty($data[Form\BundleForm::ID])) {
 			$bundle->setID($data[Form\BundleForm::ID]);

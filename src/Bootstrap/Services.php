@@ -104,7 +104,8 @@ class Services implements ServicesInterface
 			return new Discount\Bundle\BundleFactory(
 				$c['product.loader'],
 				$c['file_manager.file.loader'],
-				$c['cfg']->currency->supportedCurrencies
+				$c['cfg']->currency->supportedCurrencies,
+				$c['currency.default']
 			);
 		};
 
@@ -142,7 +143,8 @@ class Services implements ServicesInterface
 			return new Discount\Bundle\Loader(
 				$c['db.query.builder.factory'],
 				$c['user.loader'],
-				$c['discount.bundle.entity_collection']
+				$c['discount.bundle.entity_collection'],
+				$c['currency.default']
 			);
 		};
 

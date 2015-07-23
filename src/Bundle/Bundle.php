@@ -30,6 +30,11 @@ class Bundle
 	private $_authorship;
 
 	/**
+	 * @var string
+	 */
+	private $_defaultCurrency;
+
+	/**
 	 * @var \DateTime
 	 */
 	private $_start;
@@ -62,8 +67,9 @@ class Bundle
 	/**
 	 * Aet an instance of Authorship (to be edited by calling `getAuthorship()`)
 	 */
-	public function __construct()
+	public function __construct($defaultCurrency)
 	{
+		$this->_defaultCurrency = $defaultCurrency;
 		$this->_authorship = new Authorship;
 	}
 
@@ -230,8 +236,10 @@ class Bundle
 	 *
 	 * @return mixed
 	 */
-	public function getPrice($currencyID)
+	public function getPrice($currencyID = null)
 	{
+		$currencyID = $currencyID ?: $this->_defaultCurrency;
+
 		if (!is_string($currencyID) || !preg_match('/^[A-Za-z]+$/', $currencyID)) {
 			throw new \InvalidArgumentException('Currency ID must be a string of no more than three letters');
 		}

@@ -42,6 +42,11 @@ class Loader
 	private $_queryBuilder;
 
 	/**
+	 * @var string
+	 */
+	private $_defaultCurrency;
+
+	/**
 	 * @var array
 	 */
 	private $_columns = [
@@ -72,12 +77,14 @@ class Loader
 	public function __construct(
 		QueryBuilderFactory $queryBuilderFactory,
 		UserLoader $userLoader,
-		EntityLoaderCollection $loaders
+		EntityLoaderCollection $loaders,
+		$defaultCurrency
 	)
 	{
 		$this->_queryBuilderFactory = $queryBuilderFactory;
 		$this->_userLoader          = $userLoader;
 		$this->_loaders             = $loaders;
+		$this->_defaultCurrency     = $defaultCurrency;
 	}
 
 	/**
@@ -185,7 +192,7 @@ class Loader
 		$bundles = [];
 
 		foreach ($result as $row) {
-			$bundle = new BundleProxy($this->_loaders);
+			$bundle = new BundleProxy($this->_loaders, $this->_defaultCurrency);
 
 			$bundle->setID((int) $row->id);
 			$bundle->setName($row->name);

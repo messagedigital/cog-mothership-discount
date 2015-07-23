@@ -26,12 +26,13 @@ class BundleProxy extends Bundle
 
 	/**
 	 * @param EntityLoaderCollection $loaders
+	 * @param string $defaultCurrency
 	 */
-	public function __construct(EntityLoaderCollection $loaders)
+	public function __construct(EntityLoaderCollection $loaders, $defaultCurrency)
 	{
 		$this->_loaders = $loaders;
 
-		parent::__construct();
+		parent::__construct($defaultCurrency);
 	}
 
 	/**
@@ -69,7 +70,7 @@ class BundleProxy extends Bundle
 	/**
 	 * {@inheritDoc}
 	 */
-	public function getPrice($currencyID)
+	public function getPrice($currencyID = null)
 	{
 		if (!parent::getPrices()) {
 			$this->_loadPrices();
