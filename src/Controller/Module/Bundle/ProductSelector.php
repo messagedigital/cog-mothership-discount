@@ -93,7 +93,6 @@ class ProductSelector extends Controller
 	{
 		$products = $this->_getProducts($bundle);
 		$units = [];
-		$outOfStock = [];
 
 		foreach ($bundle->getProductRows() as $productRow) {
 			$units[$productRow->getID()] = $this->_getUnits($products[$productRow->getProductID()], $productRow->getOptions());
@@ -103,7 +102,7 @@ class ProductSelector extends Controller
 			'bundle'       => $bundle,
 			'products'     => $products,
 			'units'        => $units,
-			'out_of_stock' => $outOfStock,
+			'out_of_stock' => $this->_outOfStock,
 			'action'       => $this->generateUrl('ms.product.basket.add_bundle', ['bundleID' => $bundle->getID()]),
 		]);
 
@@ -170,7 +169,7 @@ class ProductSelector extends Controller
 			}
 
 			if (1 > $unit->getStockForLocation($locations->getRoleLocation($locations::SELL_ROLE))) {
-				$outOfStock[] = $unit;
+				$outOfStock[] = $unit->id;
 			}
 
 			$units[$unit->id] = $unit;

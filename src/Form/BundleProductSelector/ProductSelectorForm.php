@@ -37,6 +37,7 @@ class ProductSelectorForm extends Form\AbstractType
 		$builder->add('unit_id', 'unit_choice', [
 			'label'        => $options['product']->displayName ?: $options['product']->name,
 			'choices'      => $choices,
+			'units'        => $options['units'],
 			'oos'          => $options['out_of_stock'],
 			'empty_value'  => 'ms.commerce.product.selector.unit.label',
 			'show_pricing' => !empty($options['show_variable_pricing']) && $options['product']->hasVariablePricing(),
@@ -54,7 +55,8 @@ class ProductSelectorForm extends Form\AbstractType
 			'out_of_stock'          => [],
 			'unit_options'          => [],
 			'product'               => null,
-			'show_variable_pricing' => true,
+			'show_variable_pricing' => false,
+			'show_pricing'          => false,
 		]);
 	}
 

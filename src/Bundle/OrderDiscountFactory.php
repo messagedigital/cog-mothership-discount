@@ -97,7 +97,7 @@ class OrderDiscountFactory
 
 		foreach ($expectedCounts as $key => $value) {
 			if ($currentCounts[$key] != $value) {
-				throw new \LogicException('Number of items does not match that of bundle, so should have failed validat');
+				throw new \LogicException('Number of items does not match that of bundle, so should have failed validation');
 			}
 		}
 

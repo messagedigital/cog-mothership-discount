@@ -1,3 +1,5 @@
+
+
 {% if bundle.inTimeRange %}
 	{{ form_start(form) }}
 		{% for key, field in form_fields %}
@@ -5,6 +7,8 @@
 			{% if unit_options[key] %}
 				<span>{{ unit_options[key] }}</span>
 			{% endif %}
+			{% form_theme form[field]['unit_id'] 'Message:Mothership:Commerce::product:product-selector-form'%}
+
 			{{ form_widget(form[field]['unit_id']) }}
 		{% endfor %}
 		<button type="submit">{{ 'ms.discount.bundle.product_selector.button'|trans }}</button>

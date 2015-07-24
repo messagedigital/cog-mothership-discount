@@ -73,6 +73,7 @@ class Loader
 	 * @param QueryBuilderFactory $queryBuilderFactory
 	 * @param UserLoader $userLoader
 	 * @param EntityLoaderCollection $loaders
+	 * @param string $defaultCurrency
 	 */
 	public function __construct(
 		QueryBuilderFactory $queryBuilderFactory,
