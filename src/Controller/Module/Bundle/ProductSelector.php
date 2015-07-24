@@ -73,15 +73,18 @@ class ProductSelector extends Controller
 				foreach ($units as $unit) {
 					$this->get('basket')->addUnit($unit);
 				}
-			} else {
-				$this->addFlash('error', 'Could not add items to basket, they may be out of stock');
-			}
 
-//			$event = new Order\Event\Event($this->get('basket')->getOrder());
-//			$this->get('event.dispatcher')->dispatch(
-//				Bundle\Events::ADD_BUNDLE,
-//				$event
-//			);
+				if (!$this->get('basket.order')->discounts->exists($metadataTag)) {
+					$this->addFlash('error', $this->trans('ms.discount.bundle.product_selector.error.not_set', [
+						'%bundleName%' => $bundle->getName(),
+					]));
+				}
+
+			} else {
+				$this->addFlash('error', $this->trans('ms.discount.bundle.product_selector.error.items', [
+					'%bundleName' => $bundle->getName(),
+				]));
+			}
 		}
 
 		return $this->redirectToReferer();

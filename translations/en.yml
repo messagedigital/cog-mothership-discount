@@ -118,3 +118,6 @@ ms.discount:
     product_selector:
       button: Add to basket
       out_of_date: This offer is not currently valid
+      error:
+        items: Could not add %bundleName% to basket, some may be out of stock
+        not_set: Could not add %bundleName% to basket as it is invalid with your current order

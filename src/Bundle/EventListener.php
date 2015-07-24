@@ -37,9 +37,6 @@ class EventListener extends BaseListener implements SubscriberInterface
 	static public function getSubscribedEvents()
 	{
 		return [
-//			Events::CURRENCY_CHANGE => [
-//				['removeBundles', 500],
-//			],
 			BundleEvents::ADD_BUNDLE => [
 				['validateBundle', 400],
 			],
@@ -100,6 +97,17 @@ class EventListener extends BaseListener implements SubscriberInterface
 			// has already been set and show a flash message.
 			try {
 				$validator->validate($bundle, $event->getOrder());
+
+				$discount = $this->get('discount.bundle.order_discount_factory')
+					->createOrderDiscount($event->getOrder(), $bundle);
+
+				// Temporarily set ID to keep track of bundles that have had their discounts applied
+				$discount->id = $metadataKey;
+
+				// Add the bundle ID to the log to prevent an infinite loop
+				$this->_bundleLog[$bundleID] = $bundleID;
+				$this->get('basket')->addEntity('discounts', $discount);
+
 			} catch (Exception\BundleValidationException $e) {
 				if ($bundleExists) {
 					$this->get('http.session')->getFlashBag()->add(
@@ -111,16 +119,6 @@ class EventListener extends BaseListener implements SubscriberInterface
 
 				return false;
 			}
-
-			$discount = $this->get('discount.bundle.order_discount_factory')
-				->createOrderDiscount($event->getOrder(), $bundle);
-
-			// Temporarily set ID to keep track of bundles that have had their discounts applied
-			$discount->id = $metadataKey;
-
-			// Add the bundle ID to the log to prevent an infinite loop
-			$this->_bundleLog[$bundleID] = $bundleID;
-			$this->get('basket')->addEntity('discounts', $discount);
 		}
 
 		return true;
