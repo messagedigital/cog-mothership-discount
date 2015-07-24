@@ -23,14 +23,23 @@ use Message\Cog\Event\EventListener as BaseListener;
 class EventListener extends BaseListener implements SubscriberInterface
 {
 	/**
+	 * Array for keeping track of which bundles are being processed in this request. This is to prevent
+	 * recursive loops as a result of removing and re-adding the discount entity firing the ASSEMBLER_UPDATE
+	 * for within the listener that responds to that event.
+	 *
+	 * @var array
+	 */
+	private $_bundleLog = [];
+
+	/**
 	 * {@inheritDoc}
 	 */
 	static public function getSubscribedEvents()
 	{
 		return [
-			Events::CURRENCY_CHANGE => [
-				['removeBundles', 500],
-			],
+//			Events::CURRENCY_CHANGE => [
+//				['removeBundles', 500],
+//			],
 			BundleEvents::ADD_BUNDLE => [
 				['validateBundle', 400],
 			],
@@ -71,34 +80,43 @@ class EventListener extends BaseListener implements SubscriberInterface
 		$validator = $this->get('discount.bundle_validator');
 
 		foreach ($bundleIDs as $metadataKey => $bundleID) {
+
+			if (array_key_exists($bundleID, $this->_bundleLog)) {
+				unset($this->_bundleLog[$bundleID]);
+				continue;
+			}
+
 			$bundle = $bundles[$bundleID];
-			$discountFactory = $this->get('discount.bundle.order_discount_factory');
+			$bundleExists = $this->get('basket.order')->discounts->exists($metadataKey);
+
+			if ($bundleExists) {
+				$this->get('basket.order')->discounts->remove($this->get('basket.order')->discounts->get($metadataKey));
+			}
 
 			// Validator will throw an exception if the bundle is not valid for the order. Remove the discount if it
 			// has already been set and show a flash message.
 			try {
 				$validator->validate($bundle, $event->getOrder());
-				$discount = $discountFactory->createOrderDiscount($event->getOrder(), $bundle);
-
-				// Temporarily set ID to keep track of bundles that have had their discounts applied
-				$discount->id = $metadataKey;
-
-				if (!$this->get('basket.order')->discounts->exists($metadataKey)) {
-					$this->get('basket')->addEntity('discounts', $discount);
-				}
 			} catch (Exception\BundleValidationException $e) {
-				if ($this->get('basket.order')->discounts->exists($metadataKey)) {
+				if ($bundleExists) {
 					$this->get('http.session')->getFlashBag()->add(
 						'warning',
 						$e->getMessage()
 					);
-					$this->get('basket')->removeEntity('discounts', $this->get('basket.order')->discounts->get($metadataKey));
 
-					return false;
 				}
 
-				return $e->getMessage();
+				return false;
 			}
+
+			$discount = $this->get('discount.bundle.order_discount_factory')
+				->createOrderDiscount($event->getOrder(), $bundle);
+
+			// Temporarily set ID to keep track of bundles that have had their discounts applied
+			$discount->id = $metadataKey;
+
+			$this->_bundleLog[$bundleID] = $bundleID;
+			$this->get('basket')->addEntity('discounts', $discount);
 		}
 
 		return true;

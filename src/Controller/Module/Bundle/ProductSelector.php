@@ -55,35 +55,33 @@ class ProductSelector extends Controller
 			}
 
 			if ($allItems) {
+				// Add bundle to order even if not all items were added, rely on validation to determine whether a
+				// discount should be applied
+				$bundleNotSet = true;
+				$inc = 0;
+
+				while ($bundleNotSet) {
+					$metadataTag = 'bundle_' . $inc;
+					if ($this->get('basket')->getOrder()->metadata->exists($metadataTag)) {
+						++$inc;
+					} else {
+						$this->get('basket')->getOrder()->metadata->set($metadataTag, $bundleID);
+						$bundleNotSet = false;
+					}
+				}
+
 				foreach ($units as $unit) {
 					$this->get('basket')->addUnit($unit);
 				}
-
-				$this->addFlash('success', 'Bundle successfully added to basket');
 			} else {
 				$this->addFlash('error', 'Could not add items to basket, they may be out of stock');
 			}
 
-			// Add bundle to order even if not all items were added, rely on validation to determine whether a
-			// discount should be applied
-			$bundleNotSet = true;
-			$inc = 0;
-
-			while ($bundleNotSet) {
-				$metadataTag = 'bundle_' . $inc;
-				if ($this->get('basket')->getOrder()->metadata->exists($metadataTag)) {
-					++$inc;
-				} else {
-					$this->get('basket')->getOrder()->metadata->set($metadataTag, $bundleID);
-					$bundleNotSet = false;
-				}
-			}
-
-			$event = new Order\Event\Event($this->get('basket')->getOrder());
-			$this->get('event.dispatcher')->dispatch(
-				Bundle\Events::ADD_BUNDLE,
-				$event
-			);
+//			$event = new Order\Event\Event($this->get('basket')->getOrder());
+//			$this->get('event.dispatcher')->dispatch(
+//				Bundle\Events::ADD_BUNDLE,
+//				$event
+//			);
 		}
 
 		return $this->redirectToReferer();
