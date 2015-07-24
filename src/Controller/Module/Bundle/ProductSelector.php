@@ -66,14 +66,6 @@ class ProductSelector extends Controller
 			$allItems = true;
 			$units     = [];
 
-			$bundleCount = $this->_countBundlesOnOrder($bundleID, $this->get('basket.order'));
-
-			foreach ($this->get('basket.order')->metadata as $name => $value) {
-				if (preg_match('/^bundle_[0-9]+$/', $name) && $value == $bundleID) {
-					$bundleCount ++;
-				}
-			}
-
 			try {
 				$this->get('discount.bundle_validator')->validateAllowsCodes($bundle, $this->get('basket.order'));
 			} catch (Bundle\Exception\BundleValidationException $e) {
@@ -134,19 +126,6 @@ class ProductSelector extends Controller
 		}
 
 		return $this->redirectToReferer();
-	}
-
-	private function _countBundlesOnOrder($bundleID, Order\Order $order)
-	{
-		$count = 0;
-
-		foreach ($order->metadata as $name => $value) {
-			if (preg_match('/^bundle_[0-9]+$/', $name) && $value == $bundleID) {
-				++$count;
-			}
-		}
-
-		return $count;
 	}
 
 	private function _getForm(Bundle\Bundle $bundle)
