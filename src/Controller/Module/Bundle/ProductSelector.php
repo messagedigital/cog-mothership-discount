@@ -66,6 +66,14 @@ class ProductSelector extends Controller
 			$allItems = true;
 			$units     = [];
 
+			$bundleCount = $this->_countBundlesOnOrder($bundleID, $this->get('basket.order'));
+
+			foreach ($this->get('basket.order')->metadata as $name => $value) {
+				if (preg_match('/^bundle_[0-9]+$/', $name) && $value == $bundleID) {
+					$bundleCount ++;
+				}
+			}
+
 			try {
 				$this->get('discount.bundle_validator')->validateAllowsCodes($bundle, $this->get('basket.order'));
 			} catch (Bundle\Exception\BundleValidationException $e) {
@@ -116,14 +124,6 @@ class ProductSelector extends Controller
 				foreach ($units as $unit) {
 					$this->get('basket')->addUnit($unit);
 				}
-
-				// If no discount exists with an ID of the metadata tag, the discount was not created and added for
-				// the bundle as it was probably invalid, so display a flash message to the user
-				if (!$this->get('basket.order')->discounts->exists($metadataTag)) {
-					$this->addFlash('error', $this->trans('ms.discount.bundle.product_selector.error.not_set', [
-						'%bundleName%' => $bundle->getName(),
-					]));
-				}
 			} else {
 				// If not all units submitted were loaded from the database, it will be either out of stock or
 				// deleted.
@@ -134,6 +134,19 @@ class ProductSelector extends Controller
 		}
 
 		return $this->redirectToReferer();
+	}
+
+	private function _countBundlesOnOrder($bundleID, Order\Order $order)
+	{
+		$count = 0;
+
+		foreach ($order->metadata as $name => $value) {
+			if (preg_match('/^bundle_[0-9]+$/', $name) && $value == $bundleID) {
+				++$count;
+			}
+		}
+
+		return $count;
 	}
 
 	private function _getForm(Bundle\Bundle $bundle)
