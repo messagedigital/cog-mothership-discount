@@ -83,7 +83,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 
 			if (array_key_exists($bundleID, $this->_bundleLog)) {
 				unset($this->_bundleLog[$bundleID]);
-				continue;
+				break;
 			}
 
 			$bundle = $bundles[$bundleID];
@@ -120,21 +120,6 @@ class EventListener extends BaseListener implements SubscriberInterface
 		}
 
 		return true;
-	}
-
-	public function removeBundles(CurrencyChangeEvent $event)
-	{
-		$order = $this->get('basket.order');
-		$bundleIDs = $this->_getBundleIDs($order);
-
-		foreach ($bundleIDs as $metadataKey => $bundleID) {
-			if ($order->discounts->exists($metadataKey)) {
-				$this->get('basket')->removeEntity('discounts', $order->discounts->get($metadataKey));
-			}
-		}
-
-		$event = new OrderEvent($this->get('basket.order'));
-		$this->validateBundle($event);
 	}
 
 	/**
