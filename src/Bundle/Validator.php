@@ -59,16 +59,7 @@ class Validator
 
 		list($expectedCounts, $currentCounts) = $this->_getCounts($bundle);
 
-		if (false === $bundle->allowsCodes()) {
-			foreach ($order->discounts as $discount) {
-				if ($discount->getType() === Discount\OrderDiscountFactory::TYPE) {
-					$this->_error('ms.discount.bundle.validation.codes', [
-						'%name%' => $bundle->getName(),
-						'%code%' => $discount->code,
-					]);
-				}
-			}
-		}
+		$this->validateAllowsCodes($bundle, $order);
 
 		foreach ($order->items as $item) {
 			foreach ($bundle->getProductRows() as $row) {
@@ -101,6 +92,20 @@ class Validator
 		}
 
 		return true;
+	}
+
+	public function validateAllowsCodes(Bundle $bundle, Order\Order $order)
+	{
+		if (false === $bundle->allowsCodes()) {
+			foreach ($order->discounts as $discount) {
+				if ($discount->getType() === Discount\OrderDiscountFactory::TYPE) {
+					$this->_error('ms.discount.bundle.validation.codes', [
+						'%name%' => $bundle->getName(),
+						'%code%' => $discount->code,
+					]);
+				}
+			}
+		}
 	}
 
 	/**

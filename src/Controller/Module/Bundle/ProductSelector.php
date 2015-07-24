@@ -8,10 +8,30 @@ use Message\Mothership\Commerce\Product\Product;
 use Message\Mothership\Commerce\Order;
 use Message\Cog\Controller\Controller;
 
+/**
+ * Class ProductSelector
+ * @package Message\Mothership\Discount\Controller\Module\Bundle
+ *
+ * @author  Thomas Marchant <thomas@mothership.ec>
+ *
+ * Controller for adding bundle items to the basket via an adapted product selector form
+ */
 class ProductSelector extends Controller
 {
+	/**
+	 * Array of unit IDs for out of stock items
+	 *
+	 * @var array
+	 */
 	private $_outOfStock = [];
 
+	/**
+	 * Render the product selector form for the bundle
+	 *
+	 * @param Bundle\Bundle $bundle
+	 *
+	 * @return \Message\Cog\HTTP\Response
+	 */
 	public function index(Bundle\Bundle $bundle)
 	{
 		return $this->render('Message:Mothership:Discount::bundle:product-selector', [
@@ -22,6 +42,13 @@ class ProductSelector extends Controller
 		]);
 	}
 
+	/**
+	 * Add the items submitted via the product selector form to the basket
+	 *
+	 * @param $bundleID
+	 *
+	 * @return \Message\Cog\HTTP\RedirectResponse
+	 */
 	public function addBundle($bundleID)
 	{
 		$bundle = $this->get('discount.bundle_loader')->getByID($bundleID);
@@ -39,6 +66,17 @@ class ProductSelector extends Controller
 			$allItems = true;
 			$units     = [];
 
+			try {
+				$this->get('discount.bundle_validator')->validateAllowsCodes($bundle, $this->get('basket.order'));
+			} catch (Bundle\Exception\BundleValidationException $e) {
+				$this->addFlash('error', $this->trans('ms.discount.bundle.product_selector.error.invalid', [
+					'%bundleName%' => $bundle->getName(),
+					'%message%' => $e->getMessage(),
+				]));
+
+				return $this->redirectToReferer();
+			}
+
 			foreach ($data as $key => $value) {
 				if (!array_key_exists('unit_id', $value)) {
 					throw new \LogicException('Each row of data expects unit ID to be set in an array against a key of `unit_id`');
@@ -55,11 +93,15 @@ class ProductSelector extends Controller
 			}
 
 			if ($allItems) {
-				// Add bundle to order even if not all items were added, rely on validation to determine whether a
-				// discount should be applied
+
+				// Add record of bundle to order using metadata. This way a user can remove an item and swap it
+				// for another one even without having to use the product selector again. This metadata is also used
+				// as a temporary ID for the created discount entity on the basket to keep track of which discount
+				// applies to which bundle.
 				$bundleNotSet = true;
 				$inc = 0;
 
+				// Create a unique name for the metadata
 				while ($bundleNotSet) {
 					$metadataTag = 'bundle_' . $inc;
 					if ($this->get('basket')->getOrder()->metadata->exists($metadataTag)) {
@@ -70,17 +112,21 @@ class ProductSelector extends Controller
 					}
 				}
 
+				// Add all units to the basket
 				foreach ($units as $unit) {
 					$this->get('basket')->addUnit($unit);
 				}
 
+				// If no discount exists with an ID of the metadata tag, the discount was not created and added for
+				// the bundle as it was probably invalid, so display a flash message to the user
 				if (!$this->get('basket.order')->discounts->exists($metadataTag)) {
 					$this->addFlash('error', $this->trans('ms.discount.bundle.product_selector.error.not_set', [
 						'%bundleName%' => $bundle->getName(),
 					]));
 				}
-
 			} else {
+				// If not all units submitted were loaded from the database, it will be either out of stock or
+				// deleted.
 				$this->addFlash('error', $this->trans('ms.discount.bundle.product_selector.error.items', [
 					'%bundleName' => $bundle->getName(),
 				]));
