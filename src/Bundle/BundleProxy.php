@@ -98,11 +98,11 @@ class BundleProxy extends Bundle
 	 */
 	public function setImageID($id)
 	{
-		if (!is_int($id)) {
-			throw new \InvalidArgumentException('Image ID must be an integer');
+		if (!is_numeric($id) && (int) $id != $id) {
+			throw new \InvalidArgumentException('Image ID must be a whole number');
 		}
 
-		$this->_imageID = $id;
+		$this->_imageID = (int) $id;
 	}
 
 	/**
