@@ -77,7 +77,6 @@ class EventListener extends BaseListener implements SubscriberInterface
 		$validator = $this->get('discount.bundle_validator');
 
 		foreach ($bundleIDs as $metadataKey => $bundleID) {
-
 			if (array_key_exists($bundleID, $this->_bundleLog)) {
 				// If the ID exists in the bundle log, the only reason this method is being called against is because it
 				// has just been added to the order, so we don't need to revalidate the bundle. Instead, we remove it

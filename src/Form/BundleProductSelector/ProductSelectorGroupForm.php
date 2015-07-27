@@ -5,7 +5,6 @@ namespace Message\Mothership\Discount\Form\BundleProductSelector;
 use Message\Mothership\Discount\Bundle;
 use Symfony\Component\Form;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Validator\Constraints;
 
 /**
  * Class ProductSelectorGroupForm
@@ -51,9 +50,6 @@ class ProductSelectorGroupForm extends Form\AbstractType
 					'unit_options' => $productRow->getOptions(),
 					'out_of_stock' => $options['out_of_stock'],
 					'product'      => $options['products'][$productRow->getProductID()],
-					'constraints'  => [
-						new Constraints\NotBlank,
-					]
 				]);
 			}
 		}

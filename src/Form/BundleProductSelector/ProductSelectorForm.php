@@ -41,6 +41,9 @@ class ProductSelectorForm extends Form\AbstractType
 			'oos'          => $options['out_of_stock'],
 			'empty_value'  => 'ms.commerce.product.selector.unit.label',
 			'show_pricing' => !empty($options['show_variable_pricing']) && $options['product']->hasVariablePricing(),
+			'constraints'  => [
+				new Constraints\NotBlank,
+			]
 		]);
 
 	}
