@@ -116,11 +116,15 @@ class ProductSelector extends Controller
 				foreach ($units as $unit) {
 					$this->get('basket')->addUnit($unit);
 				}
+
+				$this->addFlash('success', $this->get('translator')->trans('ms.discount.bundle.add.add', [
+					'%bundleName%' => $bundle->getName(),
+				]));
 			} else {
 				// If not all units submitted were loaded from the database, it will be either out of stock or
 				// deleted.
 				$this->addFlash('error', $this->trans('ms.discount.bundle.product_selector.error.items', [
-					'%bundleName' => $bundle->getName(),
+					'%bundleName%' => $bundle->getName(),
 				]));
 			}
 		}

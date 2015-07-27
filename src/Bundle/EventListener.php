@@ -107,19 +107,6 @@ class EventListener extends BaseListener implements SubscriberInterface
 				// Add the bundle ID to the log to prevent an infinite loop
 				$this->_bundleLog[$bundleID] = $bundleID;
 				$this->get('basket')->addEntity('discounts', $discount);
-				if ($bundleExists) {
-					$this->get('http.session')->getFlashBag()->add(
-						'success',
-						$this->get('translator')->trans('ms.discount.bundle.add.re-add', [
-							'%bundleName%' => $bundle->getName(),
-					]));
-				} else {
-					$this->get('http.session')->getFlashBag()->add(
-						'success',
-						$this->get('translator')->trans('ms.discount.bundle.add.add', [
-							'%bundleName%' => $bundle->getName(),
-					]));
-				}
 
 			} catch (Exception\BundleValidationException $e) {
 				if ($bundleExists) {
