@@ -113,7 +113,7 @@ ms.discount:
       empty: There are no bundles set up
     validation:
       codes: %name% cannot be purchased in conjunction with a discount code (%code%)
-      items: Items in basket do not contain enough items for '%name%' bundle, discount removed
+      items: Items in basket do not fulfill items needed for '%name%' bundle, discount removed
       time: %name% cannot be purchased as this offer is not currently valid
     product_selector:
       button: Add to basket
@@ -122,3 +122,6 @@ ms.discount:
         invalid: Could not add %bundleName% to basket: %message%
         items: Could not add %bundleName% to basket, some may be out of stock
         not_set: Could not add %bundleName% discount as it is invalid with your current order
+    add:
+      add: %bundleName% added to basket
+      re-add: Discount for %bundleName% reinstated
