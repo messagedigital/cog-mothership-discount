@@ -36,11 +36,11 @@
 - `Discount\Validator` class checks that no bundles with `allowCodes` set to false are on the order before adding a discount code to the order
 - `Discount\Validator` counts the number of discount codes rather than all discounts on an order
 - Added `bundle-listing.js` file for handling filterable table on bundle listing
-- Added `discount_bundle` table to database
-- Added `discount_bundle_price` table to database
-- Added `discount_bundle_image` table to database
-- Added `discount_bundle_product_row` table to database
-- Added `discount_bundle_product_option` table to database
+- Added migration to add  `discount_bundle` table to database
+- Added migration to add  `discount_bundle_price` table to database
+- Added migration to add  `discount_bundle_image` table to database
+- Added migration to add  `discount_bundle_product_row` table to database
+- Added migration to add  `discount_bundle_product_option` table to database
 
 ## 2.0.0
 
