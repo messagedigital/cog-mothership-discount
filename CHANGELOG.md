@@ -41,6 +41,7 @@
 - Added migration to add  `discount_bundle_image` table to database
 - Added migration to add  `discount_bundle_product_row` table to database
 - Added migration to add  `discount_bundle_product_option` table to database
+- Update `cog-mothership-commerce` requirement to 5.8
 
 ## 2.0.0
 
