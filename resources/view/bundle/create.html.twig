@@ -1,0 +1,27 @@
+{% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	{% stylesheets
+		'@Message:Mothership:Discount::resources/assets/css/discount.css'
+
+		output='/assets/css/ms_discount.css'
+		filter='csscogulerewrite,?cssmin'
+	%}
+		<link rel="stylesheet" href="{{ asset_url }}">
+	{% endstylesheets %}
+{% endblock %}
+
+{% block sidebar %}
+	{{ render(controller('Message:Mothership:Discount::Controller:Sidebar#index')) }}
+{% endblock %}
+
+{% block main %}
+	<hgroup class="title">
+		<h1>Create bundle</h1>
+	</hgroup>
+
+	<div class="container-content">
+		{% include 'Message:Mothership:Discount::bundle:bundle-form' with { 'form': form, 'currencies': currencies, 'bundle': bundle } only %}
+	</div>
+{% endblock %}

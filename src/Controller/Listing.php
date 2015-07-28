@@ -8,7 +8,6 @@ use Message\Mothership\Discount\Discount;
 
 class Listing extends Controller
 {
-
 	public function all()
 	{
 		$discounts = $this->get('discount.loader')->getAll();

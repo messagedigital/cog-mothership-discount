@@ -47,5 +47,31 @@ class Routes implements RoutesInterface
 
 		$router['ms.cp.discount']->add('ms.cp.discount.view.orders', 'view/{discountID}/orders', 'Message:Mothership:Discount::Controller:Detail#orders');
 
+		// Bundles
+		$router['ms.cp.discount']->add('ms.cp.discount.bundle.create.action', 'bundle/create', 'Message:Mothership:Discount::Controller:Bundle#createAction')
+			->setMethod('POST')
+		;
+
+		$router['ms.cp.discount']->add('ms.cp.discount.bundle.create', 'bundle/create', 'Message:Mothership:Discount::Controller:Bundle#create');
+
+		$router['ms.cp.discount']->add('ms.cp.discount.bundle.edit.action', 'bundle/{bundleID}/edit', 'Message:Mothership:Discount::Controller:Bundle#editAction')
+			->setRequirement('bundleID', '\d+')
+			->setMethod('POST')
+		;
+
+		$router['ms.cp.discount']->add('ms.cp.discount.bundle.edit', 'bundle/{bundleID}/edit', 'Message:Mothership:Discount::Controller:Bundle#edit');
+		$router['ms.cp.discount']->add('ms.cp.discount.bundle.listing', 'bundle/listing', 'Message:Mothership:Discount::Controller:Bundle#listing');
+
+		$router['ms.cp.discount']->add('ms.cp.discount.bundle.delete', 'bundle/delete/{bundleID}', 'Message:Mothership:Discount::Controller:Bundle#delete')
+			->setRequirement('bundleID', '\d+')
+//			->setMethod('DELETE')
+		;
+
+		$router['ms.cp.discount']->add('ms.cp.discount.bundle.restore', 'bundle/restore/{bundleID}', 'Message:Mothership:Discount::Controller:Bundle#restore');
+
+		$router['ms.product.basket']->add('ms.product.basket.add_bundle', 'basket/bundle/add/{bundleID}', 'Message:Mothership:Discount::Controller:Module:Bundle:ProductSelector#addBundle')
+			->setRequirement('bundleID', '\d+')
+			->setMethod('POST')
+		;
 	}
 }
