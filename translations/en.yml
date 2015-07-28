@@ -58,3 +58,70 @@ ms.discount:
         max: You may only use up to %max% discount%plural%
         used: This discount has already been used on this order.
         invalid: Please enter a valid discount code.
+        bundle_no_codes: Bundle '%bundleName%' is not valid with discount codes
+  bundle:
+    label: Bundle details
+    name:
+      label: Name
+      help: The bundle name as it will appear on the site
+    start:
+      label: Start date
+      help: The date from which the bundle is valid
+    end:
+      label: End date
+      help: The date in which the bundle becomes invalid
+    price:
+      label: Price (%currencyID%)
+      help: The price for bundles in %currencyID%
+    product:
+      label: Products
+      help: Add multiple products
+    image:
+      label: Image
+      help: Select an preview image that will be associated with this bundle
+    allow_codes:
+      label: Can work with discount codes
+      help: Check this box if you want the bundle to be allowed to work in conjunction with discount codes
+    products:
+      product:
+        label: Product
+        help: Select a product
+      option_name:
+        label: Option name
+        help: The name of the option, e.g. 'colour'
+      option_value:
+        label: Option value
+        help: The value of the option, e.g. 'blue'
+      quantity:
+        label: Quantity
+        help: The quantity of this item that needs to be purchased for the bundle to be valid
+      remove: Remove product
+      add: Add product
+      label: Products
+    save: Save bundle
+    create:
+      success: Bundle saved successfully!
+    edit:
+      success: Bundle updated successfully!
+    delete:
+      success: Bundle deleted successfully, <a href="%url%">click here</a> to undo
+    restore:
+      success: Bundle restored successfully!
+    error:
+      build: Could not save bundle: %message%
+    listing:
+      empty: There are no bundles set up
+    validation:
+      codes: %name% cannot be purchased in conjunction with a discount code (%code%)
+      items: Items in basket do not fulfill items needed for '%name%' bundle, discount removed
+      time: %name% cannot be purchased as this offer is not currently valid
+    product_selector:
+      button: Add to basket
+      out_of_date: This offer is not currently valid
+      error:
+        invalid: Could not add %bundleName% to basket: %message%
+        items: Could not add %bundleName% to basket, some may be out of stock
+        not_set: Could not add %bundleName% discount as it is invalid with your current order
+    add:
+      add: %bundleName% added to basket
+      re-add: Discount for %bundleName% reinstated

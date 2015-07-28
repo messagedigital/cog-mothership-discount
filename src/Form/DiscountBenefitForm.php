@@ -5,7 +5,6 @@ namespace Message\Mothership\Discount\Form;
 use Symfony\Component\Form;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Message\Mothership\Discount\Discount\Discount;
-use Message\Mothership\Discount\Discount\DiscountAmount;
 use Symfony\Component\Validator\Constraints;
 use Message\Cog\ValueObject\DateTimeImmutable;
 
@@ -13,7 +12,6 @@ class DiscountBenefitForm extends Form\AbstractType
 {
 	public function buildForm(Form\FormBuilderInterface $builder, array $options)
 	{
-
 		$builder->add('percentage', 'percent', [
 			'label'    => 'ms.discount.discount.benefit.percentage.label',
 			'type'     => 'integer',
