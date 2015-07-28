@@ -11,7 +11,7 @@
 - Added `Bundle\Edit` class for updating bundle data in the database
 - Added `Bundle\Delete` class for soft-deleting bundles in the database
 - Added `Bundle\Loader` class for loading bundles from the database
-- Added `bundle\ProductRow` class for representing a product restraint on a bundle, i.e. the product, which options it applies to, and the quantity needed for the bundle to be valid
+- Added `Bundle\ProductRow` class for representing a product restraint on a bundle, i.e. the product, which options it applies to, and the quantity needed for the bundle to be valid
 - Added `Bundle\Validator` class for checking that a bundle is still valid on an order
 - Added `Bundle\EventListener` class to listen to changes to the basket and either add a bundle discount or remove it depending on its validity on the order
 - Added `Bundle\Events` class holding constants for event names
