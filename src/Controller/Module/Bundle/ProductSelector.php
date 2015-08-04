@@ -201,7 +201,6 @@ class ProductSelector extends Controller
 	private function _getUnits(Product $product, array $options)
 	{
 		$units = [];
-		$outOfStock = [];
 
 		$locations = $this->get('stock.locations');
 
@@ -212,15 +211,11 @@ class ProductSelector extends Controller
 			}
 
 			if (1 > $unit->getStockForLocation($locations->getRoleLocation($locations::SELL_ROLE))) {
-				$outOfStock[] = $unit->id;
+				$this->_outOfStock[(int) $unit->id] = $unit->id;
 			}
 
 			$units[$unit->id] = $unit;
 		}
-
-		$outOfStock = $outOfStock + $this->_outOfStock;
-
-		$this->_outOfStock = array_unique($outOfStock);
 
 		return $units;
 	}
