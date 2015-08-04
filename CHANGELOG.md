@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.1
+
+- Resolve issue where out of stock items in product selector would be inaccurate. No longer uses `array_unique()` but rather uses the unit IDs as keys for the out of stock array.
+
 ## 2.1.0
 
 - Added 'Bundle' functionality - adding discounts based on customers purchasing a set of products
