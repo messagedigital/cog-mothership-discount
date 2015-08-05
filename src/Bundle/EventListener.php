@@ -77,11 +77,11 @@ class EventListener extends BaseListener implements SubscriberInterface
 		$validator = $this->get('discount.bundle_validator');
 
 		foreach ($bundleIDs as $metadataKey => $bundleID) {
-			if (array_key_exists($bundleID, $this->_bundleLog)) {
-				// If the ID exists in the bundle log, the only reason this method is being called against is because it
-				// has just been added to the order, so we don't need to revalidate the bundle. Instead, we remove it
-				// from the bundle log and break out of the loop.
-				unset($this->_bundleLog[$bundleID]);
+			if (array_key_exists($metadataKey, $this->_bundleLog)) {
+				// If the metadata key exists in the bundle log, the only reason this method is being called against is
+				// because it  has just been added to the order, so we don't need to revalidate the bundle. Instead, we
+				// remove it from the bundle log and break out of the loop.
+				unset($this->_bundleLog[$metadataKey]);
 				break;
 			}
 
@@ -104,7 +104,7 @@ class EventListener extends BaseListener implements SubscriberInterface
 				$discount->id = $metadataKey;
 
 				// Add the bundle ID to the log to prevent an infinite loop
-				$this->_bundleLog[$bundleID] = $bundleID;
+				$this->_bundleLog[$metadataKey] = $metadataKey;
 				$this->get('basket')->addEntity('discounts', $discount);
 
 			} catch (Exception\BundleValidationException $e) {
