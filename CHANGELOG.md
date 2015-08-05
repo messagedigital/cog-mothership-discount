@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.2
+
+- Resolve issue where discounts would not be removed properly if two identical bundles are added to an order and then invalidated
+
 ## 2.1.1
 
 - Resolve issue where out of stock items in product selector would be inaccurate. No longer uses `array_unique()` but rather uses the unit IDs as keys for the out of stock array.
