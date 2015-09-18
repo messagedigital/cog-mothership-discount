@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.3
+
+- Added missing `cog-mothership-file-manager` dependency of 3.1
+
 ## 2.1.2
 
 - Resolve issue where discounts would not be removed properly if two identical bundles are added to an order and then invalidated
