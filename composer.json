@@ -29,11 +29,12 @@
   "require": {
     "php": ">=5.4.0",
 
-    "mothership-ec/cog"                     : "~4.0",
-    "mothership-ec/cog-user"                : "~2.0",
-    "mothership-ec/cog-mothership-cp"       : "~3.0",
-    "mothership-ec/cog-mothership-commerce" : "~5.0",
-    "mothership-ec/cog-mothership-reports"  : "~2.0"
+    "mothership-ec/cog"                        : "~4.0",
+    "mothership-ec/cog-user"                   : "~2.0",
+    "mothership-ec/cog-mothership-cp"          : "~3.0",
+    "mothership-ec/cog-mothership-commerce"    : "~5.8",
+	"mothership-ec/cog-mothership-file-manager": "~3.1",
+    "mothership-ec/cog-mothership-reports"     : "~2.0"
   },
   "suggest": {
   }

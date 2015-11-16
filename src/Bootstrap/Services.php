@@ -57,6 +57,136 @@ class Services implements ServicesInterface
 		$services['discount.order-discount-factory'] = $services->factory(function($c) {
 			return new Discount\Discount\OrderDiscountFactory();
 		});
+
+		// Bundles
+		$services['discount.bundle_create'] = function ($c) {
+			return new Discount\Bundle\Create(
+				$c['db.query'],
+				$c['discount.bundle.product_create'],
+				$c['discount.bundle.price_create'],
+				$c['discount.bundle.image_create'],
+				$c['user.current']
+			);
+		};
+
+		$services['discount.bundle_edit'] = function ($c) {
+			return new Discount\Bundle\Edit(
+				$c['db.transaction'],
+				$c['discount.bundle.product_create'],
+				$c['discount.bundle.price_create'],
+				$c['discount.bundle.image_create'],
+				$c['user.current']
+			);
+		};
+
+		$services['discount.bundle_delete'] = function ($c) {
+			return new Discount\Bundle\Delete(
+				$c['db.query'],
+				$c['user.current']
+			);
+		};
+
+		// Not a singleton as query can be replaced with transaction
+		$services['discount.bundle.product_create'] = $services->factory(function ($c) {
+			return new Discount\Bundle\BundleProductCreate(
+				$c['db.query'],
+				$c['db.query.parser']
+			);
+		});
+
+		// Not a singleton as query can be replaced with transaction
+		$services['discount.bundle.price_create'] = $services->factory(function ($c) {
+			return new Discount\Bundle\BundlePriceCreate(
+				$c['db.query'],
+				$c['db.query.parser']
+			);
+		});
+
+		// Not a singleton as query can be replaced with transaction
+		$services['discount.bundle.image_create'] = $services->factory(function ($c) {
+			return new Discount\Bundle\BundleImageCreate($c['db.query']);
+		});
+
+		$services['discount.bundle_factory'] = function($c) {
+			return new Discount\Bundle\BundleFactory(
+				$c['product.loader'],
+				$c['file_manager.file.loader'],
+				$c['cfg']->currency->supportedCurrencies,
+				$c['currency']
+			);
+		};
+
+		// Not a singleton as it needs to keep track of which units belong to which bundle within a specific order
+		$services['discount.bundle_validator'] = $services->factory(function($c) {
+			return new Discount\Bundle\Validator($c['translator']);
+		});
+
+		$services['discount.bundle.order_discount_factory'] = $services->factory(function($c) {
+			return new Discount\Bundle\OrderDiscountFactory($c['discount.bundle_validator']);
+		});
+
+		$services['discount.bundle.form.bundle'] = function ($c) {
+			return new Discount\Form\BundleForm(
+				$c['file_manager.file.loader'],
+				$c['translator'],
+				$c['discount.bundle_factory'],
+				$c['discount.bundle.form.bundle_product'],
+				$c['cfg']->currency->supportedCurrencies
+			);
+		};
+
+		$services['discount.bundle.form.bundle_product'] = function ($c) {
+			return new Discount\Form\BundleProductForm(
+				$c['product.loader'],
+				$c['product.option.loader']
+			);
+		};
+
+		$services['discount.bundle.form.product_selector'] = function($c) {
+			return new Discount\Form\BundleProductSelector\ProductSelectorGroupForm;
+		};
+
+		$services['discount.bundle_loader'] = $services->factory(function($c) {
+			return new Discount\Bundle\Loader(
+				$c['db.query.builder.factory'],
+				$c['user.loader'],
+				$c['discount.bundle.entity_collection'],
+				$c['currency']
+			);
+		});
+
+		$services['discount.bundle.entity_collection'] = function ($c) {
+			return new \Message\Cog\DB\Entity\EntityLoaderCollection([
+				'file'        => $c['discount.bundle.file_loader'],
+				'product_row' => $c['discount.bundle.product_row_loader'],
+				'price'       => $c['discount.bundle.price_loader']
+			]);
+		};
+
+		$services['discount.bundle.file_loader'] = function ($c) {
+			return new Discount\Bundle\FileLoader(
+				$c['file_manager.file.loader']
+			);
+		};
+
+		$services['discount.bundle.product_row_loader'] = function ($c) {
+			return new Discount\Bundle\ProductRowLoader(
+				$c['db.query.builder.factory']
+			);
+		};
+
+		$services['discount.bundle.price_loader'] = function ($c) {
+			return new Discount\Bundle\PriceLoader(
+				$c['db.query.builder.factory']
+			);
+		};
+
+		// Extended services
+		$services->extend('field.collection', function($fields, $c) {
+			$fields->add(new Discount\Field\Bundle($c['discount.bundle_loader']));
+
+			return $fields;
+		});
 	}
 
 	public function registerStatisticsDatasets($services)

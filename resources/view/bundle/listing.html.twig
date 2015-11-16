@@ -1,0 +1,100 @@
+{% extends 'Message:Mothership:ControlPanel::_templates/left_sidebar' %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	{% stylesheets
+		'@Message:Mothership:Discount::resources/assets/css/discount.css'
+
+		output='/assets/css/ms_discount.css'
+		filter='csscogulerewrite,?cssmin'
+	%}
+		<link rel="stylesheet" href="{{ asset_url }}">
+	{% endstylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	{% javascripts
+	'@Message:Mothership:Discount::resources/assets/js/bundle-listing.js'
+
+	output='/assets/js/ms_bundle_listing.js'
+	filter='?jsmin'
+
+	%}
+	<script src="{{ asset_url }}"></script>
+	{% endjavascripts %}
+{% endblock %}
+
+{% block sidebar %}
+	{{ render(controller('Message:Mothership:Discount::Controller:Sidebar#index')) }}
+{% endblock %}
+
+{% block main %}
+	<hgroup class="title">
+		<h1>Bundles</h1>
+	</hgroup>
+	<div class="container-content">
+	{% if bundles | length > 0 %}
+		<table class="table-filter bundles">
+			<colgroup>
+				<col width="100">
+				<col width="50">
+				<col>
+				<col>
+				<col>
+				<col>
+				<col>
+				<col width="100">
+			</colgroup>
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th class="disable">Photo</th>
+					<th>Name</th>
+					<th>Valid from</th>
+					<th>Valid until</th>
+					<th>Works with codes</th>
+					<th>Price ({{ currency }})</th>
+					<th class="disable"></th>
+					<th class="disable"></th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<th>ID</th>
+					<th class="disable">Photo</th>
+					<th>Name</th>
+					<th>Valid from</th>
+					<th>Valid until</th>
+					<th>Works with discount codes</th>
+					<th>Price ({{ currency }})</th>
+					<th></th>
+					<th class="a-center"><a href="#" class="clear-filters">Clear filters</a></th>
+				</tr>
+			</tfoot>
+			<tbody>
+				{% for bundle in bundles %}
+					<tr>
+						<td><a href="{{ url('ms.cp.discount.bundle.edit', {'bundleID' : bundle.id}) }}">{{ bundle.id }}</a></td>
+						<td>{{ getResizedImage(bundle.getImage(), 50, 50) }}</td>
+						<td><a href="{{ url('ms.cp.discount.bundle.edit', {'bundleID' : bundle.id}) }}">{{ bundle.name }}</a></td>
+						<td>{{ bundle.start ? bundle.start | date('d M Y') : ''}}</td>
+						<td>{{ bundle.end ? bundle.end | date('d M Y') : '' }}</td>
+						<td>{{ bundle.allowsCodes ? 'Yes' : 'No' }}</td>
+						<td>{{ bundle.getPrice(currency) | price(currency) }}</td>
+						<td><a href="{{ url('ms.cp.discount.bundle.edit', {'bundleID' : bundle.id}) }}" class="button small">Edit</a></td>
+						<td>
+							<form action="{{ url('ms.cp.discount.bundle.delete', { bundleID: bundle.id }) }}" method="post">
+								<input type="hidden" name="_method" value="DELETE">
+								<button name="delete[delete]" value="delete" id="delete" type="submit" class="button small remove">{{ 'Delete'|trans }}</button>
+							</form>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<p>{{ 'ms.discount.bundle.listing.empty' | trans }}</p>
+	{% endif %}
+	</div>
+{% endblock %}

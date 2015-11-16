@@ -1,0 +1,67 @@
+{% macro getRepeatablePrototype(form) %}
+	{% filter escape %}
+	<section class="group" data-collapse>
+		<h2 class="title">Product</h2>
+		<div class="content">
+			{{ form_widget(form['product'].vars.prototype) }}
+			<a href="#" data-group-remove
+			   class="button small remove">{{ 'ms.discount.bundle.products.remove'|trans }}</a>
+		</div>
+	</section>
+	{% endfilter %}
+{% endmacro %}
+
+{% macro renderProductField(form, key) %}
+	<section class="group" data-collapse>
+		<h2 class="title">Product #{{ key + 1 }}</h2>
+		<div class="content">
+			{{ form_widget(form['product'][key]) }}
+			<a href="#" data-group-remove
+			   class="button small remove">{{ 'ms.discount.bundle.products.remove'|trans }}</a>
+		</div>
+	</section>
+{% endmacro %}
+{{ form_start(form) }}
+	<section class="group">
+		<h2 class="title">{{ 'ms.discount.bundle.label' | trans }}</h2>
+			<div class="content">
+					{{ form_widget(form['id']) }}
+					{{ form_row(form['name']) }}
+					{{ form_row(form['start']) }}
+					{{ form_row(form['end']) }}
+					{% for currency in currencies %}
+						{{ form_row(form['price_' ~ currency]) }}
+					{% endfor %}
+					{{ form_row(form['image']) }}
+					{{ form_row(form['allow_codes']) }}
+			</div>
+	</section>
+
+	<section class="group">
+		<h2 class="title">{{ 'ms.discount.bundle.products.label' | trans }}</h2>
+		<div class="content">
+			<section class="repeatable-group">
+				{# If bundle could not be saved upon form submission, form data will be an array, so do the following: #}
+				{% if bundle is iterable %}
+					{% for key, product in bundle.product %}
+						{{ _self.renderProductField(form, key) }}
+					{% endfor %}
+					{% set key = key + 1 %}
+					{# If the bundle was created successfully, the form data will be an instance of Bundle, so do the following: #}
+				{% elseif bundle %}
+					{% set key = 0 %}
+					{% for product in bundle.getProductRows() %}
+						{{ _self.renderProductField(form, key) }}
+						{% set key = key + 1 %}
+					{% endfor %}
+				{% endif %}
+				<a href="#" data-group-add data-prototype="{{ _self.getRepeatablePrototype(form) }}"
+				   data-group-index="{{ key }}" class="button small add">
+					{{ 'ms.discount.bundle.products.add'|trans }}
+				</a>
+			</section>
+		</div>
+	</section>	
+	{% do form['product'].setRendered %}
+	<button type="submit" class="button small save" id="save-content">{{ 'ms.discount.bundle.save'|trans }}</button>
+{{ form_end(form) }}
