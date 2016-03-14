@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.4
+
+- Made validation on `Criteria` form in admin panel less strict, as it was preventing users from being able to edit the criteria due to auto-populated fields
+
 ## 2.1.3
 
 - Added missing `cog-mothership-file-manager` dependency of 3.1
