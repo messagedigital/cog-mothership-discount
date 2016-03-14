@@ -16,7 +16,6 @@ class DiscountBenefitForm extends Form\AbstractType
 			'label'    => 'ms.discount.discount.benefit.percentage.label',
 			'type'     => 'integer',
 			'constraints' => [
-				new Constraints\GreaterThan(['value' => 0]),
 				new Constraints\LessThanOrEqual(['value' => 100]),
 			]
 		]);
@@ -43,17 +42,17 @@ class DiscountBenefitForm extends Form\AbstractType
 
 	public function validate(Form\FormInterface $form)
 	{
-		$discountAmountsEmpty = true;
-		foreach($form->get('discountAmounts')->getData() as $currency => $amount) {
-			if(null !== $amount) {
-				$discountAmountsEmpty = false;
+		$discountAmounts = false;
+		foreach ($form->get('discountAmounts')->getData() as $currency => $amount) {
+			if ($amount) {
+				$discountAmounts = true;
 				break;
 			}
 		}
 
-		if (null !== $form->get('percentage')->getData() && !$discountAmountsEmpty) {
+		if ($form->get('percentage')->getData() && $discountAmounts) {
 			$form->addError(new Form\FormError('Please only fill in either a percentage OR a fixed discount.'));
-		} elseif (null === $form->get('percentage')->getData() && $discountAmountsEmpty && false === $form->get('freeShipping')->getData()) {
+		} elseif (!$form->get('percentage')->getData() && !$discountAmounts && false === $form->get('freeShipping')->getData()) {
 			$form->addError(new Form\FormError('Neither a percentage discount, nor a fixed discount amount, nor free shipping have been added to this discount.'));
 		}
 	}
