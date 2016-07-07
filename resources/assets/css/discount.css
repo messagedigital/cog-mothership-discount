@@ -1,6 +1,45 @@
+/* Discounts
+---------------------------------------- */
+
+
+
+#criteria-edit_products .field {
+	float: left;
+	width: 50%;
+}
+
+.choose {
+	position: relative;
+	padding-bottom: 0;
+}
+
+.choose .option {
+	float: left;
+	width: 46%;
+}
+
+.choose .or {
+	float: left;
+	margin-top: 31px;
+	width: 8%;
+	text-align: center;
+}
+
+.choose .option .add-on {
+	max-width: 100%;
+	width: 100%;
+}
+
+.choose .field-wrap .field label {
+	position: absolute;
+	top: -23px;
+	left: 170px;
+}	
+
 /* Bundles */ 
 
-.field input, .field textarea, .field select {
+.field input, 
+.field textarea, .field select {
   width: 50%;
 }
 
