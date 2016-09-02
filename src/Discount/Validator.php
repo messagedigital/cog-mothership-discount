@@ -195,9 +195,9 @@ class Validator
 
 				$usedAt = array_shift($result);
 
-//				if ($usedAt) {
-//					throw new OrderValidityException(self::ALREADY_USED);
-//				}
+				if ($usedAt) {
+					throw new OrderValidityException(self::ALREADY_USED);
+				}
 			}
 		}
 	}
